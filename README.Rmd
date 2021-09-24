@@ -1,0 +1,42 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# `R`/`uniCATE`
+
+> Univarite Conditional Average Treatment Effect Estimation
+
+__Author:__ [Philippe Boileau](https://pboileau.ca/)
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+---
+
+`uniCATE` implements an efficient semiparametric procedure for the estimation of
+individual variables' conditional average treatment effects' best linear
+approximations. This method can identify potential predictive biomarkers in
+randomized and observational studies using assumption-lean statistical inference
+techniques that rely on flexible machine learning algorithms.
+
+
+## Installation
+
+The _development version_ of the package may be installed from GitHub using
+[`remotes`](https://CRAN.R-project.org/package=remotes):
+
+```{r gh-master-installation, eval=FALSE}
+# install.packages("remotes")
+remotes::install_github("insightsengineering/uniCATE")
+```

@@ -1,0 +1,23 @@
+Package: uniCATE
+Title: Univariate Conditional Average Treatment Effect Estimation
+Version: 0.0.1
+Authors@R: 
+    person(given = "Philippe",
+           family = "Boileau",
+           role = c("aut", "cre"),
+           email = "philippe_boileau@berkeley.edu",
+           comment = c(ORCID = "0000-0002-4850-2507"))
+Description: uniCATE implements an efficient semiparametric procedure for the
+  estimation of individual variables' conditional average treatment effects'
+  best linear approximations. This method can identify potential predictive
+  biomarkers in randomized and observational studies using assumption-lean
+  statistical inference techniques that rely on flexible machine learning
+  algorithms.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
