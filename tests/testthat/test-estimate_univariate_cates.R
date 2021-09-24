@@ -1,81 +1,82 @@
-test_that("estimate_univariate_cates() returns a vector with estimate lm
-          coefficients and a table of influence curves",
-          {
-            library(dplyr)
-            library(origami)
-            set.seed(84193)
-
-            # prepare some mock data
-            data <- mtcars %>%
-              dplyr::mutate(am = factor(am)) %>%
-              dplyr::select(mpg, am, disp, hp, wt)
-            data <- bind_rows(data, data, data, data)
-            outcome <- "mpg"
-            treatment <- "am"
-            biomarkers <- c("hp", "wt")
-            propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
-
-            # compute the holdout potential outcome difference dataset
-            res_ls <- estimate_univariate_cates(
-              data, outcome, treatment, biomarkers, super_learner = NULL,
-              propensity_score_ls, v_folds = 2, parallel = FALSE
-            )
-
-            # check that the beta coefs table has the correct dimensions
-            expect_equal(dim(res_ls$betas_df), c(2, 2))
-
-            # check that the IC table has the correct dimensions
-            expect_equal(dim(res_ls$ic_df), c(nrow(data), 2))
-
-            # check that the column means of the IC table are zero
-            expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
-
-          })
-
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
           the validation set", {
 
-            library(dplyr)
-            library(sl3)
-            library(origami)
-            set.seed(61345)
+  library(dplyr)
+  library(sl3)
+  library(origami)
+  set.seed(61345)
 
-            # prepare some mock data
-            data <- mtcars %>%
-              dplyr::mutate(am = factor(am)) %>%
-              dplyr::select(mpg, am, disp, hp, wt)
-            data <- bind_rows(data, data, data, data)
-            outcome <- "mpg"
-            treatment <- "am"
-            biomarkers <- c("hp", "wt")
-            propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
+  # prepare some mock data
+  data <- mtcars %>%
+    dplyr::mutate(am = factor(am)) %>%
+    dplyr::select(mpg, am, disp, hp, wt)
+  data <- bind_rows(data, data, data, data)
+  outcome <- "mpg"
+  treatment <- "am"
+  biomarkers <- c("hp", "wt")
+  propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
 
-            # create the super learner
-            lrnr_sl <- Lrnr_sl$new(
-              learners = make_learner(
-                Stack, Lrnr_mean$new(), Lrnr_glm$new()
-              ),
-              metalearner = make_learner(Lrnr_nnls)
-            )
+  # create the super learner
+  lrnr_sl <- Lrnr_sl$new(
+    learners = make_learner(
+      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+    ),
+    metalearner = make_learner(Lrnr_nnls)
+  )
 
-            # create the fold to test on
-            fold <- make_folds(data, fold_fun = folds_vfold, V = 5)[[1]]
+  # create the fold to test on
+  fold <- make_folds(data, fold_fun = folds_vfold, V = 5)[[1]]
 
-            # apply the fold function
-            res_ls <- hold_out_calculation(
-              fold, data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
-              propensity_score_ls
-            )
+  # apply the fold function
+  res_ls <- hold_out_calculation(
+    fold, data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
+    propensity_score_ls
+  )
 
-            # make sure that the coefficients vector is a numeric vector
-            expect_equal(class(res_ls$beta_coefs), "numeric")
-            expect_length(res_ls$beta_coefs, 2)
+  # make sure that the coefficients vector is a numeric vector
+  expect_equal(class(res_ls$beta_coefs), "numeric")
+  expect_length(res_ls$beta_coefs, 2)
 
-            # make sure that the IC table is a tibble of appropriate dimensions
-            expect_equal(nrow(res_ls$ic_df), length(fold$validation_set))
-            expect_equal(ncol(res_ls$ic_df), 2)
+  # make sure that the IC table is a tibble of appropriate dimensions
+  expect_equal(nrow(res_ls$ic_df), length(fold$validation_set))
+  expect_equal(ncol(res_ls$ic_df), 2)
 
-            # make sure that the column means of the IC table are approximately equal to 0
-            expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
-          })
+  # make sure that the column means of the IC table are approximately equal to 0
+  expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
+})
+
+
+test_that("estimate_univariate_cates() returns a vector with estimate lm
+          coefficients and a table of influence curves",
+{
+  library(dplyr)
+  library(origami)
+  set.seed(12312)
+
+  # prepare some mock data
+  data <- mtcars %>%
+    dplyr::mutate(am = factor(am)) %>%
+    dplyr::select(mpg, am, disp, hp, wt)
+  data <- bind_rows(data, data, data, data)
+  outcome <- "mpg"
+  treatment <- "am"
+  biomarkers <- c("hp", "wt")
+  propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
+
+  # compute the holdout potential outcome difference dataset
+  res_ls <- estimate_univariate_cates(
+    data, outcome, treatment, biomarkers, super_learner = NULL,
+    propensity_score_ls, v_folds = 2L, parallel = FALSE
+  )
+
+  # check that the beta coefs table has the correct dimensions
+  expect_equal(dim(res_ls$betas_df), c(2, 2))
+
+  # check that the IC table has the correct dimensions
+  expect_equal(dim(res_ls$ic_df), c(nrow(data), 2))
+
+  # check that the column means of the IC table are zero
+  expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
+
+})
