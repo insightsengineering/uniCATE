@@ -4,7 +4,13 @@
 \alias{apply_aiptw_transform}
 \title{Apply an AIPTW Transform}
 \usage{
-apply_aiptw_transform(data, outcome, treatment, propensity_score_ls)
+apply_aiptw_transform(
+  data,
+  outcome,
+  treatment,
+  propensity_score_ls,
+  outcome_type
+)
 }
 \arguments{
 \item{data}{A \code{tibble} object containing the outcome variable, treatment
@@ -21,6 +27,10 @@ treatment variable in \code{data}.}
 propensity scores for the treatment levels. Note that the first element
 of the list should correspond to the "treatment" group, and the second the
 "control" group, whatever their names may be.}
+
+\item{outcome_type}{A \code{character} indicating the type of outcome.
+Currently supported outcomes are \code{"continuous"} and
+\code{"binomial"}. Here, \code{"binomial"} is used for binary outcomes.}
 }
 \value{
 A \code{tibble} containing the AIPTW transformed predicted outcomes

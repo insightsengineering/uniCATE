@@ -150,6 +150,9 @@ estimate_univariate_cates <- function(
 #'   propensity scores for the treatment levels. Note that the first element
 #'   of the list should correspond to the "treatment" group, and the second the
 #'   "control" group, whatever their names may be.
+#' @param outcome_type A \code{character} indicating the type of outcome.
+#'   Currently supported outcomes are \code{"continuous"} and
+#'   \code{"binomial"}. Here, \code{"binomial"} is used for binary outcomes.
 #'
 #' @return A \code{list} made up of two objects. The first is the \code{numeric}
 #'   vector of biomarker linear model coefficient estimates. The second is the
@@ -166,8 +169,8 @@ estimate_univariate_cates <- function(
 #'
 #' @keywords internal
 hold_out_calculation <- function(
-  fold, data, outcome, treatment, biomarkers, super_learner, propensity_score_ls,
-  outcome_type
+  fold, data, outcome, treatment, biomarkers, super_learner,
+  propensity_score_ls, outcome_type
 ) {
 
   # define the training and testing set
@@ -294,7 +297,7 @@ hold_out_calculation <- function(
   # apply the doubly-robust A-IPTW transform to each observation for each
   # treatment level in valid_data
   valid_data <- apply_aiptw_transform(
-    valid_data, outcome, treatment, propensity_score_ls
+    valid_data, outcome, treatment, propensity_score_ls, outcome_type
   )
 
   # return the difference of the AIPTW transformed treatment and control
@@ -387,6 +390,9 @@ hold_out_calculation <- function(
 #'   propensity scores for the treatment levels. Note that the first element
 #'   of the list should correspond to the "treatment" group, and the second the
 #'   "control" group, whatever their names may be.
+#' @param outcome_type A \code{character} indicating the type of outcome.
+#'   Currently supported outcomes are \code{"continuous"} and
+#'   \code{"binomial"}. Here, \code{"binomial"} is used for binary outcomes.
 #'
 #' @return A \code{tibble} containing the AIPTW transformed predicted outcomes
 #'   under treatment and control group assignments of all observations in
@@ -398,7 +404,7 @@ hold_out_calculation <- function(
 #'
 #' @keywords internal
 apply_aiptw_transform <- function(
-  data, outcome, treatment, propensity_score_ls
+  data, outcome, treatment, propensity_score_ls, outcome_type
 ) {
   data %>%
     dplyr::mutate(
@@ -409,12 +415,32 @@ apply_aiptw_transform <- function(
           (!!rlang::sym(outcome) - .data$Y_hat_treat),
         .data$Y_hat_treat
       ),
+      Y_aiptw_treat = dplyr::if_else(
+        outcome_type == "binomial" & Y_aiptw_treat < 0,
+        0,
+        Y_aiptw_treat
+      ),
+      Y_aiptw_treat = dplyr::if_else(
+        outcome_type == "binomial" & Y_aiptw_treat > 1,
+        1,
+        Y_aiptw_treat
+      ),
       Y_aiptw_cont = dplyr::if_else(
         !!rlang::sym(treatment) == names(propensity_score_ls)[2],
         .data$Y_hat_cont +
           (1 / propensity_score_ls[[2]]) *
           (!!rlang::sym(outcome) - .data$Y_hat_cont),
         .data$Y_hat_cont
+      ),
+      Y_aiptw_cont = dplyr::if_else(
+        outcome_type == "binomial" & Y_aiptw_cont < 0,
+        0,
+        Y_aiptw_cont
+      ),
+      Y_aiptw_cont = dplyr::if_else(
+        outcome_type == "binomial" & Y_aiptw_cont > 1,
+        1,
+        Y_aiptw_cont
       )
     )
 }
