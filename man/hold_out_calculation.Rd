@@ -11,7 +11,8 @@ hold_out_calculation(
   treatment,
   biomarkers,
   super_learner,
-  propensity_score_ls
+  propensity_score_ls,
+  outcome_type
 )
 }
 \arguments{
@@ -37,6 +38,10 @@ to \code{NULL}, the default SuperLearner is used.}
 propensity scores for the treatment levels. Note that the first element
 of the list should correspond to the "treatment" group, and the second the
 "control" group, whatever their names may be.}
+
+\item{outcome_type}{A \code{character} indicating the type of outcome.
+Currently supported outcomes are \code{"continuous"} and
+\code{"binomial"}. Here, \code{"binomial"} is used for binary outcomes.}
 }
 \value{
 A \code{list} made up of two objects. The first is the \code{numeric}

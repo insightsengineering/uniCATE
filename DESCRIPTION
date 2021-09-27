@@ -1,6 +1,6 @@
 Package: uniCATE
 Title: Univariate Conditional Average Treatment Effect Estimation
-Version: 0.0.1
+Version: 0.1.0
 Authors@R: 
     person(given = "Philippe",
            family = "Boileau",
@@ -20,6 +20,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Suggests: 
     nnls,
+    Rsolnp,
     speedglm,
     glmnet,
     polspline,

@@ -416,14 +416,14 @@ apply_aiptw_transform <- function(
         .data$Y_hat_treat
       ),
       Y_aiptw_treat = dplyr::if_else(
-        outcome_type == "binomial" & Y_aiptw_treat < 0,
+        outcome_type == "binomial" & .data$Y_aiptw_treat < 0,
         0,
-        Y_aiptw_treat
+        .data$Y_aiptw_treat
       ),
       Y_aiptw_treat = dplyr::if_else(
-        outcome_type == "binomial" & Y_aiptw_treat > 1,
+        outcome_type == "binomial" & .data$Y_aiptw_treat > 1,
         1,
-        Y_aiptw_treat
+        .data$Y_aiptw_treat
       ),
       Y_aiptw_cont = dplyr::if_else(
         !!rlang::sym(treatment) == names(propensity_score_ls)[2],
@@ -433,14 +433,14 @@ apply_aiptw_transform <- function(
         .data$Y_hat_cont
       ),
       Y_aiptw_cont = dplyr::if_else(
-        outcome_type == "binomial" & Y_aiptw_cont < 0,
+        outcome_type == "binomial" & .data$Y_aiptw_cont < 0,
         0,
-        Y_aiptw_cont
+        .data$Y_aiptw_cont
       ),
       Y_aiptw_cont = dplyr::if_else(
-        outcome_type == "binomial" & Y_aiptw_cont > 1,
+        outcome_type == "binomial" & .data$Y_aiptw_cont > 1,
         1,
-        Y_aiptw_cont
+        .data$Y_aiptw_cont
       )
     )
 }
