@@ -67,13 +67,14 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
     msg = "biomarkers is not a subset of covariates"
   )
 
-  # assert that the outcome is a numeric variable or a binary factor
+  # assert that the outcome is a numeric variable (continuous or binary)
   assertthat::assert_that(
     (class(data[[outcome]]) == "numeric" &
        length(unique(data[[outcome]])) > 2) |
-      (class(data[[outcome]]) == "factor" &
-         length(unique(data[[outcome]])) == 2),
-    msg = "outcome should be a continuous variable or a binary factor"
+      (class(data[[outcome]]) == "numeric" &
+         length(unique(data[[outcome]])) == 2 &
+           sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2),
+    msg = "outcome should be a continuous or binary numeric variable"
   )
 
   # assert that the treatment is binary

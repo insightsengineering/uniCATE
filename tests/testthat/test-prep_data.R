@@ -15,20 +15,26 @@ test_that("only accepts data.frames and tibbles", {
   )
 })
 
-test_that("checks that outcome is a continuous variable or binary factor", {
+test_that("checks that outcome is a continuous or binary numeric variable", {
+  library(dplyr)
+  data <- mtcars %>%
+    mutate(vs = factor(vs))
   expect_error(
-    prep_data(mtcars, "vs", "am", "hp", "hp"),
-    "outcome should be a continuous variable or a binary factor"
+    prep_data(data, "vs", "am", "hp", "hp"),
+    "outcome should be a continuous or binary numeric variable"
   )
   data <- mtcars
   data$mpg <- as.character(data$mpg)
   expect_error(
     prep_data(data, "mpg", "am", "hp", "hp"),
-    "outcome should be a continuous variable or a binary factor"
+    "outcome should be a continuous or binary numeric variable"
+  )
+  expect_silent(
+    prep_data(mtcars, "vs", "am", "hp", "hp")
   )
 })
 
-test_that("checks that treatment is a binary varibale", {
+test_that("checks that treatment is a binary variable", {
   expect_error(
     prep_data(mtcars, "mpg", "cyl", "hp", "hp"),
     "treatment should be a binary variable"
