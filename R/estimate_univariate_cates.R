@@ -274,7 +274,7 @@ hold_out_calculation <- function(
 
         # estimate the best linear approximation using the estimating equation
         # formula
-        bio_coef <- mean(Y_diff * bio) / mean(bio^2)
+        bio_coef <- sum(Y_diff * bio) / sum(bio^2)
 
         # compute the unscaled empirical IC of each observation
         unsc_inf_curves <- (Y_diff - bio_coef * bio) * bio
