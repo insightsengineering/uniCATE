@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_coefs_table.R
 \name{compute_coefs_tbl}
 \alias{compute_coefs_tbl}
-\title{Compute Linear Model Coefficients and Standard Errors}
+\title{Compute Cross-Validated Estimate and its Standard Errors}
 \usage{
 compute_coefs_tbl(cv_ls)
 }
@@ -17,7 +17,8 @@ of the cross-validated influence curves of every observation in
 A \code{tibble} of estimated coefficients and their standard errors.
 }
 \description{
-\code{compute_coefs_tbl()} estimates the univariate linear model coefficients
-of each biomarker, and computes their accompanying standard errors.
+\code{compute_coefs_tbl()} estimates the linear model coefficients of each
+biomarker's projected conditional average treatment effect, and computes
+their associated standard errors.
 }
 \keyword{internal}
