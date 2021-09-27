@@ -181,36 +181,40 @@ hold_out_calculation <- function(
     # define the treatment-covariate interaction for certain learners
     covars <- covar_names[which(!grepl(treatment, covar_names))]
     interactions <- lapply(covars, function(w) c(w, treatment))
-    lrnr_interactions <- Lrnr_define_interactions$new(interactions)
+    lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
 
     # define the base learners for contiuous outcomes
-    lrnr_glm <- make_learner(Pipeline, lrnr_interactions, Lrnr_glm_fast$new())
-    lrnr_lasso <- make_learner(Pipeline, lrnr_interactions, Lrnr_glmnet$new())
-    lrnr_enet <- make_learner(
-      Pipeline, lrnr_interactions, Lrnr_glmnet$new(alpha = 0.5)
+    lrnr_glm <- sl3::make_learner(
+      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
     )
-    lrnr_spline <- make_learner(
-      Pipeline, lrnr_interactions, Lrnr_polspline$new()
+    lrnr_lasso <- sl3::make_learner(
+      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
     )
-    lrnr_xgboost <- Lrnr_xgboost$new()
-    lrnr_rf <- Lrnr_ranger$new()
-    lrnr_mean <- Lrnr_mean$new()
+    lrnr_enet <- sl3::make_learner(
+      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
+    )
+    lrnr_spline <- sl3::make_learner(
+      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_polspline$new()
+    )
+    lrnr_xgboost <- sl3::Lrnr_xgboost$new()
+    lrnr_rf <- sl3::Lrnr_ranger$new()
+    lrnr_mean <- sl3::Lrnr_mean$new()
 
     # assemble learners
-    learner_library <- make_learner(
-      Stack, lrnr_glm, lrnr_spline, lrnr_lasso, lrnr_enet, lrnr_xgboost,
+    learner_library <- sl3::make_learner(
+      sl3::Stack, lrnr_glm, lrnr_spline, lrnr_lasso, lrnr_enet, lrnr_xgboost,
       lrnr_rf, lrnr_mean
     )
 
     # define the metalearner
-    meta_learner <- make_learner(
-      Lrnr_solnp,
-      loss_function = loss_squared_error,
+    meta_learner <- sl3::make_learner(
+      sl3::Lrnr_solnp,
+      loss_function = sl3::loss_squared_error,
       learner_function = sl3::metalearner_linear
     )
 
     # intialize the SuperLearner
-    super_learner <- Lrnr_sl$new(
+    super_learner <- sl3::Lrnr_sl$new(
       learners = learner_library,
       metalearner = meta_learner
     )
@@ -263,14 +267,16 @@ hold_out_calculation <- function(
 
   # compute the coef estimates, and the influence functions of each observation
   # for each biomarker
-  Y_diff <- as.vector(scale(valid_data$Y_diff, center = TRUE, scale = FALSE))
+  Y_diff <- as.vector(
+    base::scale(valid_data$Y_diff, center = TRUE, scale = FALSE)
+  )
   valid_data <- valid_data %>% dplyr::select(-Y_diff)
   coefs_and_ic_ls <- valid_data %>%
     purrr::map(
       function(bio) {
 
         # center the biomarker measurements
-        bio <- as.vector(scale(bio, center = TRUE, scale = FALSE))
+        bio <- as.vector(base::scale(bio, center = TRUE, scale = FALSE))
 
         # estimate the best linear approximation using the estimating equation
         # formula

@@ -51,6 +51,7 @@ test_that("estimate_univariate_cates() returns a vector with estimate lm
           coefficients and a table of influence curves",
 {
   library(dplyr)
+  library(sl3)
   library(origami)
   set.seed(12312)
 
@@ -64,9 +65,17 @@ test_that("estimate_univariate_cates() returns a vector with estimate lm
   biomarkers <- c("hp", "wt")
   propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
 
+  # create the super learner
+  lrnr_sl <- Lrnr_sl$new(
+    learners = make_learner(
+      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+    ),
+    metalearner = make_learner(Lrnr_nnls)
+  )
+
   # compute the holdout potential outcome difference dataset
   res_ls <- estimate_univariate_cates(
-    data, outcome, treatment, biomarkers, super_learner = NULL,
+    data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
     propensity_score_ls, v_folds = 2L, parallel = FALSE
   )
 

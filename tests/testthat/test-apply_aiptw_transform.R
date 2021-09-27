@@ -1,0 +1,38 @@
+test_that("can pass in a propensity score list to apply_aiptw_transform()", {
+
+  library(dplyr)
+
+  # prepare some mock data
+  data <- mtcars %>%
+    mutate(
+      am = factor(am),
+      Y = 1,
+      Y_hat_treat = 2,
+      Y_hat_cont = 3
+    )
+  outcome <- "Y"
+  treatment <- "am"
+  propensity_score_ls <- list("1" = 0.3, "0" = 0.7) # treatment group goes first
+
+  # apply the AIPTW transform
+  transform_data <- apply_aiptw_transform(
+    data, outcome, treatment, propensity_score_ls
+  )
+
+  # make sure that the calculations are correct
+  transform_data <- transform_data %>%
+    dplyr::mutate(
+      confirm_treat = dplyr::if_else(
+        am == "1", 2 + -1/0.3, 2
+      ),
+      confirm_treat = (confirm_treat == Y_aiptw_treat),
+      confirm_cont = dplyr::if_else(
+        am == "0", 3 + -2/0.7, 3
+      ),
+      confirm_cont = (confirm_cont == Y_aiptw_cont)
+    ) %>%
+    dplyr::select(confirm_treat, confirm_cont)
+
+  # make sure that all checks return true
+  expect_true(sum(transform_data) == 2 * nrow(transform_data))
+})
