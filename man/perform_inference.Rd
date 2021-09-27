@@ -2,7 +2,7 @@
 % Please edit documentation in R/perform_inference.R
 \name{perform_inference}
 \alias{perform_inference}
-\title{Perform Inference on Biomarker Coefficients}
+\title{Perform Inference on Estimate Biomarker Coefficients}
 \usage{
 perform_inference(biomarkers_tbl)
 }
