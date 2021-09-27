@@ -1,4 +1,4 @@
-#' Perform Inference on Estimate Biomarker Coefficients
+#' Perform Inference on Estimated Biomarker Coefficients
 #'
 #' \code{perform_inference()} performs valid inference using the estimated
 #' biomarker coefficients and the standard errors computed using the
