@@ -1,6 +1,6 @@
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
-          the validation set", {
+          the validation set (continuous outcomes)", {
 
   library(dplyr)
   library(sl3)
@@ -31,7 +31,60 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   # apply the fold function
   res_ls <- hold_out_calculation(
     fold, data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
-    propensity_score_ls
+    propensity_score_ls, outcome_type = "continous"
+  )
+
+  # make sure that the coefficients vector is a numeric vector
+  expect_equal(class(res_ls$beta_coefs), "numeric")
+  expect_length(res_ls$beta_coefs, 2)
+
+  # make sure that the IC table is a tibble of appropriate dimensions
+  expect_equal(nrow(res_ls$ic_df), length(fold$validation_set))
+  expect_equal(ncol(res_ls$ic_df), 2)
+
+  # make sure that the column means of the IC table are approximately equal to 0
+  expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
+})
+
+test_that("fold function returns a vector of estimated biomarker coefficients
+          and a tibble of influence curve calculations for each observation in
+          the validation set (binary outcome)", {
+
+  library(dplyr)
+  library(sl3)
+  library(origami)
+  set.seed(61345)
+
+  # prepare some mock data
+  data <- mtcars %>%
+    dplyr::mutate(vs = factor(vs)) %>%
+    dplyr::select(mpg, am, vs, hp, wt)
+  data <- bind_rows(data, data, data, data)
+  outcome <- "am"
+  treatment <- "vs"
+  biomarkers <- c("hp", "wt")
+  propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
+
+  # create the super learner
+  meta_learner <- sl3::make_learner(
+    sl3::Lrnr_solnp,
+    loss_function = sl3::loss_loglik_binomial,
+    learner_function = sl3::metalearner_logistic_binomial
+  )
+  lrnr_sl <- Lrnr_sl$new(
+    learners = make_learner(
+      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+    ),
+    metalearner = meta_learner
+  )
+
+  # create the fold to test on
+  fold <- make_folds(data, fold_fun = folds_vfold, V = 5)[[1]]
+
+  # apply the fold function
+  res_ls <- hold_out_calculation(
+    fold, data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
+    propensity_score_ls, outcome_type = "binomial"
   )
 
   # make sure that the coefficients vector is a numeric vector

@@ -81,6 +81,12 @@ estimate_univariate_cates <- function(
     msg = "super_learner must be NULL or an sl3::Lrnr_sl object"
   )
 
+  # identify the outcome type (bniary or continuous)
+  if (sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2)
+    outcome_type <- "binomial"
+  else
+    outcome_type <- "continuous"
+
   # compute the holdout estimated potential outcome differences
   hold_out_calculations <- origami::cross_validate(
     cv_fun = hold_out_calculation,
@@ -91,6 +97,7 @@ estimate_univariate_cates <- function(
     biomarkers = biomarkers,
     super_learner = super_learner,
     propensity_score_ls = propensity_score_ls,
+    outcome_type = outcome_type,
     use_future = parallel,
     .combine = FALSE
   )
@@ -159,7 +166,8 @@ estimate_univariate_cates <- function(
 #'
 #' @keywords internal
 hold_out_calculation <- function(
-  fold, data, outcome, treatment, biomarkers, super_learner, propensity_score_ls
+  fold, data, outcome, treatment, biomarkers, super_learner, propensity_score_ls,
+  outcome_type
 ) {
 
   # define the training and testing set
@@ -172,7 +180,8 @@ hold_out_calculation <- function(
   train_task <- sl3::make_sl3_Task(
     data = train_data,
     covariates = covar_names,
-    outcome = outcome
+    outcome = outcome,
+    outcome_type = outcome_type
   )
 
   # should the built-in SuperLearner be used to estimate the outcome regression?
@@ -183,35 +192,67 @@ hold_out_calculation <- function(
     interactions <- lapply(covars, function(w) c(w, treatment))
     lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
 
-    # define the base learners for contiuous outcomes
-    lrnr_glm <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
-    )
-    lrnr_lasso <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
-    )
-    lrnr_enet <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
-    )
-    lrnr_spline <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_polspline$new()
-    )
-    lrnr_xgboost <- sl3::Lrnr_xgboost$new()
-    lrnr_rf <- sl3::Lrnr_ranger$new()
-    lrnr_mean <- sl3::Lrnr_mean$new()
+    if (outcome_type == "continuous") {
 
-    # assemble learners
-    learner_library <- sl3::make_learner(
-      sl3::Stack, lrnr_glm, lrnr_spline, lrnr_lasso, lrnr_enet, lrnr_xgboost,
-      lrnr_rf, lrnr_mean
-    )
+      # define the base learners for continuous outcomes
+      lrnr_glm <- sl3::make_learner(
+        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
+      )
+      lrnr_lasso <- sl3::make_learner(
+        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
+      )
+      lrnr_enet <- sl3::make_learner(
+        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
+      )
+      lrnr_spline <- sl3::make_learner(
+        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_polspline$new()
+      )
+      lrnr_xgboost <- sl3::Lrnr_xgboost$new()
+      lrnr_rf <- sl3::Lrnr_ranger$new()
+      lrnr_mean <- sl3::Lrnr_mean$new()
 
-    # define the metalearner
-    meta_learner <- sl3::make_learner(
-      sl3::Lrnr_solnp,
-      loss_function = sl3::loss_squared_error,
-      learner_function = sl3::metalearner_linear
-    )
+      # assemble learners
+      learner_library <- sl3::make_learner(
+        sl3::Stack, lrnr_glm, lrnr_spline, lrnr_lasso, lrnr_enet, lrnr_xgboost,
+        lrnr_rf, lrnr_mean
+      )
+
+      # define the metalearner
+      meta_learner <- sl3::make_learner(
+        sl3::Lrnr_solnp,
+        loss_function = sl3::loss_squared_error,
+        learner_function = sl3::metalearner_linear
+      )
+
+    } else {
+
+      # define the base learners for binary outcomes
+      lrnr_glm <- sl3::make_learner(
+        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
+      )
+      lrnr_lasso <- sl3::make_learner(
+        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
+      )
+      lrnr_enet <- sl3::make_learner(
+        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
+      )
+      lrnr_xgboost <- sl3::Lrnr_xgboost$new()
+      lrnr_rf <- sl3::Lrnr_ranger$new()
+      lrnr_mean <- sl3::Lrnr_mean$new()
+
+      # assemble learners
+      learner_library <- sl3::make_learner(
+        sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_xgboost, lrnr_rf,
+        lrnr_mean
+      )
+
+      # define the metalearner
+      meta_learner <- sl3::make_learner(
+        sl3::Lrnr_solnp,
+        loss_function = sl3::loss_loglik_binomial,
+        learner_function = sl3::metalearner_logistic_binomial
+      )
+    }
 
     # intialize the SuperLearner
     super_learner <- sl3::Lrnr_sl$new(
