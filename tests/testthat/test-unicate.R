@@ -24,9 +24,14 @@ test_that("biomarkers 1 and 2 are found by unicate() (cont. outcome)", {
   propensity_score_ls <- list("1" = 0.5, "0" = 0.5)
 
   # create the super learner
+  interactions <- lapply(biomarkers, function(b) c(b, "treatment"))
+  lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
+  lrnr_glm <- sl3::make_learner(
+    sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm$new()
+  )
   lrnr_sl <- Lrnr_sl$new(
     learners = make_learner(
-      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+      Stack, Lrnr_mean$new(), lrnr_glm
     ),
     metalearner = make_learner(Lrnr_nnls)
   )
@@ -110,7 +115,7 @@ test_that("biomarkers 1 and 2 are found by unicate() (binary outcome)", {
   )
   lrnr_sl <- Lrnr_sl$new(
     learners = make_learner(
-      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+      Stack, Lrnr_mean$new(), Lrnr_ranger$new()
     ),
     metalearner = meta_learner
   )

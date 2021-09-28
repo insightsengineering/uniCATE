@@ -18,9 +18,14 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
 
   # create the super learner
+  interactions <- lapply(biomarkers, function(b) c(b, treatment))
+  lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
+  lrnr_glm <- sl3::make_learner(
+    sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm$new()
+  )
   lrnr_sl <- Lrnr_sl$new(
     learners = make_learner(
-      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+      Stack, Lrnr_mean$new(), lrnr_glm
     ),
     metalearner = make_learner(Lrnr_nnls)
   )
@@ -66,6 +71,11 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
 
   # create the super learner
+  interactions <- lapply(biomarkers, function(b) c(b, treatment))
+  lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
+  lrnr_glm <- sl3::make_learner(
+    sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm$new()
+  )
   meta_learner <- sl3::make_learner(
     sl3::Lrnr_solnp,
     loss_function = sl3::loss_loglik_binomial,
@@ -73,7 +83,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   )
   lrnr_sl <- Lrnr_sl$new(
     learners = make_learner(
-      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+      Stack, Lrnr_mean$new(), lrnr_glm
     ),
     metalearner = meta_learner
   )
@@ -119,9 +129,14 @@ test_that("estimate_univariate_cates() returns a vector with estimate lm
   propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
 
   # create the super learner
+  interactions <- lapply(biomarkers, function(b) c(b, treatment))
+  lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
+  lrnr_glm <- sl3::make_learner(
+    sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm$new()
+  )
   lrnr_sl <- Lrnr_sl$new(
     learners = make_learner(
-      Stack, Lrnr_mean$new(), Lrnr_glm$new()
+      Stack, Lrnr_mean$new(), lrnr_glm
     ),
     metalearner = make_learner(Lrnr_nnls)
   )
