@@ -191,33 +191,6 @@ test_that("Errors occure when the status, relative_time, treatment, covariates
 
 })
 
-test_that("An error is reported when the status variable is not a binary numeric
-          variable in the data argument",
-{
-  # define the dummy data
-  data <- tibble(
-    status = c("C", "F", "F"),
-    time = c(1, 2, 3),
-    treat = c("t", "t", "c"),
-    biom1 = seq_len(3),
-    biom2 = seq_len(3),
-    biom3 = seq_len(3)
-  )
-
-  # refuses non-binary, non-numeric status variable
-  expect_error(
-    prep_long_data(
-      data = data,
-      status = "status",
-      relative_time = "time",
-      treatment = "treat",
-      covariates = c("biom1", "biom2", "biom3"),
-      biomarkers = c("biom1", "biom2", "biom3")
-    ),
-    "status argument should correspond to a numeric, binary variable in the data"
-  )
-})
-
 test_that("Errors occur when variable arguments are missing from the data",
 {
   # define the dummy data
@@ -282,4 +255,138 @@ test_that("Errors occur when variable arguments are missing from the data",
     "some covariates are missing from the data"
   )
 
+})
+
+test_that("An error is reported when the status variable is not a binary numeric
+          variable in the data argument",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c("C", "F", "F"),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3)
+  )
+
+  # refuses non-binary, non-numeric status variable
+  expect_error(
+    prep_long_data(
+      data = data,
+      status = "status",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3")
+    ),
+    "status argument should correspond to a numeric, binary variable in the data"
+  )
+})
+
+test_that("An error is reported when the treatment variable is not a binary
+          variable in the data argument",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "u", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3)
+  )
+
+  # refuses non-binary treatment variable
+  expect_error(
+    prep_long_data(
+      data = data,
+      status = "status",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3")
+    ),
+    "treatment argument should correspond to a binary variable in the data"
+  )
+})
+
+test_that("Treatment variable is coerced to a factor if not already",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3)
+  )
+
+  # produce long format data
+  long_data <- prep_long_data(
+    data = data,
+    status = "status",
+    relative_time = "time",
+    treatment = "treat",
+    covariates = c("biom1", "biom2", "biom3"),
+    biomarkers = c("biom1", "biom2", "biom3")
+  )
+
+  # check the class of the treatment variable
+  expect_s3_class(long_data$treat, "factor")
+})
+
+test_that("An error is reported when relative_time variable is not a positive
+          numeric",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(-1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3)
+  )
+
+  # refuses relative time variable with negative value
+  expect_error(
+    prep_long_data(
+      data = data,
+      status = "status",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3")
+    ),
+    "relative_time argument's corresponding variable should be a positive numeric variable"
+  )
+})
+
+test_that("Only relevant variables remain after data prep",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3),
+    unwanted_cov = seq_len(3),
+  )
+
+  # prepare the data
+  long_data <- prep_long_data(
+    data = data,
+    status = "status",
+    relative_time = "time",
+    treatment = "treat",
+    covariates = c("biom1", "biom2", "biom3"),
+    biomarkers = c("biom1", "biom2", "biom3")
+  )
+
+  # check that unwanted_cov is not in long_data
+  expect_false("unwanted_cov" %in% colnames(long_data))
 })

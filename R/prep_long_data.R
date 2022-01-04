@@ -64,8 +64,31 @@ prep_long_data <- function(
   )
 
   # check that the treatment variable is binary
+  assertthat::assert_that(
+    identical(nrow(unique(data[treatment])), 2L),
+    msg = "treatment argument should correspond to a binary variable in the data"
+  )
+
+  # if the treatment variable isn't already a factor, then transform it
+  if (!is.factor(data[treatment]))
+    data <- data %>%
+    dplyr::mutate(
+      !!rlang::sym(treatment) := factor(!!rlang::sym(treatment))
+    )
 
   # check that the relative time variable is a positive, continuous variable
+  assertthat::assert_that(
+    all(dplyr::pull(data, relative_time) > 0) &
+      is.numeric(dplyr::pull(data, relative_time)),
+    msg = paste0("relative_time argument's corresponding variable should be a ",
+                 "positive numeric variable")
+  )
+
+  # remove unnecessary variables from data
+  data <- data %>%
+    dplyr::select(
+      dplyr::all_of(c(status, relative_time, treatment, covariates))
+    )
 
   # transform the data from a wide format to a longitudinal format
   times <- data %>% dplyr::pull(relative_time) %>% unique() %>% sort()
