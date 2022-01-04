@@ -21,13 +21,13 @@ test_that("checks that outcome is a continuous or binary numeric variable", {
     mutate(vs = factor(vs))
   expect_error(
     prep_data(data, "vs", "am", "hp", "hp"),
-    "outcome should be a continuous or binary numeric variable"
+    "outcome variable should be a continuous or binary numeric variable"
   )
   data <- mtcars
   data$mpg <- as.character(data$mpg)
   expect_error(
     prep_data(data, "mpg", "am", "hp", "hp"),
-    "outcome should be a continuous or binary numeric variable"
+    "outcome variable should be a continuous or binary numeric variable"
   )
   expect_silent(
     prep_data(mtcars, "vs", "am", "hp", "hp")
@@ -37,18 +37,18 @@ test_that("checks that outcome is a continuous or binary numeric variable", {
 test_that("checks that treatment is a binary variable", {
   expect_error(
     prep_data(mtcars, "mpg", "cyl", "hp", "hp"),
-    "treatment should be a binary variable"
+    "treatment variable should be a binary variable"
   )
 })
 
 test_that("outcome and treatment designators are of length 1", {
   expect_error(
     prep_data(mtcars, c("mpg", "wt"), "cyl", "hp", "hp"),
-    "outcome should be a length-one character"
+    "outcome argument should be a character"
   )
   expect_error(
     prep_data(mtcars, "mpg", c("am", "wt"), "hp", "hp"),
-    "treatment should be a length-one character"
+    "treatment argument should be a character"
   )
 })
 
@@ -56,19 +56,19 @@ test_that("outcome and treatment designators are of length 1", {
 test_that("specified variables are contained in the data", {
   expect_error(
     prep_data(mtcars, "mpgg", "am", "hp", "hp"),
-    "outcome is not contained in data"
+    "outcome variable is not contained in data"
   )
   expect_error(
     prep_data(mtcars, "mpg", "amm", "hp", "hp"),
-    "treatment is not contained in data"
+    "treatment variable is not contained in data"
   )
   expect_error(
     prep_data(mtcars, "mpg", "am", c("disp", "horsepower"), "disp"),
-    "not all covariates are contained in data"
+    "some covariates are missing from the data"
   )
   expect_error(
     prep_data(mtcars, "mpg", "am", c("disp", "hp"), c("disp", "hp", "wt")),
-    "biomarkers is not a subset of covariates"
+    "biomarkers vector is not a subset of the covariates vector"
   )
 })
 
@@ -87,8 +87,9 @@ test_that("if the treatment variable is not a factor, it is turned into one", {
 })
 
 test_that("always returns a tibble with only the outcome, treatment, and
-          covariates", {
-            data <- prep_data(mtcars, "mpg", "am", "hp", "hp")
-            expect_true(is_tibble(data))
-            expect_true(ncol(data) == 3)
-          })
+          covariates",
+{
+  data <- prep_data(mtcars, "mpg", "am", "hp", "hp")
+  expect_true(is_tibble(data))
+  expect_true(ncol(data) == 3)
+})

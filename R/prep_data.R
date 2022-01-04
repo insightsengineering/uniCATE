@@ -41,30 +41,30 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
   # assert that the arguments are of the appropriate length
   assertthat::assert_that(
     identical(length(outcome), 1L) & identical(class(outcome), "character"),
-    msg = "outcome should be a length-one character"
+    msg = "outcome argument should be a character"
   )
   assertthat::assert_that(
     identical(length(treatment), 1L) & identical(class(treatment), "character"),
-    msg = "treatment should be a length-one character"
+    msg = "treatment argument should be a character"
   )
 
   # assert that the outcome, treatment, covariates, and biomarkers are contained
   # in the data
   assertthat::assert_that(
     outcome %in% colnames(data),
-    msg = "outcome is not contained in data"
+    msg = "outcome variable is not contained in data"
   )
   assertthat::assert_that(
     treatment %in% colnames(data),
-    msg = "treatment is not contained in data"
+    msg = "treatment variable is not contained in data"
   )
   assertthat::assert_that(
     all(covariates %in% colnames(data)),
-    msg = "not all covariates are contained in data"
+    msg = "some covariates are missing from the data"
   )
   assertthat::assert_that(
     all(biomarkers %in% covariates),
-    msg = "biomarkers is not a subset of covariates"
+    msg = "biomarkers vector is not a subset of the covariates vector"
   )
 
   # assert that the outcome is a numeric variable (continuous or binary)
@@ -74,13 +74,13 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
       (class(data[[outcome]]) == "numeric" &
          length(unique(data[[outcome]])) == 2 &
            sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2),
-    msg = "outcome should be a continuous or binary numeric variable"
+    msg = "outcome variable should be a continuous or binary numeric variable"
   )
 
   # assert that the treatment is binary
   assertthat::assert_that(
     identical(nrow(unique(data[treatment])), 2L),
-    msg = "treatment should be a binary variable"
+    msg = "treatment variable should be a binary variable"
   )
 
   # if the treatment variable isn't already a factor, then transform it
@@ -92,7 +92,7 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
 
   # transform the data to a tibble if it is a data.frame
   if (identical(class(data), "data.frame"))
-    data <- data %>% as_tibble(.name_repair = "minimal")
+    data <- data %>% tibble::as_tibble(.name_repair = "minimal")
 
   # retain only the treatment, outcome, and covariates
   data <- data %>%
