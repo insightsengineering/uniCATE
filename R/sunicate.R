@@ -26,17 +26,17 @@
 #' @param biomarkers A \code{character} vector listing the biomarkers of
 #'   interest in \code{data}. \code{biomarkers} must be a subset of
 #'   \code{covariates}.
-#' @param falure_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object
+#' @param failure_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object
 #'   used to estimate the conditional failure model. If set to \code{NULL}, the
 #'   default SuperLearner is used. The default's library consists of a linear
 #'   model, penalized linear models (LASSO and elasticnet), a spline regression,
 #'   a General Additive Model, XGBoost, a Random Forest, and the mean model.
-#' @param censore_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object
-#'   used to estimate the conditional censoring model. If set to \code{NULL},
-#'   the default SuperLearner is used. The default's library consists of a
-#'   linear model, penalized linear models (LASSO and elasticnet), a spline
-#'   regression, a General Additive Model, XGBoost, a Random Forest, and the
-#'   mean model.
+#' @param censoring_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
+#'   object used to estimate the conditional censoring model. If set to
+#'   \code{NULL}, the default SuperLearner is used. The default's library
+#'   consists of a linear model, penalized linear models (LASSO and elasticnet),
+#'   a spline regression, a General Additive Model, XGBoost, a Random Forest,
+#'   and the mean model.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
 #'   propensity scores for the treatment levels. The first element of the list
 #'   should correspond to the "treatment" group, and the second to the "control"
@@ -69,7 +69,7 @@ sunicate <- function(
 ) {
 
   # assess the data quality and formatting, and prepare it for analysis
-  data <- prep_longitudinal_data(
+  data <- prep_long_data(
     data, status, relative_time, treatment, covariates, biomarkers
   )
 
