@@ -1,5 +1,6 @@
 prep_long_data <- function(
-  data, status, relative_time, treatment, covariates, biomarkers
+  data, status, relative_time, treatment, covariates, biomarkers,
+  time_cutoff = NULL
 ) {
 
   # check that data is a data.frame or tibble object
@@ -33,8 +34,8 @@ prep_long_data <- function(
     msg = "biomarkers vector is not a subset of the covariates vector"
   )
 
-  # assert that the status, relative_time, treatment, and covariates are
-  # contained in the data
+  # assert that the status, relative_time, treatment, covariates, and
+  # time_cutoff are contained in the data
   assertthat::assert_that(
     status %in% colnames(data),
     msg = "status variable is missing from the data"
@@ -51,6 +52,18 @@ prep_long_data <- function(
     all(covariates %in% colnames(data)),
     msg = "some covariates are missing from the data"
   )
+  if (!is.null(time_cutoff)) {
+    assertthat::assert_that(
+      is.numeric(time_cutoff) & length(time_cutoff),
+      msg = "time_cutoff should be a single numeric value when specified"
+    )
+    assertthat::assert_that(
+      max(data[relative_time]) >= time_cutoff,
+      msg = paste0("time_cutoff should be smaller than or equal to the largest ",
+                   "value in relative_time's corresponding variable: ",
+                   max(data[relative_time]))
+    )
+  }
 
   # transform the data to a tibble if it is a data.frame
   if (identical(class(data), "data.frame"))
@@ -96,9 +109,11 @@ prep_long_data <- function(
   long_data <- lapply(
     seq_len(nrow(data)),
     function(idx) {
+
+      # lengthen data
       expanded_obs <- replicate(num_times, data[idx, ], simplify = FALSE) %>%
         dplyr::bind_rows()
-      expanded_obs %>%
+      expanded_obs <- expanded_obs %>%
         dplyr::mutate(
           all_times = times,
           observation_id = idx
@@ -106,9 +121,23 @@ prep_long_data <- function(
         dplyr::filter(.data$time >= .data$all_times) %>%
         dplyr::mutate(time = .data$all_times) %>%
         dplyr::select(-.data$all_times)
+
+      # ensure that failures are properly recorded
+      final_status <- data[[idx, status]]
+      final_status_time <- data[[idx, relative_time]]
+      expanded_obs <- expanded_obs %>%
+        mutate(
+          status = if_else(.data$time == final_status_time, final_status, 0)
+        )
+
+      return(expanded_obs)
+
     }
   ) %>%
     dplyr::bind_rows()
+
+  if (!is.null(time_cutoff))
+    long_data <- long_data %>% dplyr::filter(.data$time <= time_cutoff)
 
   return(long_data)
 

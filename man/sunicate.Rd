@@ -11,6 +11,7 @@ sunicate(
   treatment,
   covariates,
   biomarkers,
+  time_cutoff = NULL,
   failure_super_learner = NULL,
   censoring_super_learner = NULL,
   propensity_score_ls,
@@ -42,6 +43,11 @@ treatment variable in \code{data}.}
 \item{biomarkers}{A \code{character} vector listing the biomarkers of
 interest in \code{data}. \code{biomarkers} must be a subset of
 \code{covariates}.}
+
+\item{time_cutoff}{A \code{numeric} representing the time at which to assess
+the biomarkers' importance with respect to the outcome. If not specified,
+this value is set to the maximum value in the \code{data} argument's
+\code{relative_time} variable.}
 
 \item{failure_super_learner}{A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object
 used to estimate the conditional failure model. If set to \code{NULL}, the
@@ -77,10 +83,10 @@ significance.
 }
 \description{
 \code{sunicate()} estimates a linear approximation of the conditional
-average treatment effect for each variable specified in the
-\code{biomarkers} argument. The estimated coefficients are then used to
-test whether their corresponding biomarkers are treatment-effect modifiers.
-Valid statistical inference is performed by employing the biomarkers'
-cross-validated empirical influence curves to estimate these coefficients'
-standard errors.
+average treatment effect of a time-to-event outcome for each variable
+specified in the \code{biomarkers} argument. The estimated coefficients are
+then used to test whether their corresponding biomarkers are
+treatment-effect modifiers. Valid statistical inference is performed by
+employing the biomarkers' cross-validated empirical influence curves to
+estimate these coefficients' standard errors.
 }

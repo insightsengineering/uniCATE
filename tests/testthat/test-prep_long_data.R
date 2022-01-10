@@ -364,11 +364,67 @@ test_that("An error is reported when relative_time variable is not a positive
   )
 })
 
-test_that("Only relevant variables remain after data prep",
+test_that("The time cutoff is a numeric if non-null",
 {
   # define the dummy data
   data <- tibble(
     status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3),
+    unwanted_cov = seq_len(3),
+  )
+
+  # refuses time_cutoff since it doesn't fall within the provided data range
+  expect_error(
+    prep_long_data(
+      data = data,
+      status = "status",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3"),
+      time_cutoff = "4"
+    ),
+    "time_cutoff should be a single numeric value when specified"
+  )
+})
+
+test_that("The time cutoff within the range of relative time",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3),
+    unwanted_cov = seq_len(3),
+  )
+
+  # refuses time_cutoff since it doesn't fall within the provided data range
+  expect_error(
+    prep_long_data(
+      data = data,
+      status = "status",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3"),
+      time_cutoff = 4
+    ),
+    "time_cutoff should be smaller than or equal to the largest value in relative_time's corresponding variable: 3"
+  )
+})
+
+test_that("Only relevant variables remain after data prep",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 1),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -384,9 +440,19 @@ test_that("Only relevant variables remain after data prep",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
-    biomarkers = c("biom1", "biom2", "biom3")
+    biomarkers = c("biom1", "biom2", "biom3"),
+    time_cutoff = 2
   )
 
   # check that unwanted_cov is not in long_data
   expect_false("unwanted_cov" %in% colnames(long_data))
+
+  # check that the max time is 2
+  expect_true(max(long_data$time) == 2)
+
+  # check that the final status of third observation is censored
+  third_obs_status <- long_data %>%
+    filter(observation_id == 3, time == 2) %>%
+    pull(status)
+  expect_equal(third_obs_status, 0)
 })
