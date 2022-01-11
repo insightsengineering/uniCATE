@@ -1,5 +1,10 @@
 #' Prepare Longitudinal Time-to-Event Data
 #'
+#' \code{prep_long_data()} assesses whether the data passed to \code{sunicate()}
+#' is correctly formatted. This function also performs modifications to the
+#' data, (e.g. transforming the treatment variable into a factor if not
+#' already, and transforming it from a wide to a long format).
+#'
 #' @param data A wide \code{data.frame} or \code{tibble} object containing the
 #'   status (event variable), relative time of the event, treatment indicator,
 #'   and covariates. Note that the biomarkers must be a subset of the
