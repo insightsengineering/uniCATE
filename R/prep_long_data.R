@@ -1,3 +1,35 @@
+#' Prepare Longitudinal Time-to-Event Data
+#'
+#' @param data A wide \code{data.frame} or \code{tibble} object containing the
+#'   status (event variable), relative time of the event, treatment indicator,
+#'   and covariates. Note that the biomarkers must be a subset of the
+#'   covariates, and that there should only be one row per observation.
+#' @param status A \code{character} defining the name of the status variable
+#'   in \code{data}. This binary variable indicates whether the observation
+#'   failed at the associated \code{relative_time}, or if it was censored.
+#'   Failures should be represented by a \code{1}, and censoring events by a
+#'   \code{0}.
+#' @param relative_time A \code{character} providing the name of the time
+#'   variable in \code{data}.
+#' @param treatment A \code{character} indicating the name of the binary
+#'   treatment variable in \code{data}.
+#' @param covariates A \code{character} vector listing the covariates in
+#'   \code{data}.
+#' @param biomarkers A \code{character} vector listing the biomarkers of
+#'   interest in \code{data}. \code{biomarkers} must be a subset of
+#'   \code{covariates}.
+#' @param time_cutoff A \code{numeric} representing the time at which to assess
+#'   the biomarkers' importance with respect to the outcome. If not specified,
+#'   this value is set to the maximum value in the \code{data} argument's
+#'   \code{relative_time} variable.
+#'
+#' @return A longitudinal \code{tibble} containing only the status variable,
+#'   a relative time variable, treatment indicator, covariates, and observation
+#'   identifier. The treatment variable is transformed into a factor if not
+#'   already, and no rows whose relative time values are larger than
+#'   \code{time_cutoff} are retained when \code{time_cutoff} is non-null.
+#'
+#' @keywords internal
 prep_long_data <- function(
   data, status, relative_time, treatment, covariates, biomarkers,
   time_cutoff = NULL
