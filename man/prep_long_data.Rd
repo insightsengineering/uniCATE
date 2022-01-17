@@ -6,7 +6,8 @@
 \usage{
 prep_long_data(
   data,
-  status,
+  failure,
+  censor,
   relative_time,
   treatment,
   covariates,
@@ -20,11 +21,13 @@ status (event variable), relative time of the event, treatment indicator,
 and covariates. Note that the biomarkers must be a subset of the
 covariates, and that there should only be one row per observation.}
 
-\item{status}{A \code{character} defining the name of the status variable
-in \code{data}. This binary variable indicates whether the observation
-failed at the associated \code{relative_time}, or if it was censored.
-Failures should be represented by a \code{1}, and censoring events by a
-\code{0}.}
+\item{failure}{A \code{character} defining the name of the binary variable in
+the \code{data} argument that indicates a failure event. Observations
+can have a failure or a censoring event, but not both.}
+
+\item{censor}{A \code{character} defining the name of the binary variable in
+the \code{data} argument that indicates a right-censoring event.
+Observations can have a failure or a censoring event, but not both.}
 
 \item{relative_time}{A \code{character} providing the name of the time
 variable in \code{data}.}
@@ -45,10 +48,10 @@ this value is set to the maximum value in the \code{data} argument's
 \code{relative_time} variable.}
 }
 \value{
-A longitudinal \code{tibble} containing only the status variable,
-a relative time variable, treatment indicator, covariates, and observation
-identifier. The treatment variable is transformed into a factor if not
-already, and no rows whose relative time values are larger than
+A longitudinal \code{tibble} containing only the event indicator
+variables, a relative time variable, treatment indicator, covariates, and
+observation identifier. The treatment variable is transformed into a factor
+if not already, and no rows whose relative time values are larger than
 \code{time_cutoff} are retained when \code{time_cutoff} is non-null.
 }
 \description{

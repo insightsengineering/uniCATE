@@ -3,7 +3,8 @@ test_that("A wide data.frame of 3 rows with 3 unique relative times produces a
 {
   # define the dummy data
   data <- data.frame(
-    status = c(0, 1, 1),
+    sick = c(1, 0, 1),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -14,7 +15,8 @@ test_that("A wide data.frame of 3 rows with 3 unique relative times produces a
   # generate the long data format
   long_data <- prep_long_data(
     data = data,
-    status = "status",
+    failure = "sick",
+    censor = "left",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
@@ -33,7 +35,8 @@ test_that("The observation with latest relative time is represented at every
 {
   # define the dummy data
   data <- tibble(
-    status = c(0, 1, 1),
+    sick = c(1, 0, 1),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -44,7 +47,8 @@ test_that("The observation with latest relative time is represented at every
   # generate the long data format
   long_data <- prep_long_data(
     data = data,
-    status = "status",
+    failure = "sick",
+    censor = "left",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
@@ -64,7 +68,8 @@ test_that("Only data.frame or tibble objects are accepted by the data argument",
 {
   # define the dummy data
   data <- tibble(
-    status = c(0, 1, 1),
+    sick = c(1, 0, 1),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -76,7 +81,8 @@ test_that("Only data.frame or tibble objects are accepted by the data argument",
   expect_silent(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -88,7 +94,8 @@ test_that("Only data.frame or tibble objects are accepted by the data argument",
   expect_silent(
     prep_long_data(
       data = data.frame(data),
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -100,7 +107,8 @@ test_that("Only data.frame or tibble objects are accepted by the data argument",
   expect_error(
     prep_long_data(
       data = as.matrix(data),
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -111,12 +119,13 @@ test_that("Only data.frame or tibble objects are accepted by the data argument",
 
 })
 
-test_that("Errors occure when the status, relative_time, treatment, covariates
-          and biomarkers arguments are not characters",
+test_that("Errors occure when the failure, censor, relative_time, treatment,
+           covariates and biomarkers arguments are not characters",
 {
   # define the dummy data
   data <- tibble(
-    status = c(0, 1, 1),
+    sick = c(1, 0, 1),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -124,24 +133,41 @@ test_that("Errors occure when the status, relative_time, treatment, covariates
     biom3 = seq_len(3)
   )
 
-  # error when status is a vector
+
+  # error when failure argument is a vector
   expect_error(
     prep_long_data(
       data = data,
-      status = data$status,
+      failure = data$sick,
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3")
     ),
-    "status argument should be a character"
+    "failure argument should be a character"
+  )
+
+  # error when failure argument is a vector
+  expect_error(
+    prep_long_data(
+      data = data,
+      failure = "sick",
+      censor = data$left,
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3")
+    ),
+    "censor argument should be a character"
   )
 
   # error when relative_time is a vector
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = data$time,
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -154,7 +180,8 @@ test_that("Errors occure when the status, relative_time, treatment, covariates
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = data$treat,
       covariates = c("biom1", "biom2", "biom3"),
@@ -167,7 +194,8 @@ test_that("Errors occure when the status, relative_time, treatment, covariates
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c(1, 2),
@@ -180,7 +208,8 @@ test_that("Errors occure when the status, relative_time, treatment, covariates
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -195,7 +224,8 @@ test_that("Errors occur when variable arguments are missing from the data",
 {
   # define the dummy data
   data <- tibble(
-    status = c(0, 1, 1),
+    sick = c(1, 0, 1),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -203,50 +233,68 @@ test_that("Errors occur when variable arguments are missing from the data",
     biom3 = seq_len(3)
   )
 
-  # error for missing status variable
+  # error for missing failure variable
   expect_error(
     prep_long_data(
       data = data,
-      status = "bad_status",
+      failure = "failure",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3")
     ),
-    "status variable is missing from the data"
+    "failure argument's variable is missing from the data"
+  )
+
+  # error for missing failure variable
+  expect_error(
+    prep_long_data(
+      data = data,
+      failure = "sick",
+      censor = "censor",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3")
+    ),
+    "censor argument's variable is missing from the data"
   )
 
   # error for missing relative time variable
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "bad_time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3")
     ),
-    "relative_time variable is missing from the data"
+    "relative_time argument's variable is missing from the data"
   )
 
   # error for missing treatment variable
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "bad_treat",
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3")
     ),
-    "treatment variable is missing from the data"
+    "treatment argument's variable is missing from the data"
   )
 
   # error for missing covariates variables
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3", "biom4"),
@@ -257,12 +305,13 @@ test_that("Errors occur when variable arguments are missing from the data",
 
 })
 
-test_that("An error is reported when the status variable is not a binary numeric
-          variable in the data argument",
+test_that("An error is reported when the failure variable is not a
+           binary numeric variables in the data argument",
 {
   # define the dummy data
   data <- tibble(
-    status = c("C", "F", "F"),
+    sick = c("1", "0", "1"),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -274,13 +323,71 @@ test_that("An error is reported when the status variable is not a binary numeric
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3")
     ),
-    "status argument should correspond to a numeric, binary variable in the data"
+    "failure argument should correspond to a numeric, binary variable in the data"
+  )
+})
+
+test_that("An error is reported when the censor variable is not a
+           binary numeric variables in the data argument",
+{
+  # define the dummy data
+  data <- tibble(
+    sick = c(1, 0, 1),
+    left = c("0", 1, "0"),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3)
+  )
+
+  # refuses non-binary, non-numeric status variable
+  expect_error(
+    prep_long_data(
+      data = data,
+      failure = "sick",
+      censor = "left",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3")
+    ),
+    "censor argument should correspond to a numeric, binary variable in the data"
+  )
+})
+
+test_that("An error is thrown for observations with a failure and a censoring
+          event",
+{
+
+  data <- tibble(
+    sick = c(1, 0, 1),
+    left = c(1, 1, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3)
+  )
+
+  expect_error(
+    prep_long_data(
+      data = data,
+      failure = "sick",
+      censor = "left",
+      relative_time = "time",
+      treatment = "treat",
+      covariates = c("biom1", "biom2", "biom3"),
+      biomarkers = c("biom1", "biom2", "biom3")
+    ),
+    "observations may not have a both failure and a censoring event"
   )
 })
 
@@ -289,7 +396,8 @@ test_that("An error is reported when the treatment variable is not a binary
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 0),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "u", "c"),
     biom1 = seq_len(3),
@@ -301,7 +409,8 @@ test_that("An error is reported when the treatment variable is not a binary
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -315,9 +424,10 @@ test_that("Treatment variable is coerced to a factor if not already",
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 0),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
-    treat = c("t", "t", "c"),
+    treat = c("t", "u", "t"),
     biom1 = seq_len(3),
     biom2 = seq_len(3),
     biom3 = seq_len(3)
@@ -326,7 +436,8 @@ test_that("Treatment variable is coerced to a factor if not already",
   # produce long format data
   long_data <- prep_long_data(
     data = data,
-    status = "status",
+    failure = "sick",
+    censor = "left",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
@@ -342,7 +453,8 @@ test_that("An error is reported when relative_time variable is not a positive
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 0),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(-1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -354,7 +466,8 @@ test_that("An error is reported when relative_time variable is not a positive
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -368,7 +481,8 @@ test_that("The time cutoff is a numeric if non-null",
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 0),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -381,7 +495,8 @@ test_that("The time cutoff is a numeric if non-null",
   expect_error(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
@@ -396,7 +511,8 @@ test_that("Warn when time cutoff not within the range of relative time",
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 1),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -409,14 +525,15 @@ test_that("Warn when time cutoff not within the range of relative time",
   expect_message(
     prep_long_data(
       data = data,
-      status = "status",
+      failure = "sick",
+      censor = "left",
       relative_time = "time",
       treatment = "treat",
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3"),
       time_cutoff = 4
     ),
-    "time_cutoff is larger than the largest value in relative_time's corresponding variable: 3"
+    "time_cutoff is larger than or equal to the largest value in relative_time's corresponding variable: 3"
   )
 })
 
@@ -424,7 +541,8 @@ test_that("Only relevant variables remain after data prep",
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 1),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -436,7 +554,8 @@ test_that("Only relevant variables remain after data prep",
   # prepare the data
   long_data <- prep_long_data(
     data = data,
-    status = "status",
+    failure = "sick",
+    censor = "left",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
@@ -452,7 +571,8 @@ test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events",
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 0),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -464,7 +584,8 @@ test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events",
   # prepare the data
   long_data <- prep_long_data(
     data = data,
-    status = "status",
+    failure = "sick",
+    censor = "left",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
@@ -478,17 +599,17 @@ test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events",
   # check tha the second observation's censor status is one at t2
   sec_censor_status <- long_data %>%
     filter(observation_id == 2, time == 2) %>%
-    pull(censor)
+    pull(left)
   expect_equal(sec_censor_status, 1)
 
   # check that the third observation's failure and censor status are zero at t2
   third_failure_status <- long_data %>%
     filter(observation_id == 3, time == 2) %>%
-    pull(failure)
+    pull(sick)
   expect_equal(third_failure_status, 0)
   third_censor_status <- long_data %>%
     filter(observation_id == 3, time == 2) %>%
-    pull(censor)
+    pull(left)
   expect_equal(third_censor_status, 0)
 })
 
@@ -496,7 +617,8 @@ test_that("Obs 3 doesn't have a censoring or failure event",
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 0),
+    sick = c(1, 0, 0),
+    left = c(0, 1, 0),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -508,7 +630,8 @@ test_that("Obs 3 doesn't have a censoring or failure event",
   # prepare the data
   long_data <- prep_long_data(
     data = data,
-    status = "status",
+    failure = "sick",
+    censor = "left",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
@@ -518,45 +641,11 @@ test_that("Obs 3 doesn't have a censoring or failure event",
   # check that the third observation's failure and censor status are zero at t3
   third_failure_status <- long_data %>%
     filter(observation_id == 3, time == 3) %>%
-    pull(failure)
+    pull(sick)
   expect_equal(third_failure_status, 0)
   third_censor_status <- long_data %>%
     filter(observation_id == 3, time == 3) %>%
-    pull(censor)
+    pull(left)
   expect_equal(third_censor_status, 0)
 })
 
-test_that("Obs 3 has a censoring or failure event",
-{
-  # define the dummy data
-  data <- tibble(
-    status = c(1, 0, 0),
-    time = c(1, 2, 3),
-    treat = c("t", "t", "c"),
-    biom1 = seq_len(3),
-    biom2 = seq_len(3),
-    biom3 = seq_len(3),
-    unwanted_cov = seq_len(3),
-  )
-
-  # prepare the data
-  long_data <- prep_long_data(
-    data = data,
-    status = "status",
-    relative_time = "time",
-    treatment = "treat",
-    covariates = c("biom1", "biom2", "biom3"),
-    biomarkers = c("biom1", "biom2", "biom3"),
-    time_cutoff = 10
-  )
-
-  # check that the third observation's failure and censor status are zero at t3
-  third_failure_status <- long_data %>%
-    filter(observation_id == 3, time == 3) %>%
-    pull(failure)
-  expect_equal(third_failure_status, 0)
-  third_censor_status <- long_data %>%
-    filter(observation_id == 3, time == 3) %>%
-    pull(censor)
-  expect_equal(third_censor_status, 1)
-})

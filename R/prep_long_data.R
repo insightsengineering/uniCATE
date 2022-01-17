@@ -9,11 +9,12 @@
 #'   status (event variable), relative time of the event, treatment indicator,
 #'   and covariates. Note that the biomarkers must be a subset of the
 #'   covariates, and that there should only be one row per observation.
-#' @param status A \code{character} defining the name of the status variable
-#'   in \code{data}. This binary variable indicates whether the observation
-#'   failed at the associated \code{relative_time}, or if it was censored.
-#'   Failures should be represented by a \code{1}, and censoring events by a
-#'   \code{0}.
+#' @param failure A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates a failure event. Observations
+#'   can have a failure or a censoring event, but not both.
+#' @param censor A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates a right-censoring event.
+#'   Observations can have a failure or a censoring event, but not both.
 #' @param relative_time A \code{character} providing the name of the time
 #'   variable in \code{data}.
 #' @param treatment A \code{character} indicating the name of the binary
@@ -28,10 +29,10 @@
 #'   this value is set to the maximum value in the \code{data} argument's
 #'   \code{relative_time} variable.
 #'
-#' @return A longitudinal \code{tibble} containing only the status variable,
-#'   a relative time variable, treatment indicator, covariates, and observation
-#'   identifier. The treatment variable is transformed into a factor if not
-#'   already, and no rows whose relative time values are larger than
+#' @return A longitudinal \code{tibble} containing only the event indicator
+#'   variables, a relative time variable, treatment indicator, covariates, and
+#'   observation identifier. The treatment variable is transformed into a factor
+#'   if not already, and no rows whose relative time values are larger than
 #'   \code{time_cutoff} are retained when \code{time_cutoff} is non-null.
 #'
 #' @importFrom assertthat assert_that validate_that
@@ -41,7 +42,7 @@
 #'
 #' @keywords internal
 prep_long_data <- function(
-  data, status, relative_time, treatment, covariates, biomarkers,
+  data, failure, censor, relative_time, treatment, covariates, biomarkers,
   time_cutoff = NULL
 ) {
 
@@ -52,11 +53,15 @@ prep_long_data <- function(
     msg = "data should be a data.frame or tibble object"
   )
 
-  # check that the status, relative_time, treatment, covariates, and biomarkers
-  # are characters
+  # check that the failure, censor, relative_time, treatment, covariates, and
+  # biomarkers are characters
   assertthat::assert_that(
-    identical(length(status), 1L) & identical(class(status), "character"),
-    msg = "status argument should be a character"
+    identical(length(failure), 1L) & identical(class(failure), "character"),
+    msg = "failure argument should be a character"
+  )
+  assertthat::assert_that(
+    identical(length(censor), 1L) & identical(class(censor), "character"),
+    msg = "censor argument should be a character"
   )
   assertthat::assert_that(
     identical(length(relative_time), 1L) &
@@ -76,19 +81,23 @@ prep_long_data <- function(
     msg = "biomarkers vector is not a subset of the covariates vector"
   )
 
-  # assert that the status, relative_time, treatment, covariates, and
+  # assert that the failure, censor, relative_time, treatment, covariates, and
   # time_cutoff are contained in the data
   assertthat::assert_that(
-    status %in% colnames(data),
-    msg = "status variable is missing from the data"
+    failure %in% colnames(data),
+    msg = "failure argument's variable is missing from the data"
+  )
+  assertthat::assert_that(
+    censor %in% colnames(data),
+    msg = "censor argument's variable is missing from the data"
   )
   assertthat::assert_that(
     relative_time %in% colnames(data),
-    msg = "relative_time variable is missing from the data"
+    msg = "relative_time argument's variable is missing from the data"
   )
   assertthat::assert_that(
     treatment %in% colnames(data),
-    msg = "treatment variable is missing from the data"
+    msg = "treatment argument's variable is missing from the data"
   )
   assertthat::assert_that(
     all(covariates %in% colnames(data)),
@@ -100,7 +109,7 @@ prep_long_data <- function(
       msg = "time_cutoff should be a single numeric value when specified"
     )
     if (max(data[relative_time]) < time_cutoff) {
-      message(paste0("time_cutoff is larger than the largest ",
+      message(paste0("time_cutoff is larger than or equal to the largest ",
                    "value in relative_time's corresponding variable: ",
                    max(data[relative_time])))
     }
@@ -110,25 +119,41 @@ prep_long_data <- function(
   if (identical(class(data), "data.frame"))
     data <- data %>% tibble::as_tibble(.name_repair = "minimal")
 
-  # check that the status argument's variable is a binary numeric variable
+  # check that the failur and censor arguments' variables are binary numeric
+  # variables
   assertthat::assert_that(
-    dplyr::setequal(unique(pull(data, status)), c(0, 1)),
-    msg = paste0("status argument should correspond to a numeric, binary ",
+    dplyr::setequal(unique(dplyr::pull(data, failure)), c(0, 1)) &
+      is.numeric(dplyr::pull(data, failure)),
+    msg = paste0("failure argument should correspond to a numeric, binary ",
                  "variable in the data")
+  )
+  assertthat::assert_that(
+    dplyr::setequal(unique(dplyr::pull(data, censor)), c(0, 1)) &
+      is.numeric(dplyr::pull(data, censor)),
+    msg = paste0("censor argument should correspond to a numeric, binary ",
+                 "variable in the data")
+  )
+
+  # ensure that no observation has both a censoring and a failure reported
+  assertthat::assert_that(
+    !(data[[failure]] == 1 && data[[censor]] == 1),
+    msg = "observations may not have a both failure and a censoring event"
   )
 
   # check that the treatment variable is binary
   assertthat::assert_that(
     identical(nrow(unique(data[treatment])), 2L),
-    msg = "treatment argument should correspond to a binary variable in the data"
+    msg = paste0("treatment argument should correspond to a binary variable in",
+                 " the data")
   )
 
   # if the treatment variable isn't already a factor, then transform it
-  if (!is.factor(data[treatment]))
+  if (!is.factor(data[treatment])) {
     data <- data %>%
-    dplyr::mutate(
-      !!rlang::sym(treatment) := factor(!!rlang::sym(treatment))
-    )
+      dplyr::mutate(
+        !!rlang::sym(treatment) := factor(!!rlang::sym(treatment))
+      )
+  }
 
   # check that the relative time variable is a positive, continuous variable
   assertthat::assert_that(
@@ -141,52 +166,52 @@ prep_long_data <- function(
   # remove unnecessary variables from data
   data <- data %>%
     dplyr::select(
-      dplyr::all_of(c(status, relative_time, treatment, covariates))
+      dplyr::all_of(c(failure, censor, relative_time, treatment, covariates))
     )
 
   # transform the data from a wide format to a longitudinal format
-  times <- data %>% dplyr::pull(relative_time) %>% unique() %>% sort()
+  times <- data %>% dplyr::pull(relative_time)
   if (!is.null(time_cutoff)) {
     if (max(times) < time_cutoff) {
-      times <- c(times, time_cutoff) %>% unique() %>% sort()
+      times <- c(times, time_cutoff)
     }
   }
-  num_times <- length(times)
+  times <- times %>% unique() %>% sort()
   long_data <- lapply(
     seq_len(nrow(data)),
     function(idx) {
 
       # lengthen data
-      expanded_obs <- replicate(num_times, data[idx, ], simplify = FALSE) %>%
-        dplyr::bind_rows()
-      expanded_obs <- expanded_obs %>%
+      n_times <- which(data[[idx, relative_time]] == times)
+      if (n_times > 1) {
+        long_obs <- replicate(n_times - 1, data[idx, ], simplify = FALSE) %>%
+          dplyr::bind_rows() %>%
+          dplyr::mutate(
+            !!rlang::sym(failure) := 0,
+            !!rlang::sym(censor) := 0
+          ) %>%
+          dplyr::bind_rows(data[idx, ])
+      } else {
+        long_obs <- data[idx, ]
+      }
+
+      # add the relative time back, along with an observation id
+      long_obs <- long_obs %>%
         dplyr::mutate(
-          all_times = times,
+          time = times[1:n_times],
           observation_id = idx
-        ) %>%
-        dplyr::filter(.data$time >= .data$all_times) %>%
-        dplyr::mutate(time = .data$all_times) %>%
-        dplyr::select(-.data$all_times)
+        )
+      # if the relative time variable happens to be called "time", don't filter
+      if (relative_time != "time")
+        long_obs <- long_obs %>% dplyr::select(-dplyr::all_of(relative_time))
 
-      # ensure that failures are properly recorded
-      final_status <- data[[idx, status]]
-      final_status_time <- data[[idx, relative_time]]
-      expanded_obs <- expanded_obs %>%
-        dplyr::mutate(
-          failure = if_else(.data$time >= final_status_time & final_status == 1,
-                            1, 0),
-          censor = if_else(.data$time >= final_status_time &
-                              final_status_time < max(times) &
-                                final_status == 0, 1, 0)
-        ) %>%
-        dplyr::select(-.data$status)
-
-      return(expanded_obs)
+      return(long_obs)
 
     }
   ) %>%
     dplyr::bind_rows()
 
+  # apply time cutoff if necessary
   if (!is.null(time_cutoff))
     long_data <- long_data %>% dplyr::filter(.data$time <= time_cutoff)
 
