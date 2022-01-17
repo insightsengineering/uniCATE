@@ -34,6 +34,11 @@
 #'   already, and no rows whose relative time values are larger than
 #'   \code{time_cutoff} are retained when \code{time_cutoff} is non-null.
 #'
+#' @importFrom assertthat assert_that validate_that
+#' @importFrom tibble is_tibble
+#' @importFrom dplyr setequal mutate filter pull select
+#' @importFrom rlang sym
+#'
 #' @keywords internal
 prep_long_data <- function(
   data, status, relative_time, treatment, covariates, biomarkers,
@@ -94,12 +99,11 @@ prep_long_data <- function(
       is.numeric(time_cutoff) & length(time_cutoff),
       msg = "time_cutoff should be a single numeric value when specified"
     )
-    assertthat::assert_that(
-      max(data[relative_time]) >= time_cutoff,
-      msg = paste0("time_cutoff should be smaller than or equal to the largest ",
+    if (max(data[relative_time]) < time_cutoff) {
+      message(paste0("time_cutoff is larger than the largest ",
                    "value in relative_time's corresponding variable: ",
-                   max(data[relative_time]))
-    )
+                   max(data[relative_time])))
+    }
   }
 
   # transform the data to a tibble if it is a data.frame
@@ -142,6 +146,11 @@ prep_long_data <- function(
 
   # transform the data from a wide format to a longitudinal format
   times <- data %>% dplyr::pull(relative_time) %>% unique() %>% sort()
+  if (!is.null(time_cutoff)) {
+    if (max(times) < time_cutoff) {
+      times <- c(times, time_cutoff) %>% unique() %>% sort()
+    }
+  }
   num_times <- length(times)
   long_data <- lapply(
     seq_len(nrow(data)),
@@ -163,9 +172,14 @@ prep_long_data <- function(
       final_status <- data[[idx, status]]
       final_status_time <- data[[idx, relative_time]]
       expanded_obs <- expanded_obs %>%
-        mutate(
-          status = if_else(.data$time == final_status_time, final_status, 0)
-        )
+        dplyr::mutate(
+          failure = if_else(.data$time >= final_status_time & final_status == 1,
+                            1, 0),
+          censor = if_else(.data$time >= final_status_time &
+                              final_status_time < max(times) &
+                                final_status == 0, 1, 0)
+        ) %>%
+        dplyr::select(-.data$status)
 
       return(expanded_obs)
 

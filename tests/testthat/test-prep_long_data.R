@@ -392,11 +392,11 @@ test_that("The time cutoff is a numeric if non-null",
   )
 })
 
-test_that("The time cutoff within the range of relative time",
+test_that("Warn when time cutoff not within the range of relative time",
 {
   # define the dummy data
   data <- tibble(
-    status = c(1, 0, 0),
+    status = c(1, 0, 1),
     time = c(1, 2, 3),
     treat = c("t", "t", "c"),
     biom1 = seq_len(3),
@@ -406,7 +406,7 @@ test_that("The time cutoff within the range of relative time",
   )
 
   # refuses time_cutoff since it doesn't fall within the provided data range
-  expect_error(
+  expect_message(
     prep_long_data(
       data = data,
       status = "status",
@@ -416,7 +416,7 @@ test_that("The time cutoff within the range of relative time",
       biomarkers = c("biom1", "biom2", "biom3"),
       time_cutoff = 4
     ),
-    "time_cutoff should be smaller than or equal to the largest value in relative_time's corresponding variable: 3"
+    "time_cutoff is larger than the largest value in relative_time's corresponding variable: 3"
   )
 })
 
@@ -446,13 +446,117 @@ test_that("Only relevant variables remain after data prep",
 
   # check that unwanted_cov is not in long_data
   expect_false("unwanted_cov" %in% colnames(long_data))
+})
+
+test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3),
+    unwanted_cov = seq_len(3),
+  )
+
+  # prepare the data
+  long_data <- prep_long_data(
+    data = data,
+    status = "status",
+    relative_time = "time",
+    treatment = "treat",
+    covariates = c("biom1", "biom2", "biom3"),
+    biomarkers = c("biom1", "biom2", "biom3"),
+    time_cutoff = 2
+  )
 
   # check that the max time is 2
   expect_true(max(long_data$time) == 2)
 
-  # check that the final status of third observation is censored
-  third_obs_status <- long_data %>%
+  # check tha the second observation's censor status is one at t2
+  sec_censor_status <- long_data %>%
+    filter(observation_id == 2, time == 2) %>%
+    pull(censor)
+  expect_equal(sec_censor_status, 1)
+
+  # check that the third observation's failure and censor status are zero at t2
+  third_failure_status <- long_data %>%
     filter(observation_id == 3, time == 2) %>%
-    pull(status)
-  expect_equal(third_obs_status, 0)
+    pull(failure)
+  expect_equal(third_failure_status, 0)
+  third_censor_status <- long_data %>%
+    filter(observation_id == 3, time == 2) %>%
+    pull(censor)
+  expect_equal(third_censor_status, 0)
+})
+
+test_that("Obs 3 doesn't have a censoring or failure event",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3),
+    unwanted_cov = seq_len(3),
+  )
+
+  # prepare the data
+  long_data <- prep_long_data(
+    data = data,
+    status = "status",
+    relative_time = "time",
+    treatment = "treat",
+    covariates = c("biom1", "biom2", "biom3"),
+    biomarkers = c("biom1", "biom2", "biom3")
+  )
+
+  # check that the third observation's failure and censor status are zero at t3
+  third_failure_status <- long_data %>%
+    filter(observation_id == 3, time == 3) %>%
+    pull(failure)
+  expect_equal(third_failure_status, 0)
+  third_censor_status <- long_data %>%
+    filter(observation_id == 3, time == 3) %>%
+    pull(censor)
+  expect_equal(third_censor_status, 0)
+})
+
+test_that("Obs 3 has a censoring or failure event",
+{
+  # define the dummy data
+  data <- tibble(
+    status = c(1, 0, 0),
+    time = c(1, 2, 3),
+    treat = c("t", "t", "c"),
+    biom1 = seq_len(3),
+    biom2 = seq_len(3),
+    biom3 = seq_len(3),
+    unwanted_cov = seq_len(3),
+  )
+
+  # prepare the data
+  long_data <- prep_long_data(
+    data = data,
+    status = "status",
+    relative_time = "time",
+    treatment = "treat",
+    covariates = c("biom1", "biom2", "biom3"),
+    biomarkers = c("biom1", "biom2", "biom3"),
+    time_cutoff = 10
+  )
+
+  # check that the third observation's failure and censor status are zero at t3
+  third_failure_status <- long_data %>%
+    filter(observation_id == 3, time == 3) %>%
+    pull(failure)
+  expect_equal(third_failure_status, 0)
+  third_censor_status <- long_data %>%
+    filter(observation_id == 3, time == 3) %>%
+    pull(censor)
+  expect_equal(third_censor_status, 1)
 })
