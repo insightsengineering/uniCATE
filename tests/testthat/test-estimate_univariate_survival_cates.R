@@ -11,14 +11,14 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   # prepare some mock data
 
   # define baseline characteristics
-  n <- 50
+  n <- 500
   treat <- rbinom(n, 1, 0.5)
   biom1 <- runif(n, min = 2, max = 6)
   biom2 <- rnorm(n, mean = 10, sd = sqrt(10))
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-8 - 0.75*treat + 0.3*biom1^2 + 0.5*biom2*treat))) +
+    (t < 9) / (1 + exp(-(-1 - 0.75*treat + 0.3*biom1 - biom2*treat))) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -126,5 +126,20 @@ test_that("fold function returns a vector of estimated biomarker coefficients
     cond_censor_haz_super_learner = censor_lrnr_sl,
     propensity_score_ls = list("treatment" = 0.5, "control" = 0.5)
   )
+
+  # make sure that the coefficients vector is a numeric vector
+  expect_equal(class(res_ls$beta_coefs), "numeric")
+  expect_length(res_ls$beta_coefs, 2)
+
+  # make sure that the IC table is a tibble of appropriate dimensions
+  num_obs_v <- long_data[fold$validation_set, ] %>%
+    pull(observation_id) %>%
+    unique() %>%
+    length()
+  expect_equal(nrow(res_ls$ic_df), num_obs_v)
+  expect_equal(ncol(res_ls$ic_df), 2)
+
+  # make sure that the column means of the IC table are approximately equal to 0
+  expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
 
 })

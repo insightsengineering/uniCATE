@@ -388,7 +388,7 @@ hold_out_calculation_survival <- function(
   valid_data$cond_cens_haz <- cond_cens_haz_fit$predict(pred_task_valid)
 
   # compute the ajdusted differences in survival probabilities
-  surv_diff_df <- valid_data %>%
+  surv_diff <- valid_data %>%
     dplyr::group_by(.data$observation_id) %>%
     dplyr::mutate(
       surv = cumprod(1 - cond_surv_haz),
@@ -412,12 +412,58 @@ hold_out_calculation_survival <- function(
         .data$surv_t0_cont
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(.data$adj_surv_diff) %>%
+    dplyr::distinct() %>%
+    dplyr::pull(adj_surv_diff)
+
+  # estimate the variable importance parameter and compute the emp eif for all
+  # biomarkers
+  valid_data <- valid_data %>%
+    dplyr::select(dplyr::all_of(biomarkers)) %>%
     dplyr::distinct()
+  coefs_and_ic_ls <- valid_data %>%
+    purrr::map(
+      function(bio) {
 
-  # compute variable importance parameter for all biomarkers
+        # center the biomarker measurements
+        bio <- as.vector(base::scale(bio, center = TRUE, scale = FALSE))
+        var_bio <- sum(bio^2)
 
-  # compute empirical efficient influence curves for all biomarkers
+        # estimate the best linear approximation using the estimating equation
+        # formula
+        bio_coef <- sum(surv_diff * bio) / var_bio
+
+        # compute the unscaled empirical IC of each observation
+        inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
+
+        # return the beta coefficients and the influence curves
+        return(list(
+          "bio_coef" = bio_coef,
+          "inf_curves" = inf_curves
+        ))
+      }
+    )
+
+  # extract the vector of coefficient estimates
+  beta_coefs <- sapply(
+    seq_len(length(coefs_and_ic_ls)),
+    function(idx) coefs_and_ic_ls[[idx]]$bio_coef
+  )
+  names(beta_coefs) <- biomarkers
+
+  # extract the table of un-scaled influence curves
+  ic_ls <- lapply(seq_len(length(coefs_and_ic_ls)),
+    function(idx) coefs_and_ic_ls[[idx]]$inf_curves
+  )
+  ic_df <- do.call(cbind, ic_ls) %>% dplyr::as_tibble(.name_repair = "minimal")
+  colnames(ic_df) <- biomarkers
+
+  # return the vector of coefficients and the table of empirical IC values
+  return(
+    list(
+      "beta_coefs" = beta_coefs,
+      "ic_df" = ic_df
+    )
+  )
 
 
 }
