@@ -413,9 +413,9 @@ hold_out_calculation_survival <- function(
     dplyr::summarise(
       cumult_eif = sum(.data$inner_sum_t),
       adj_surv_diff = .data$cumult_eif + .data$surv_t0_treat -
-        .data$surv_t0_cont
+        .data$surv_t0_cont,
+      .groups = "drop"
     ) %>%
-    dplyr::ungroup() %>%
     dplyr::distinct() %>%
     dplyr::pull(.data$adj_surv_diff)
 
@@ -430,11 +430,11 @@ hold_out_calculation_survival <- function(
 
         # center the biomarker measurements
         bio <- as.vector(base::scale(bio, center = TRUE, scale = FALSE))
-        var_bio <- sum(bio^2)
+        var_bio <- mean(bio^2)
 
         # estimate the best linear approximation using the estimating equation
         # formula
-        bio_coef <- sum(surv_diff * bio) / var_bio
+        bio_coef <- mean(surv_diff * bio) / var_bio
 
         # compute the unscaled empirical IC of each observation
         inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
