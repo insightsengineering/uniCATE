@@ -11,7 +11,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   # prepare some mock data
 
   # define baseline characteristics
-  n <- 500
+  n <- 200
   treat <- rbinom(n, 1, 0.5)
   biom1 <- runif(n, min = 2, max = 6)
   biom2 <- rnorm(n, mean = 10, sd = sqrt(10))
@@ -155,7 +155,7 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
   # prepare some mock data
 
   # define baseline characteristics
-  n <- 500
+  n <- 200
   treat <- rbinom(n, 1, 0.5)
   biom1 <- runif(n, min = 2, max = 6)
   biom2 <- rnorm(n, mean = 10, sd = sqrt(10))

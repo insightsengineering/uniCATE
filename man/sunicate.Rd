@@ -6,14 +6,15 @@
 \usage{
 sunicate(
   data,
-  status,
+  failure,
+  censor,
   relative_time,
   treatment,
   covariates,
   biomarkers,
   time_cutoff = NULL,
-  failure_super_learner = NULL,
-  censoring_super_learner = NULL,
+  cond_surv_haz_super_learner = NULL,
+  cond_censor_haz_super_learner = NULL,
   propensity_score_ls,
   v_folds = 5L,
   parallel = FALSE
@@ -25,11 +26,13 @@ status (event variable), relative time of the event, treatment indicator,
 and covariates. Note that the biomarkers must be a subset of the
 covariates, and that there should only be one row per observation.}
 
-\item{status}{A \code{character} defining the name of the status variable
-in \code{data}. This binary variable indicates whether the observation
-failed at the associated \code{relative_time}, or if it was censored.
-Failures should be represented by a \code{1}, and censoring events by a
-\code{0}.}
+\item{failure}{A \code{character} defining the name of the binary variable in
+the \code{data} argument that indicates a failure event. Observations
+can have a failure or a censoring event, but not both.}
+
+\item{censor}{A \code{character} defining the name of the binary variable in
+the \code{data} argument that indicates a right-censoring event.
+Observations can have a failure or a censoring event, but not both.}
 
 \item{relative_time}{A \code{character} providing the name of the time
 variable in \code{data}.}
@@ -49,18 +52,17 @@ the biomarkers' importance with respect to the outcome. If not specified,
 this value is set to the maximum value in the \code{data} argument's
 \code{relative_time} variable.}
 
-\item{failure_super_learner}{A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object
-used to estimate the conditional failure model. If set to \code{NULL}, the
-default SuperLearner is used. The default's library consists of a linear
-model, penalized linear models (LASSO and elasticnet), a spline regression,
-a General Additive Model, XGBoost, a Random Forest, and the mean model.}
-
-\item{censoring_super_learner}{A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
-object used to estimate the conditional censoring model. If set to
+\item{cond_surv_haz_super_learner}{A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
+object used to estimate the conditional hazard model. If set to
 \code{NULL}, the default SuperLearner is used. The default's library
 consists of a linear model, penalized linear models (LASSO and elasticnet),
-a spline regression, a General Additive Model, XGBoost, a Random Forest,
-and the mean model.}
+a Random Forest, and the mean model.}
+
+\item{cond_censor_haz_super_learner}{A
+\code{\link[sl3:Lrnr_sl]{SuperLearner}} object used to estimate the
+conditional hazard model. If set to \code{NULL}, the default SuperLearner
+is used. The default's library consists of a linear model, penalized linear
+models (LASSO and elasticnet), a Random Forest, and the mean model.}
 
 \item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
 propensity scores for the treatment levels. The first element of the list
@@ -77,9 +79,9 @@ capabilities. Defaults to \code{FALSE}.}
 \value{
 A \code{tibble} of the biomarkers. Each row contains the estimated
 univariate linear model coefficient of the biomarker regressed against the
-predicted difference in potential outcomes, along with the standard error,
-test statistic, and (adjusted) p-values. The table is ordered by
-significance.
+predicted difference in adjsuted survival probabilities, along with the
+standard error, test statistic, and (adjusted) p-values. The table is
+ordered by significance.
 }
 \description{
 \code{sunicate()} estimates a linear approximation of the conditional

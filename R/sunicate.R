@@ -12,11 +12,12 @@
 #'   status (event variable), relative time of the event, treatment indicator,
 #'   and covariates. Note that the biomarkers must be a subset of the
 #'   covariates, and that there should only be one row per observation.
-#' @param status A \code{character} defining the name of the status variable
-#'   in \code{data}. This binary variable indicates whether the observation
-#'   failed at the associated \code{relative_time}, or if it was censored.
-#'   Failures should be represented by a \code{1}, and censoring events by a
-#'   \code{0}.
+#' @param failure A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates a failure event. Observations
+#'   can have a failure or a censoring event, but not both.
+#' @param censor A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates a right-censoring event.
+#'   Observations can have a failure or a censoring event, but not both.
 #' @param relative_time A \code{character} providing the name of the time
 #'   variable in \code{data}.
 #' @param treatment A \code{character} indicating the name of the binary
@@ -30,17 +31,16 @@
 #'   the biomarkers' importance with respect to the outcome. If not specified,
 #'   this value is set to the maximum value in the \code{data} argument's
 #'   \code{relative_time} variable.
-#' @param failure_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object
-#'   used to estimate the conditional failure model. If set to \code{NULL}, the
-#'   default SuperLearner is used. The default's library consists of a linear
-#'   model, penalized linear models (LASSO and elasticnet), a spline regression,
-#'   a General Additive Model, XGBoost, a Random Forest, and the mean model.
-#' @param censoring_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
-#'   object used to estimate the conditional censoring model. If set to
+#' @param cond_surv_haz_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
+#'   object used to estimate the conditional hazard model. If set to
 #'   \code{NULL}, the default SuperLearner is used. The default's library
 #'   consists of a linear model, penalized linear models (LASSO and elasticnet),
-#'   a spline regression, a General Additive Model, XGBoost, a Random Forest,
-#'   and the mean model.
+#'   a Random Forest, and the mean model.
+#' @param cond_censor_haz_super_learner A
+#'   \code{\link[sl3:Lrnr_sl]{SuperLearner}} object used to estimate the
+#'   conditional hazard model. If set to \code{NULL}, the default SuperLearner
+#'   is used. The default's library consists of a linear model, penalized linear
+#'   models (LASSO and elasticnet), a Random Forest, and the mean model.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
 #'   propensity scores for the treatment levels. The first element of the list
 #'   should correspond to the "treatment" group, and the second to the "control"
@@ -53,39 +53,42 @@
 #'
 #' @return A \code{tibble} of the biomarkers. Each row contains the estimated
 #'   univariate linear model coefficient of the biomarker regressed against the
-#'   predicted difference in potential outcomes, along with the standard error,
-#'   test statistic, and (adjusted) p-values. The table is ordered by
-#'   significance.
+#'   predicted difference in adjsuted survival probabilities, along with the
+#'   standard error, test statistic, and (adjusted) p-values. The table is
+#'   ordered by significance.
 #'
 #' @export
 sunicate <- function(
   data,
-  status,
+  failure,
+  censor,
   relative_time,
   treatment,
   covariates,
   biomarkers,
   time_cutoff = NULL,
-  failure_super_learner = NULL,
-  censoring_super_learner = NULL,
+  cond_surv_haz_super_learner = NULL,
+  cond_censor_haz_super_learner = NULL,
   propensity_score_ls,
   v_folds = 5L,
   parallel = FALSE
 ) {
 
   # assess the data quality and formatting, and prepare it for analysis
-  data <- prep_long_data(
-    data, status, relative_time, treatment, covariates, biomarkers, time_cutoff
+  long_data <- prep_long_data(
+    data, failure, censor, relative_time, treatment, covariates, biomarkers,
+    time_cutoff
   )
 
   # compute CV coefficients and CV influence curves
   cv_ls <- estimate_univariate_survival_cates(
-    data, status, relative_time, treatment, biomarkers, failure_super_learner,
-    censoring_super_learner, propensity_score_ls, v_folds, parallel
+    long_data, failure, censor, treatment, biomarkers,
+    cond_surv_haz_super_learner, cond_censor_haz_super_learner,
+    propensity_score_ls, v_folds, parallel
   )
 
   # compute the table of biomarker coefficients and standard errors
-  biomarkers_tbl <- compute_survival_coefs_tbl(cv_ls)
+  biomarkers_tbl <- compute_coefs_tbl(cv_ls)
 
   # perform tests using the estimated coefficients and standard errors
   biomarkers_tbl <- perform_inference(biomarkers_tbl)
