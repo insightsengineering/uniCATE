@@ -321,14 +321,13 @@ hold_out_calculation_survival <- function(
 
   # estimate variable important parameters #####################################
 
-  # clean up validation set: copy rows for required times
-  # TODO: Need to keep track of who failed
+  # estimate the survival probs under treatment and control at t0
   times <- c(valid_data$time, train_data$time) %>% unique %>% sort()
   n_times <- length(times)
-  valid_data <- valid_data %>%
+  surv_valid_data <- valid_data %>%
     dplyr::select(-dplyr::all_of(c(failure, censor, "time"))) %>%
     dplyr::distinct()
-  valid_data <- lapply(
+  surv_valid_data <- lapply(
     seq_len(nrow(valid_data)),
     function(idx) {
       replicate(n_times, valid_data[idx, ], simplify = FALSE) %>%
@@ -338,7 +337,7 @@ hold_out_calculation_survival <- function(
   ) %>% dplyr::bind_rows()
 
   # create the treatment dataset and prediction task
-  valid_data_treat <- valid_data
+  valid_data_treat <- surv_valid_data
   valid_data_treat[treatment] <- names(propensity_score_ls)[1]
   valid_data_treat[treatment] <- factor(
     dplyr::pull(valid_data_treat, treatment),
@@ -350,7 +349,7 @@ hold_out_calculation_survival <- function(
   )
 
   # create the control dataset and prediction task
-  valid_data_cont <- valid_data
+  valid_data_cont <- surv_valid_data
   valid_data_cont[treatment] <- names(propensity_score_ls)[2]
   valid_data_cont[treatment] <- factor(
     dplyr::pull(valid_data_cont, treatment), levels = names(propensity_score_ls)
@@ -361,15 +360,60 @@ hold_out_calculation_survival <- function(
   )
 
   # estimate conditional survival for all at max time (one est per row)
-  valid_data$cond_surv_haz_treat <- cond_surv_haz_fit$predict(pred_task_treat)
-  valid_data$cond_cens_haz_treat <- cond_cens_haz_fit$predict(pred_task_treat)
-  valid_data$cond_surv_haz_control <- cond_surv_haz_fit$predict(pred_task_cont)
-  valid_data$cond_cens_haz_control <- cond_cens_haz_fit$predict(pred_task_cont)
+  surv_valid_data$cond_surv_haz_control <- cond_surv_haz_fit$predict(
+    pred_task_cont
+  )
+  surv_valid_data$cond_surv_haz_treat <- cond_surv_haz_fit$predict(
+    pred_task_treat
+  )
+  surv_valid_data <- surv_valid_data %>%
+    dplyr::group_by(.data$observation_id) %>%
+    dplyr::summarise(
+      surv_t0_treat = prod(1 - cond_surv_haz_treat),
+      surv_t0_cont = prod(1 - cond_surv_haz_control)
+    ) %>%
+    dplyr::ungroup()
 
-  # estimate conditional censoring prob for all at max time (one est per row)
+  # construct cumulative portion of empirical efficient influence curve
 
-  # estimate difference in all observations' survival under treatments
-  # (est cond survival, censoring, and compute AIPW difference. one per obs)
+  # add the survival probs at t0
+  valid_data <- valid_data %>% left_join(surv_valid_data, by = "observation_id")
+
+  # predict cond hazards at each time
+  pred_task_valid <- sl3::make_sl3_Task(
+    data = valid_data,
+    covariates = covar_names
+  )
+  valid_data$cond_surv_haz <- cond_surv_haz_fit$predict(pred_task_valid)
+  valid_data$cond_cens_haz <- cond_cens_haz_fit$predict(pred_task_valid)
+
+  # compute the ajdusted differences in survival probabilities
+  surv_diff_df <- valid_data %>%
+    dplyr::group_by(.data$observation_id) %>%
+    dplyr::mutate(
+      surv = cumprod(1 - cond_surv_haz),
+      surv_cens = cumprod(1 - cond_cens_haz),
+      surv_cens_prev = dplyr::lag(surv_cens),
+      surv_cens_prev = dplyr::if_else(is.na(surv_cens_prev), 1, surv_cens_prev),
+      h1 = dplyr::if_else(
+        !!rlang::sym(treatment) != names(propensity_score_ls)[1], 0,
+        -surv_t0_treat/(propensity_score_ls[[1]] * surv_cens_prev * surv)
+      ),
+      h0 = dplyr::if_else(
+        !!rlang::sym(treatment) != names(propensity_score_ls)[2], 0,
+        -surv_t0_cont/(propensity_score_ls[[2]] * surv_cens_prev * surv)
+      ),
+      haz_prod = ((!!rlang::sym(failure) == 1) - .data$cond_surv_haz),
+      inner_sum_t = (.data$h1 - .data$h0) * .data$haz_prod
+    ) %>%
+    dplyr::summarise(
+      cumult_eif = sum(.data$inner_sum_t),
+      adj_surv_diff = .data$cumult_eif + .data$surv_t0_treat -
+        .data$surv_t0_cont
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(.data$adj_surv_diff) %>%
+    dplyr::distinct()
 
   # compute variable importance parameter for all biomarkers
 
