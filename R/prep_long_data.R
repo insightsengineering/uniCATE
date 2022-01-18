@@ -35,10 +35,10 @@
 #'   if not already, and no rows whose relative time values are larger than
 #'   \code{time_cutoff} are retained when \code{time_cutoff} is non-null.
 #'
-#' @importFrom assertthat assert_that validate_that
+#' @importFrom assertthat assert_that
 #' @importFrom tibble is_tibble
-#' @importFrom dplyr setequal mutate filter pull select
-#' @importFrom rlang sym
+#' @importFrom dplyr setequal mutate filter pull select all_of bind_rows
+#' @importFrom rlang sym := !!
 #'
 #' @keywords internal
 prep_long_data <- function(
@@ -105,19 +105,20 @@ prep_long_data <- function(
   )
   if (!is.null(time_cutoff)) {
     assertthat::assert_that(
-      is.numeric(time_cutoff) & length(time_cutoff),
+      is.numeric(time_cutoff) & length(time_cutoff) == 1,
       msg = "time_cutoff should be a single numeric value when specified"
     )
-    if (max(data[relative_time]) < time_cutoff) {
+    if (max(data[[relative_time]]) < time_cutoff) {
       message(paste0("time_cutoff is larger than or equal to the largest ",
-                   "value in relative_time's corresponding variable: ",
-                   max(data[relative_time])))
+                     "value in relative_time's corresponding variable: ",
+                     max(data[relative_time])))
     }
   }
 
   # transform the data to a tibble if it is a data.frame
-  if (identical(class(data), "data.frame"))
+  if (identical(class(data), "data.frame")) {
     data <- data %>% tibble::as_tibble(.name_repair = "minimal")
+  }
 
   # check that the failur and censor arguments' variables are binary numeric
   # variables
@@ -136,7 +137,7 @@ prep_long_data <- function(
 
   # ensure that no observation has both a censoring and a failure reported
   assertthat::assert_that(
-    !(data[[failure]] == 1 && data[[censor]] == 1),
+    !any(data[[failure]] == 1 & data[[censor]] == 1),
     msg = "observations may not have a both failure and a censoring event"
   )
 
