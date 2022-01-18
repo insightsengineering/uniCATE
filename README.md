@@ -16,12 +16,14 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 
 ------------------------------------------------------------------------
 
-`uniCATE` implements an efficient semiparametric procedure for the
-estimation of individual variables’ conditional average treatment
-effects’ best linear approximations. This method can identify potential
-predictive biomarkers in randomized studies using assumption-lean
-statistical inference techniques that rely on flexible machine learning
-algorithms.
+`uniCATE` implements a semiparametric procedure for inference about
+biomarkers’ *UNIvariate Conditional Average Treatment Effects*. These
+parameters are nonparametric variable importance metrics that quantify
+the strength of biomarkers’ treatment-effect modification on the
+absolute scale. Our method can be used to identify potentially
+predictive biomarkers in randomized control studies using
+assumption-lean hypothesis testing procedures that rely on flexible
+machine learning algorithms.
 
 ## Installation
 
@@ -33,11 +35,16 @@ using [`remotes`](https://CRAN.R-project.org/package=remotes):
 remotes::install_github("insightsengineering/uniCATE")
 ```
 
+## Usage
+
+`unicate()` should be used when the outcome is continuous or binary. For
+right-censored time-to-event outcomes, use `sunicate()`.
+
 ## Example
 
 We simulate a randomized control trial in which there is a heterogeneous
 treatment effect for biomarkers 1 and 2. `unicate()` successfully
-identifies these biomarkers as effect modifierss.
+identifies these biomarkers as effect modifiers.
 
 ``` r
 # load the required libraries

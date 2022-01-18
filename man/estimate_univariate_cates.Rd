@@ -54,7 +54,7 @@ of the cross-validated influence curves of every observation in
 \description{
 \code{estimate_univariate_cates()} estimates the univariate Conditional
 Average Treatment Effect of each biomarker on the predicted potential
-outcomes using cross-validation. First, the data is pre-processed data is
+outcomes using cross-validation. First, the data is pre-processed data and
 split into \code{v_folds}. Then, the conditional outcome regression over all
 the training sets are estimated using the \code{super_learner}. The estimated
 outcome regressions are then used to estimate the expected difference in

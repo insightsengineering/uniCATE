@@ -1,6 +1,6 @@
 #' Univariate Conditional Average Treatment Effect Estimation
 #'
-#' \code{unicate()} estimates the best linear approximation of the conditional
+#' \code{unicate()} estimates a linear approximation of the conditional
 #'   average treatment effect for each variable specified in the
 #'   \code{biomarkers} argument. The estimated coefficients are then used to
 #'   test whether their corresponding biomarkers are treatment-effect modifiers.
@@ -67,7 +67,7 @@ unicate <- function(
   # compute the table of biomarker coefficients and standard errors
   biomarkers_tbl <- compute_coefs_tbl(cv_ls)
 
-  # perform inference using the estimated coefficients and standard errors
+  # perform tests using the estimated coefficients and standard errors
   biomarkers_tbl <- perform_inference(biomarkers_tbl)
 
   return(biomarkers_tbl)
