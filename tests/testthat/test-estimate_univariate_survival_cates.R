@@ -13,12 +13,12 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   # define baseline characteristics
   n <- 200
   treat <- rbinom(n, 1, 0.5)
-  biom1 <- runif(n, min = 2, max = 6)
-  biom2 <- rnorm(n, mean = 10, sd = sqrt(10))
+  biom1 <- rnorm(n)
+  biom2 <- rnorm(n)
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-1 - 0.75*treat + 0.3*biom1 - biom2*treat))) +
+    (t < 9) / (1 + exp(-(-2 - 3*treat*biom1))) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -68,6 +68,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
   # assemble the data
   treat <- if_else(treat == 1, "treatment", "control")
+  treat <- factor(treat, levels = c("treatment", "control"))
   data <- tibble(treat, biom1, biom2) %>% bind_cols(status_df)
 
   # transform into long data
@@ -157,12 +158,12 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
   # define baseline characteristics
   n <- 200
   treat <- rbinom(n, 1, 0.5)
-  biom1 <- runif(n, min = 2, max = 6)
-  biom2 <- rnorm(n, mean = 10, sd = sqrt(10))
+  biom1 <- rnorm(n)
+  biom2 <- rnorm(n)
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-1 - 0.75*treat + 0.1*biom1 - biom2*treat))) +
+    (t < 9) / (1 + exp(-(-2 - 3*treat*biom1))) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -212,6 +213,7 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
 
   # assemble the data
   treat <- if_else(treat == 1, "treatment", "control")
+  treat <- factor(treat, levels = c("treatment", "control"))
   data <- tibble(treat, biom1, biom2) %>% bind_cols(status_df)
 
   # transform into long data
