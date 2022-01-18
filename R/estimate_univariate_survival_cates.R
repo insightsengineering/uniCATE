@@ -26,16 +26,16 @@
 #'   treatment variable in \code{data}.
 #' @param biomarkers A \code{character} vector listing the biomarkers of
 #'   interest in \code{data}.
-#' @param failure_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object
-#'   used to estimate the conditional failure model. If set to \code{NULL}, the
-#'   default SuperLearner is used. The default's library consists of a linear
-#'   model, penalized linear models (LASSO and elasticnet), XGBoost, a
-#'   Random Forest, and the mean model.
-#' @param censoring_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
-#'   object used to estimate the conditional censoring model. If set to
+#' @param cond_surv_haz_super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
+#'   object used to estimate the conditional hazard model. If set to
 #'   \code{NULL}, the default SuperLearner is used. The default's library
 #'   consists of a linear model, penalized linear models (LASSO and elasticnet),
-#'   XGBoost, a Random Forest, and the mean model.
+#'   a Random Forest, and the mean model.
+#' @param cond_censor_haz_super_learner A
+#'   \code{\link[sl3:Lrnr_sl]{SuperLearner}} object used to estimate the
+#'   conditional hazard model. If set to \code{NULL}, the default SuperLearner
+#'   is used. The default's library consists of a linear model, penalized linear
+#'   models (LASSO and elasticnet), a Random Forest, and the mean model.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
 #'   propensity scores for the treatment levels. The first element of the list
 #'   should correspond to the "treatment" group, and the second to the "control"
@@ -63,8 +63,8 @@ estimate_univariate_survival_cates <- function(
   censor,
   treatment,
   biomarkers,
-  failure_super_learner,
-  censoring_super_learner,
+  cond_surv_haz_super_learner,
+  cond_censor_haz_super_learner,
   propensity_score_ls,
   v_folds,
   parallel
@@ -92,14 +92,16 @@ estimate_univariate_survival_cates <- function(
 
   # assert that the super learners are  NULL or SL3 SuperLearner objects
   assertthat::assert_that(
-    is.null(failure_super_learner) |
-      identical(class(failure_super_learner), c("Lrnr_sl", "Lrnr_base", "R6")),
-    msg = "failure_super_learner must be NULL or an sl3::Lrnr_sl object"
+    is.null(cond_surv_haz_super_learner) |
+      identical(class(cond_surv_haz_super_learner),
+                c("Lrnr_sl", "Lrnr_base", "R6")),
+    msg = "cond_surv_haz_super_learner must be NULL or an sl3::Lrnr_sl object"
   )
   assertthat::assert_that(
-    is.null(censoring_super_learner) |
-      identical(class(censoring_super_learner), c("Lrnr_sl", "Lrnr_base", "R6")),
-    msg = "censoring_super_learner must be NULL or an sl3::Lrnr_sl object"
+    is.null(cond_censor_haz_super_learner) |
+      identical(class(cond_censor_haz_super_learner),
+                c("Lrnr_sl", "Lrnr_base", "R6")),
+    msg = "cond_censor_haz_super_learner must be NULL or an sl3::Lrnr_sl object"
   )
 
   # compute the holdout estimated potential outcome differences
@@ -107,10 +109,12 @@ estimate_univariate_survival_cates <- function(
     cv_fun = hold_out_calculation_survival,
     folds = folds,
     long_data = long_data,
+    failure = failure,
+    censor = censor,
     treatment = treatment,
     biomarkers = biomarkers,
-    failure_super_learner = failure_super_learner,
-    censoring_super_learner = censoring_super_learner,
+    cond_surv_haz_super_learner = cond_surv_haz_super_learner,
+    cond_censor_haz_super_learner = cond_censor_haz_super_learner,
     propensity_score_ls = propensity_score_ls,
     use_future = parallel,
     .combine = FALSE
@@ -181,20 +185,18 @@ estimate_univariate_survival_cates <- function(
 #'   vector of biomarker linear model coefficient estimates. The second is the
 #'   \code{tibble} of the empirical influence curves for each biomarker.
 #'
-#' @importFrom dplyr mutate select pull .data all_of bind_cols
-#' @importFrom rlang !! enquo
+#' @importFrom dplyr mutate select pull .data all_of bind_cols left_join
+#' @importFrom rlang !! enquo sym
 #' @importFrom magrittr %>%
 #' @importFrom origami training validation
-#' @importFrom stats var coef lm
 #' @importFrom purrr map
-#' @importFrom matrixStats colVars
 #' @import sl3
 #'
 #' @keywords internal
 hold_out_calculation_survival <- function(
   fold, long_data, failure, censor, treatment, biomarkers,
   cond_surv_haz_super_learner, cond_censor_haz_super_learner,
-  propensity_score_ls, outcome_type
+  propensity_score_ls
 ) {
 
   # define the training and testing set
@@ -240,8 +242,7 @@ hold_out_calculation_survival <- function(
 
     # assemble learners
     learner_library <- sl3::make_learner(
-      sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_xgboost, lrnr_rf,
-      lrnr_mean
+      sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_rf, lrnr_mean
     )
 
     # define the metalearner
@@ -296,8 +297,7 @@ hold_out_calculation_survival <- function(
 
     # assemble learners
     learner_library <- sl3::make_learner(
-      sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_xgboost, lrnr_rf,
-      lrnr_mean
+      sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_rf, lrnr_mean
     )
 
     # define the metalearner
@@ -369,15 +369,16 @@ hold_out_calculation_survival <- function(
   surv_valid_data <- surv_valid_data %>%
     dplyr::group_by(.data$observation_id) %>%
     dplyr::summarise(
-      surv_t0_treat = prod(1 - cond_surv_haz_treat),
-      surv_t0_cont = prod(1 - cond_surv_haz_control)
+      surv_t0_treat = prod(1 - .data$cond_surv_haz_treat),
+      surv_t0_cont = prod(1 - .data$cond_surv_haz_control)
     ) %>%
     dplyr::ungroup()
 
   # construct cumulative portion of empirical efficient influence curve
 
   # add the survival probs at t0
-  valid_data <- valid_data %>% left_join(surv_valid_data, by = "observation_id")
+  valid_data <- valid_data %>%
+    dplyr::left_join(surv_valid_data, by = "observation_id")
 
   # predict cond hazards at each time
   pred_task_valid <- sl3::make_sl3_Task(
@@ -391,17 +392,20 @@ hold_out_calculation_survival <- function(
   surv_diff <- valid_data %>%
     dplyr::group_by(.data$observation_id) %>%
     dplyr::mutate(
-      surv = cumprod(1 - cond_surv_haz),
-      surv_cens = cumprod(1 - cond_cens_haz),
-      surv_cens_prev = dplyr::lag(surv_cens),
-      surv_cens_prev = dplyr::if_else(is.na(surv_cens_prev), 1, surv_cens_prev),
+      surv = cumprod(1 - .data$cond_surv_haz),
+      surv_cens = cumprod(1 - .data$cond_cens_haz),
+      surv_cens_prev = dplyr::lag(.data$surv_cens),
+      surv_cens_prev = dplyr::if_else(is.na(.data$surv_cens_prev), 1,
+                                      .data$surv_cens_prev),
       h1 = dplyr::if_else(
         !!rlang::sym(treatment) != names(propensity_score_ls)[1], 0,
-        -surv_t0_treat/(propensity_score_ls[[1]] * surv_cens_prev * surv)
+        -.data$surv_t0_treat /
+          (propensity_score_ls[[1]] * .data$surv_cens_prev * .data$surv)
       ),
       h0 = dplyr::if_else(
         !!rlang::sym(treatment) != names(propensity_score_ls)[2], 0,
-        -surv_t0_cont/(propensity_score_ls[[2]] * surv_cens_prev * surv)
+        -.data$surv_t0_cont /
+          (propensity_score_ls[[2]] * .data$surv_cens_prev * .data$surv)
       ),
       haz_prod = ((!!rlang::sym(failure) == 1) - .data$cond_surv_haz),
       inner_sum_t = (.data$h1 - .data$h0) * .data$haz_prod
@@ -413,7 +417,7 @@ hold_out_calculation_survival <- function(
     ) %>%
     dplyr::ungroup() %>%
     dplyr::distinct() %>%
-    dplyr::pull(adj_surv_diff)
+    dplyr::pull(.data$adj_surv_diff)
 
   # estimate the variable importance parameter and compute the emp eif for all
   # biomarkers
