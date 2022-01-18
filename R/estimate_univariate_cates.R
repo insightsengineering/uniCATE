@@ -2,7 +2,7 @@
 #'
 #' \code{estimate_univariate_cates()} estimates the univariate Conditional
 #' Average Treatment Effect of each biomarker on the predicted potential
-#' outcomes using cross-validation. First, the data is pre-processed data is
+#' outcomes using cross-validation. First, the data is pre-processed data and
 #' split into \code{v_folds}. Then, the conditional outcome regression over all
 #' the training sets are estimated using the \code{super_learner}. The estimated
 #' outcome regressions are then used to estimate the expected difference in
@@ -81,7 +81,7 @@ estimate_univariate_cates <- function(
     msg = "super_learner must be NULL or an sl3::Lrnr_sl object"
   )
 
-  # identify the outcome type (bniary or continuous)
+  # identify the outcome type (binary or continuous)
   if (sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2)
     outcome_type <- "binomial"
   else
