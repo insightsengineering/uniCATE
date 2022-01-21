@@ -1,44 +1,52 @@
-#' Estimate the Univariate CATEs
+#' Estimate the parameters and empirical efficient influence functions
 #'
-#' \code{estimate_univariate_cates()} estimates the univariate Conditional
-#' Average Treatment Effect of each biomarker on the predicted potential
-#' outcomes using cross-validation. First, the data is pre-processed data and
-#' split into \code{v_folds}. Then, the conditional outcome regression over all
-#' the training sets are estimated using the \code{super_learner}. The estimated
-#' outcome regressions are then used to estimate the expected difference in
-#' potential outcomes across treatment groups for each individual in their
-#' respective validation sets. Univariate linear regressions are then regressed
-#' over the predicted potential outcomes in the validation set, and the
-#' influence curves of all observations is computed as well. \code{tibbles} of
-#' biomarker coefficients and influence curves are returned for each validation
-#' set.
+#' \code{estimate_univariate_cates()} estimates the slope of the univariate
+#'   conditional average treatment effect's linear approximation for continuous
+#'   and binary outcomes. First, the data is pre-processed and split into
+#'   \code{v_folds} folds. Then, the conditional outcome regression over all the
+#'   training sets are estimated using the \code{super_learner}. The estimated
+#'   outcome regressions are then used to estimate the expected difference in
+#'   potential outcomes across treatment conditions for each individual in their
+#'   respective validation set. The variable importance parameters are then
+#'   estimated in the validation sets, along with their efficient influence
+#'   functions.
 #'
-##' @param data A \code{tibble} object containing the outcome variable, treatment
+#' @param data A \code{tibble} object containing the outcome variable, treatment
 #'   indicator, and covariates. The treatment variable is a factor whose levels
 #'   correspond to the names of the \code{propensity_score_ls} argument.
 #' @param outcome A \code{character} defining the name of the outcome variable
-#'   in \code{data}.
+#'   in \code{data}. The outcome must be a continuous or a binary factor
+#'   variable.
 #' @param treatment A \code{character} indicating the name of the binary
 #'   treatment variable in \code{data}.
-#' @param biomarkers A \code{character} vector listing the biomarkers of
-#'   interest in \code{data}.
-#' @param super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object. If set
-#'   to \code{NULL}, the default SuperLearner is used.
+#' @param biomarkers A \code{character} vector listing the pre-treatment
+#'   biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
+#'   \code{covariates}.
+#' @param super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object. If set
+#'   to \code{NULL}, a default SuperLearner is used. If the outcome variable is
+#'   continuous, the default's library of base learners is made up of a
+#'   linear model, penalized linear models (LASSO and elasticnet), a spline
+#'   regression, XGBoost, a Random Forest, and the mean model. When the outcome
+#'   variable is binary, the base learner library consists of (penalized)
+#'   logistic regression models, XGBoost, a Random Forests, and the mean model.
+#'   The type of outcome is automatically detected.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
-#'   propensity scores for the treatment levels. Note that the first element
-#'   of the list should correspond to the "treatment" group, and the second the
-#'   "control" group, whatever their names may be.
-#' @param v_folds A \code{numeric} indicating the number of folds to use for
-#'   V-fold cross-validation.
+#'   propensity scores for the treatment conditions. The first element of the
+#'   list should correspond to the "treatment" condition, and the second to the
+#'   "control" condition, whatever their names may be.
+#' @param v_folds A \code{numeric} indicating the number of folds used for
+#'   V-fold cross-validation. Defaults to \code{5}.
 #' @param parallel A \code{logical} determining whether to use
-#'   \code{\link[origami:cross_validate]{origami}}'s built-in parallelization
-#'   capabilities.
+#'   \code{\link[origami:cross_validate]{origami}}'s built-in parallelized
+#'   cross-validation routines. This parallelization framework is built upon
+#'   the \href{https://cran.r-project.org/package=future}{\code{future}} suite.
+#'   Defaults to \code{FALSE}.
 #'
-#' @return A \code{list} containing two \code{tibbles}. The first,
+#' @return A \code{list} containing two \code{tibble} objects. The first,
 #'   \code{betas_df}, contains the estimated beta coefficients for each
 #'   biomarker across all validation sets. The second, \code{ic_df}, is made up
-#'   of the cross-validated influence curves of every observation in
-#'   \code{data}.
+#'   of the cross-validated empirical efficient influence functions of every
+#'   observation in \code{data}.
 #'
 #' @importFrom origami make_folds folds_vfold cross_validate
 #' @importFrom assertthat assert_that
@@ -125,38 +133,47 @@ estimate_univariate_cates <- function(
 
 #' Compute Validation Set Objects
 #'
-#' \code{hold_out_calculation} computes all the objects required to estimated
-#' the univariate CATE over the validation set. It begins by estimated the
-#' conditional outcome regression on the training set using the
-#' \code{super_learner}. Next, the difference in potential outcomes is
-#' predicted for the observations in the validation set. Finally, these
-#' predicted outcomes are used to estimate the unvariate regression coefficients
-#' of each biomarker, and their respective empirical influence curves are
-#' computed as well.
+#' \code{hold_out_calculation()} computes all the objects required to estimate
+#'   the variable importance parameter and compute their empirical efficient
+#'   influence curve over the validation set, assuming continuous or binary
+#'   outcomes. It begins by estimated the conditional outcome regression on the
+#'   training set using the \code{super_learner}. Next, the difference in
+#'   potential outcomes is predicted for the observations in the validation set.
+#'   Finally, these predicted outcomes are used to estimate the variable
+#'   importance parameters and efficient influence functions.
 #'
 #' @param fold A \code{fold} object (from \code{\link[origami]{make_folds}()}).
 #' @param data A \code{tibble} object containing the outcome variable, treatment
 #'   indicator, and covariates. The treatment variable is a factor whose levels
 #'   correspond to the names of the \code{propensity_score_ls} argument.
 #' @param outcome A \code{character} defining the name of the outcome variable
-#'   in \code{data}.
+#'   in \code{data}. The outcome must be a continuous or a binary factor
+#'   variable.
 #' @param treatment A \code{character} indicating the name of the binary
 #'   treatment variable in \code{data}.
-#' @param biomarkers A \code{character} vector listing the biomarkers of
-#'   interest in \code{data}.
-#' @param super_learner A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object. If set
-#'   to \code{NULL}, the default SuperLearner is used.
+#' @param biomarkers A \code{character} vector listing the pre-treatment
+#'   biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
+#'   \code{covariates}.
+#' @param super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object. If set
+#'   to \code{NULL}, a default SuperLearner is used. If the outcome variable is
+#'   continuous, the default's library of base learners is made up of a
+#'   linear model, penalized linear models (LASSO and elasticnet), a spline
+#'   regression, XGBoost, a Random Forest, and the mean model. When the outcome
+#'   variable is binary, the base learner library consists of (penalized)
+#'   logistic regression models, XGBoost, a Random Forests, and the mean model.
+#'   The type of outcome is automatically detected.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
-#'   propensity scores for the treatment levels. Note that the first element
-#'   of the list should correspond to the "treatment" group, and the second the
-#'   "control" group, whatever their names may be.
+#'   propensity scores for the treatment conditions. The first element of the
+#'   list should correspond to the "treatment" condition, and the second to the
+#'   "control" condition, whatever their names may be.
 #' @param outcome_type A \code{character} indicating the type of outcome.
 #'   Currently supported outcomes are \code{"continuous"} and
 #'   \code{"binomial"}. Here, \code{"binomial"} is used for binary outcomes.
 #'
 #' @return A \code{list} made up of two objects. The first is the \code{numeric}
-#'   vector of biomarker linear model coefficient estimates. The second is the
-#'   \code{tibble} of the empirical influence curves for each biomarker.
+#'   vector of biomarker variable importance estimates. The second is the
+#'   \code{tibble} of the empirical efficient influence functions for each
+#'   biomarker.
 #'
 #' @importFrom dplyr mutate select pull .data all_of bind_cols
 #' @importFrom rlang !! enquo
@@ -375,28 +392,28 @@ hold_out_calculation <- function(
 
 #' Apply an AIPTW Transform
 #'
-#' \code{apply_aiptw_transform()} applies an augmented inverse-probability
-#' treatment wright (AIPTW) transform to the estimated potential outcomes
-#' generated by the SuperLearner over the training set.
+#' \code{apply_aiptw_transform()} applies the augmented inverse-probability
+#'   treatment wright (AIPTW) transform to the predicted potential outcomes
+#'   generated by the SuperLearner over the training set.
 #'
 #' @param data A \code{tibble} object containing the outcome variable, treatment
 #'   indicator, and covariates. The treatment variable is a factor whose levels
 #'   correspond to the names of the \code{propensity_score_ls} argument.
 #' @param outcome A \code{character} defining the name of the outcome variable
-#'   in \code{data}.
+#'   in \code{data}. The outcome must be a continuous or a binary factor
+#'   variable.
 #' @param treatment A \code{character} indicating the name of the binary
 #'   treatment variable in \code{data}.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
-#'   propensity scores for the treatment levels. Note that the first element
-#'   of the list should correspond to the "treatment" group, and the second the
-#'   "control" group, whatever their names may be.
+#'   propensity scores for the treatment conditions. The first element of the
+#'   list should correspond to the "treatment" condition, and the second to the
+#'   "control" condition, whatever their names may be.
 #' @param outcome_type A \code{character} indicating the type of outcome.
 #'   Currently supported outcomes are \code{"continuous"} and
 #'   \code{"binomial"}. Here, \code{"binomial"} is used for binary outcomes.
 #'
 #' @return A \code{tibble} containing the AIPTW transformed predicted outcomes
-#'   under treatment and control group assignments of all observations in
-#'   \code{data}.
+#'   under treatment and control conditions of all observations in \code{data}.
 #'
 #' @importFrom dplyr mutate if_else .data
 #' @importFrom rlang !! sym

@@ -55,9 +55,9 @@ if not already, and no rows whose relative time values are larger than
 \code{time_cutoff} are retained when \code{time_cutoff} is non-null.
 }
 \description{
-\code{prep_long_data()} assesses whether the data passed to \code{sunicate()}
-is correctly formatted. This function also performs modifications to the
-data, (e.g. transforming the treatment variable into a factor if not
-already, and transforming it from a wide to a long format).
+\code{prep_long_data()} assesses whether the data passed to
+\code{\link{sunicate}} is correctly formatted. This function also performs
+modifications to the data, (e.g. transforming the treatment variable into a
+factor if not already, and transforming it from a wide to a long format).
 }
 \keyword{internal}

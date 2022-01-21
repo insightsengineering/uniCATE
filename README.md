@@ -3,7 +3,7 @@
 
 # `R`/`uniCATE`
 
-> Univarite Conditional Average Treatment Effect Estimation
+> Univariate Conditional Average Treatment Effect Estimation
 
 **Author:** [Philippe Boileau](https://pboileau.ca/)
 
@@ -16,14 +16,18 @@ public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostat
 
 ------------------------------------------------------------------------
 
-`uniCATE` implements a semiparametric procedure for inference about
-biomarkers’ *UNIvariate Conditional Average Treatment Effects*. These
-parameters are nonparametric variable importance metrics that quantify
-the strength of biomarkers’ treatment-effect modification on the
-absolute scale. Our method can be used to identify potentially
-predictive biomarkers in randomized control studies using
-assumption-lean hypothesis testing procedures that rely on flexible
-machine learning algorithms.
+`uniCATE` implements statistical inference procedures for variable
+importance measures that assess the treatment effect modification
+capabilities of individual pre-treatment biomarkers in high-dimensional
+randomized control trials. This variable importance measure is defined
+as the vector of simple linear regression slope coefficients obtained by
+regressing the difference in potential outcomes on each biomarker. This
+parameter, which we dub the *univariate conditional average treatment
+effect*, is a reasonable indicator of treatment effect modification in
+all but pathological biomarker-outcome relationships, and can therefore
+be used to identify predictive biomarkers. Assumption-lean estimation
+and testing procedures based on semiparametric theory are made available
+for continuous, binary, and right-censored time-to-event outcomes.
 
 ## Installation
 

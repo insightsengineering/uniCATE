@@ -23,21 +23,29 @@ indicator, and covariates. The treatment variable is a factor whose levels
 correspond to the names of the \code{propensity_score_ls} argument.}
 
 \item{outcome}{A \code{character} defining the name of the outcome variable
-in \code{data}.}
+in \code{data}. The outcome must be a continuous or a binary factor
+variable.}
 
 \item{treatment}{A \code{character} indicating the name of the binary
 treatment variable in \code{data}.}
 
-\item{biomarkers}{A \code{character} vector listing the biomarkers of
-interest in \code{data}.}
+\item{biomarkers}{A \code{character} vector listing the pre-treatment
+biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
+\code{covariates}.}
 
-\item{super_learner}{A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object. If set
-to \code{NULL}, the default SuperLearner is used.}
+\item{super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object. If set
+to \code{NULL}, a default SuperLearner is used. If the outcome variable is
+continuous, the default's library of base learners is made up of a
+linear model, penalized linear models (LASSO and elasticnet), a spline
+regression, XGBoost, a Random Forest, and the mean model. When the outcome
+variable is binary, the base learner library consists of (penalized)
+logistic regression models, XGBoost, a Random Forests, and the mean model.
+The type of outcome is automatically detected.}
 
 \item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
-propensity scores for the treatment levels. Note that the first element
-of the list should correspond to the "treatment" group, and the second the
-"control" group, whatever their names may be.}
+propensity scores for the treatment conditions. The first element of the
+list should correspond to the "treatment" condition, and the second to the
+"control" condition, whatever their names may be.}
 
 \item{outcome_type}{A \code{character} indicating the type of outcome.
 Currently supported outcomes are \code{"continuous"} and
@@ -45,17 +53,18 @@ Currently supported outcomes are \code{"continuous"} and
 }
 \value{
 A \code{list} made up of two objects. The first is the \code{numeric}
-vector of biomarker linear model coefficient estimates. The second is the
-\code{tibble} of the empirical influence curves for each biomarker.
+vector of biomarker variable importance estimates. The second is the
+\code{tibble} of the empirical efficient influence functions for each
+biomarker.
 }
 \description{
-\code{hold_out_calculation} computes all the objects required to estimated
-the univariate CATE over the validation set. It begins by estimated the
-conditional outcome regression on the training set using the
-\code{super_learner}. Next, the difference in potential outcomes is
-predicted for the observations in the validation set. Finally, these
-predicted outcomes are used to estimate the unvariate regression coefficients
-of each biomarker, and their respective empirical influence curves are
-computed as well.
+\code{hold_out_calculation()} computes all the objects required to estimate
+the variable importance parameter and compute their empirical efficient
+influence curve over the validation set, assuming continuous or binary
+outcomes. It begins by estimated the conditional outcome regression on the
+training set using the \code{super_learner}. Next, the difference in
+potential outcomes is predicted for the observations in the validation set.
+Finally, these predicted outcomes are used to estimate the variable
+importance parameters and efficient influence functions.
 }
 \keyword{internal}

@@ -1,16 +1,18 @@
 #' Compute Cross-Validated Estimate and its Standard Errors
 #'
 #' \code{compute_coefs_tbl()} estimates the linear model coefficients of each
-#'   biomarker's projected conditional average treatment effect, and computes
-#'   their associated standard errors.
+#'   biomarker's variable importance parameter by aggregating the estimates of
+#'   the validation folds. The cross-validated standard errors are also
+#'   computed.
 #'
 #' @param cv_ls A \code{list} containing two \code{tibbles}. The first,
 #'   \code{betas_df}, contains the estimated beta coefficients for each
 #'   biomarker across all validation sets. The second, \code{ic_df}, is made up
-#'   of the cross-validated influence curves of every observation in
-#'   \code{data}.
+#'   of the cross-validated emipirical efficient influence functions of every
+#'   observation in \code{data}.
 #'
-#' @return A \code{tibble} of estimated coefficients and their standard errors.
+#' @return A \code{tibble} of estimated coefficients and accompanying standard
+#'   errors.
 #'
 #' @importFrom tibble tibble
 #'
