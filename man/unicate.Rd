@@ -62,8 +62,11 @@ Defaults to \code{FALSE}.}
 A \code{tibble} with rows corresponding to the specified
 \code{biomarkers}. Each row contains an estimate of the
 treatment-modification variable importance parameter, its standard error,
-and the nominal and adjusted p-values of the accompanying test. The
-\code{biomarkers} are ordered by significance.
+and the nominal and adjusted p-values of the accompanying test. FDR and
+FWER adjustments are performed using the \code{\link[stats]{p.adjust}}
+function with the \code{method} argument set to \code{"BH"} and
+\code{"holm"}, respectively. The \code{biomarkers} are ordered by
+significance.
 }
 \description{
 \code{unicate()} performs inference about \code{biomarkers}' capacity to
