@@ -36,37 +36,39 @@ treatment variable in \code{data}.}
 \item{biomarkers}{A \code{character} vector listing the biomarkers of
 interest in \code{data}.}
 
-\item{cond_surv_haz_super_learner}{A \code{\link[sl3:Lrnr_sl]{SuperLearner}}
-object used to estimate the conditional hazard model. If set to
+\item{cond_surv_haz_super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
+object used to estimate the conditional failure hazard model. If set to
 \code{NULL}, the default SuperLearner is used. The default's library
 consists of a linear model, penalized linear models (LASSO and elasticnet),
 a Random Forest, and the mean model.}
 
-\item{cond_censor_haz_super_learner}{A
-\code{\link[sl3:Lrnr_sl]{SuperLearner}} object used to estimate the
-conditional hazard model. If set to \code{NULL}, the default SuperLearner
-is used. The default's library consists of a linear model, penalized linear
-models (LASSO and elasticnet), a Random Forest, and the mean model.}
+\item{cond_censor_haz_super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
+object used to estimate the conditional censoring hazard model. If set to
+\code{NULL}, the default SuperLearner is used. The default's library
+consists of a linear model, penalized linear models (LASSO and elasticnet),
+a Random Forest, and the mean model.}
 
 \item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
-propensity scores for the treatment levels. The first element of the list
-should correspond to the "treatment" group, and the second to the "control"
-group, whatever their names may be.}
+propensity scores for the treatment conditions. The first element of the
+list should correspond to the "treatment" condition, and the second to the
+"control" condition, whatever their names may be.}
 }
 \value{
 A \code{list} made up of two objects. The first is the \code{numeric}
-vector of biomarker linear model coefficient estimates. The second is the
-\code{tibble} of the empirical influence curves for each biomarker.
+vector of biomarker variable importance estimates. The second is the
+\code{tibble} of the empirical efficient influence functions for each
+biomarker.
 }
 \description{
-\code{hold_out_calculation_survival} computes all the objects required to
-estimate the univariate CATEs for survival outcomes over the validation set.
-It begins by estimating the conditional survival and censoring survival
-functions on the training set using the \code{failure_super_learner} and
-\code{censoring_super_learner}, respectively. Next, the difference in
+\code{hold_out_calculation_survival()} computes all the objects required to
+estimate the univariate CATEs for survival outcomes over the validation
+set. It begins by estimating the conditional survival and censoring
+hazard functions on the training set using the
+\code{cond_surv_haz_super_learner} and
+\code{cond_censor_haz_super_learner}, respectively. Next, the difference in
 survival probabilities is predicted for the observations in the validation
-set. Finally, these predicted outcomes are used to estimate the unvariate
-regression coefficients of each biomarker. Their respective empirical
-efficient influence curves are computed as well.
+set. Finally, these predicted outcomes are used to estimate the variable
+impotance parameters of each biomarker. Their respective empirical
+efficient influence functions are computed as well.
 }
 \keyword{internal}

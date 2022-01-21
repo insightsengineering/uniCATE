@@ -54,7 +54,7 @@ Currently supported outcomes are \code{"continuous"} and
 \value{
 A \code{list} made up of two objects. The first is the \code{numeric}
 vector of biomarker variable importance estimates. The second is the
-\code{tibble} of the empirical efficient influence curves for each
+\code{tibble} of the empirical efficient influence functions for each
 biomarker.
 }
 \description{

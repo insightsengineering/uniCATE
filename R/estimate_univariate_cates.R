@@ -2,14 +2,14 @@
 #'
 #' \code{estimate_univariate_cates()} estimates the slope of the univariate
 #'   conditional average treatment effect's linear approximation for continuous
-#'   and binary outcomes. First, the data is pre-processed data and split into
+#'   and binary outcomes. First, the data is pre-processed and split into
 #'   \code{v_folds} folds. Then, the conditional outcome regression over all the
 #'   training sets are estimated using the \code{super_learner}. The estimated
 #'   outcome regressions are then used to estimate the expected difference in
 #'   potential outcomes across treatment conditions for each individual in their
 #'   respective validation set. The variable importance parameters are then
-#'   estimated in the validation sets, along with their empirical efficient
-#'   influence functions.
+#'   estimated in the validation sets, along with their efficient influence
+#'   functions.
 #'
 #' @param data A \code{tibble} object containing the outcome variable, treatment
 #'   indicator, and covariates. The treatment variable is a factor whose levels
@@ -172,7 +172,7 @@ estimate_univariate_cates <- function(
 #'
 #' @return A \code{list} made up of two objects. The first is the \code{numeric}
 #'   vector of biomarker variable importance estimates. The second is the
-#'   \code{tibble} of the empirical efficient influence curves for each
+#'   \code{tibble} of the empirical efficient influence functions for each
 #'   biomarker.
 #'
 #' @importFrom dplyr mutate select pull .data all_of bind_cols
