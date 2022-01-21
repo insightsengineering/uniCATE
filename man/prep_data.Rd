@@ -8,20 +8,21 @@ prep_data(data, outcome, treatment, covariates, biomarkers)
 }
 \arguments{
 \item{data}{A \code{data.frame} or \code{tibble} object containing the
-outcome variable, treatment indicator, and covariates. Note that the
-biomarkers must be a subset of the covariates.}
+outcome variable, treatment indicator, and pre-treatment covariates. Note
+that the biomarkers are considered be a subset of the covariates.}
 
 \item{outcome}{A \code{character} defining the name of the outcome variable
-in \code{data}.}
+in \code{data}. The outcome must be a continuous or a binary factor
+variable.}
 
 \item{treatment}{A \code{character} indicating the name of the binary
 treatment variable in \code{data}.}
 
-\item{covariates}{A \code{character} vector listing the covariates in
-\code{data}.}
+\item{covariates}{A \code{character} vector listing the pre-treatment
+covariates variables in \code{data}.}
 
-\item{biomarkers}{A \code{character} vector listing the biomarkers of
-interest in \code{data}. \code{biomarkers} must be a subset of
+\item{biomarkers}{A \code{character} vector listing the pre-treatment
+biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
 \code{covariates}.}
 }
 \value{
@@ -30,9 +31,9 @@ indicator, and covariates. Note that the treatment variable is transformed
 into a factor if not already.
 }
 \description{
-\code{prep_data()} assesses whether the data passed to \code{unicate()} is
-correctly formatted. This function also performs minor modifications to the
-data, (e.g. transforming the treatment variable into a factor if not
+\code{prep_data()} assesses whether the data passed to \code{\link{unicate}}
+is correctly formatted. This function also performs minor modifications to
+the data, (e.g. transforming the treatment variable into a factor if not
 already).
 }
 \keyword{internal}

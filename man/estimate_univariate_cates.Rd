@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimate_univariate_cates.R
 \name{estimate_univariate_cates}
 \alias{estimate_univariate_cates}
-\title{Estimate the Univariate CATEs}
+\title{Estimate the parameters and empirical efficient influence functions}
 \usage{
 estimate_univariate_cates(
   data,
@@ -21,48 +21,56 @@ indicator, and covariates. The treatment variable is a factor whose levels
 correspond to the names of the \code{propensity_score_ls} argument.}
 
 \item{outcome}{A \code{character} defining the name of the outcome variable
-in \code{data}.}
+in \code{data}. The outcome must be a continuous or a binary factor
+variable.}
 
 \item{treatment}{A \code{character} indicating the name of the binary
 treatment variable in \code{data}.}
 
-\item{biomarkers}{A \code{character} vector listing the biomarkers of
-interest in \code{data}.}
+\item{biomarkers}{A \code{character} vector listing the pre-treatment
+biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
+\code{covariates}.}
 
-\item{super_learner}{A \code{\link[sl3:Lrnr_sl]{SuperLearner}} object. If set
-to \code{NULL}, the default SuperLearner is used.}
+\item{super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object. If set
+to \code{NULL}, a default SuperLearner is used. If the outcome variable is
+continuous, the default's library of base learners is made up of a
+linear model, penalized linear models (LASSO and elasticnet), a spline
+regression, XGBoost, a Random Forest, and the mean model. When the outcome
+variable is binary, the base learner library consists of (penalized)
+logistic regression models, XGBoost, a Random Forests, and the mean model.
+The type of outcome is automatically detected.}
 
 \item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
-propensity scores for the treatment levels. Note that the first element
-of the list should correspond to the "treatment" group, and the second the
-"control" group, whatever their names may be.}
+propensity scores for the treatment conditions. The first element of the
+list should correspond to the "treatment" condition, and the second to the
+"control" condition, whatever their names may be.}
 
-\item{v_folds}{A \code{numeric} indicating the number of folds to use for
-V-fold cross-validation.}
+\item{v_folds}{A \code{numeric} indicating the number of folds used for
+V-fold cross-validation. Defaults to \code{5}.}
 
 \item{parallel}{A \code{logical} determining whether to use
-\code{\link[origami:cross_validate]{origami}}'s built-in parallelization
-capabilities.}
+\code{\link[origami:cross_validate]{origami}}'s built-in parallelized
+cross-validation routines. This parallelization framework is built upon
+the \href{https://cran.r-project.org/package=future}{\code{future}} suite.
+Defaults to \code{FALSE}.}
 }
 \value{
-A \code{list} containing two \code{tibbles}. The first,
+A \code{list} containing two \code{tibble} objects. The first,
 \code{betas_df}, contains the estimated beta coefficients for each
 biomarker across all validation sets. The second, \code{ic_df}, is made up
-of the cross-validated influence curves of every observation in
-\code{data}.
+of the cross-validated empirical efficient influence functions of every
+observation in \code{data}.
 }
 \description{
-\code{estimate_univariate_cates()} estimates the univariate Conditional
-Average Treatment Effect of each biomarker on the predicted potential
-outcomes using cross-validation. First, the data is pre-processed data and
-split into \code{v_folds}. Then, the conditional outcome regression over all
-the training sets are estimated using the \code{super_learner}. The estimated
+\code{estimate_univariate_cates()} estimates the slope of the univariate
+conditional average treatment effect's linear approximation for continuous
+and binary outcomes. First, the data is pre-processed data and split into
+\code{v_folds} folds. Then, the conditional outcome regression over all the
+training sets are estimated using the \code{super_learner}. The estimated
 outcome regressions are then used to estimate the expected difference in
-potential outcomes across treatment groups for each individual in their
-respective validation sets. Univariate linear regressions are then regressed
-over the predicted potential outcomes in the validation set, and the
-influence curves of all observations is computed as well. \code{tibbles} of
-biomarker coefficients and influence curves are returned for each validation
-set.
+potential outcomes across treatment conditions for each individual in their
+respective validation set. The variable importance parameters are then
+estimated in the validation sets, along with their empirical efficient
+influence functions.
 }
 \keyword{internal}

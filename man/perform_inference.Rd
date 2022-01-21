@@ -16,12 +16,12 @@ statistics, and (adjusted) p-values for each biomarker. The biomarkers
 are ordered by significance.
 }
 \description{
-\code{perform_inference()} performs valid inference using the estimated
-biomarker coefficients and the standard errors computed using the
-cross-validated influence curves. The computed test statistics are
-asymptotically Normal with mean zero under the null hypothesis. The resulting
-p-values for the two-sided tests are subsequently corrected for multiple
-testing using the Benjamini-Hochberg method to control the False Discovery
-Rate, and Holm's procedure to compute control the Family-Wise Error Rate.
+\code{perform_inference()} tests whether each biomarker's variable importance
+parameter is significantly different from zero. The computed test
+statistics are asymptotically Normal with mean zero under the null
+hypothesis. The resulting p-values for the two-sided tests are subsequently
+corrected for multiple testing using the Benjamini-Hochberg method to
+control the False Discovery Rate, and Holm's procedure to compute control
+the Family-Wise Error Rate.
 }
 \keyword{internal}

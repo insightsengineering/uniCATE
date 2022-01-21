@@ -4,9 +4,9 @@
 #'   modify treatment effects in randomized control trials with continuous or
 #'   binary outcomes. The strength of each \code{biomarkers}' treatment effect
 #'   modification is captured by an unknown variable importance parameter
-#'   defined as the slope of the marginal conditional average treatment effect's
-#'   linear approximation. In all but pathological cases, the larger the
-#'   absolute value of this parameter, the greater the treatment effect
+#'   defined as the slope of the univariate conditional average treatment
+#'   effect's linear approximation. In all but pathological cases, the larger
+#'   the absolute value of this parameter, the greater the treatment effect
 #'   modification. \code{unicate()} implements assumption-lean, cross-validated
 #'   inference procedures about these variable importance parameters based on
 #'   semiparametric theory. Assuming that the \code{biomarkers} have non-zero
@@ -51,10 +51,9 @@
 #' @return A \code{tibble} with rows corresponding to the specified
 #'   \code{biomarkers}. Each row contains an estimate of the
 #'   treatment-modification variable importance parameter, its standard error,
-#'   and the nominal and adjusted p-values of the accompanying test. FDR and
-#'   FWER adjustments are performed using the \code{\link[stats]{p.adjust}}
-#'   function with the \code{method} argument set to \code{"BH"} and
-#'   \code{"holm"}, respectively. The \code{biomarkers} are ordered by
+#'   z-score, and the nominal and adjusted p-values of the accompanying test.
+#'   FDR and FWER adjustments are performed using the Benjamini-Hochberg method
+#'   and Holm's procedure, respectively. The \code{biomarkers} are ordered by
 #'   significance.
 #'
 #' @export
