@@ -1,0 +1,85 @@
+---
+title: "Using uniCATE"
+author: "[Philippe Boileau](https://pboileau.ca)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using uniCATE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(uniCATE)
+```
+
+# Summary
+
+`uniCATE` implements statistical inference procedures for variable importance
+measures that assess the treatment effect modification capabilities of
+individual pre-treatment biomarkers in high-dimensional randomized control
+trials. These parameters, which we dub the
+*univariate conditional average treatment effects*, are reasonable indicators of
+treatment effect modification in all but pathological biomarker-outcome
+relationships, and can therefore be used to identify predictive biomarkers.
+Assumption-lean estimation and testing procedures based on semiparametric theory
+are made available for continuous, binary, and right-censored time-to-event
+outcomes.
+
+# Statement of Need
+
+Modern semiparametric methods rely on complex statistical theory that is beyond
+the training afforded to many of the clinical scientists most interested in
+their use. These methods also rely on modern supervised machine learning
+algorithms and data-adaptive techniques, like cross-validation, to produce
+assumption-lean inference, further raising the barrier for adoption. The method
+proposed in our manuscript is no different. The `uniCATE` package therefore
+provides a rigorously-tested, open-source implementation of this methodology
+that is easy to use.
+
+
+# `uniCATE` in Action
+
+The `uniCATE` package implements statistical inference procedures targeting
+biomarkers' univariate conditional average treatment effects for a range of
+outcome types. The following subsections detail the assumed data-generating
+processes for the supported outcome classes, their target parameters, and
+examples on simulated data.
+
+## Continuous Outcomes
+
+### Setup
+
+Define the full-data random vector. Define the observed data random vector.
+
+### Target Parameter
+
+Define the causal parameter, and then the statistical parameter. In an RCT,
+generally identified. See papers for full details and discussion.
+
+### Example
+
+Simulated example from README.
+
+## Binary Outcomes
+
+### Setup
+
+### Target Causal Parameter
+
+### Example
+
+## Survival Outcomes
+
+### Setup
+
+### Target Causal Parameter
+
+### Example
