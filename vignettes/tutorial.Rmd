@@ -111,14 +111,14 @@ Under conditions that are generally satisfied in the clinical trial setting, we
 find that $\Psi(P_X)$ can be estimated from realizations of the observed
 data-generating distribution $P_0$. Further, the estimator of this parameter
 implemented in the `unicate()` function is asymptotically linear, permitting
-valid statistical inference in most RCT scenarios. In-depth details are provided
-in the manuscript.
+valid statistical inference in most RCT scenarios. Details are provided in the
+manuscript.
 
 ### Example
 
-We simulate some randomized control trial data to demonstrate the application
-of `unicate()`. We refrain from generating a high-dimensional vector of
-biomarkers for computational convenience.
+We simulate some RCT data to demonstrate the application of `unicate()`. We
+refrain from generating a high-dimensional vector of biomarkers for
+computational convenience.
 
 ```{r load-pkgs, eval=FALSE}
 library(dplyr)
@@ -187,14 +187,38 @@ predictive.
 
 ### Setup
 
-The assumed data-generating process is identical to that of the continuous
-outcome, save that $Y^{(0)}$ and $Y^{(1)}$ are binary random vectors.
+The assumed full-data and observed data-generating processes are identical to
+those of the continuous outcome, save that $Y^{(0)}, Y^{(1)}$ and $Y$ are binary
+random variables.
 
 ### Target Causal Parameter
 
+The full-data parameter of interest is slightly modified from the continuous
+outcome scenario to reflect the use of a binary outcome. We instead target
+$\Psi(P_X) = (\Psi_1(P_X), \ldots, \Psi_p(P_X))$ where
+$$
+\Psi_j(P_X) =
+\frac{\mathbb{E}_{P_X}\left[\left(\mathbb{P}_{P_X}(Y^{(1)} =1| W)
+  - \mathbb{P}_{P_X}(Y^{(0)} = 1| W)\right)B_j\right]}
+{\mathbb{E}_{P_X}\left[B_j^2\right]}
+$$
+for centered biomarkers indexed by $j = 1, \ldots, p$.  Assuming a linear
+relationship between the difference of the potential outcomes' probability of
+success and the covariates, this variable importance parameter consists of the
+simple linear regression coefficients of the difference in the conditional
+potential outcome success probabilities regressed on each biomarker. While the
+true relationship between potential outcome probabilities and covariates is
+unlikely to be linear, this parameter is telling of biomarkers' predictive
+capacities. Biomarkers with the largest absolute values will correspond to those
+that meaningfully modify the treatment effect.
 
+As in the continuous case, this parameter can generally be estimated from
+the observed RCT data under non-stringent assumptions about the data-generating
+process. Inference is in fact based on the same estimator used for continuous
+outcomes, and so we again use `unicate()` to learn about the biomarkers'
+marginal importance in regards to binary treatment effect modification. For
+details, please review the manuscript.
 
-### Example
 
 ## Survival Outcomes
 
