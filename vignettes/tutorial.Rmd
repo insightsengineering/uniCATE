@@ -17,9 +17,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, echo=FALSE}
 library(uniCATE)
+library(dplyr)
 ```
+
 
 # Background
 
@@ -68,22 +70,129 @@ applied to simulated data.
 
 ### Setup
 
-Define the full-data random vector. Define the observed data random vector.
+Suppose we perform a randomized control trial (RCT) where each patient is
+represented by one of $n$ independent and identically distributed (i.i.d.)
+copies of the full-data random vector $X_i = (W_i, A_i, Y_i^{(0)}, Y_i^{(1)})$
+distributed according $P_X$, $i = 1, \ldots, n$. Here, $W_i = (V_i, B_i)$ is a
+$(q+p)$-length random vector of $q$ pre-treatment covariates, $V$, like location
+and nationality, and $p$ pre-treatment biomarkers, $B$, such as gene expression
+data, $A$ is a binary random variable representing treatment assignment, and
+$Y^{(1)}$ and $Y^{(0)}$ are continuous random variables corresponding to the
+potential outcomes of clinical interest under both treatment and control
+conditions, respectively. Of course, we do not have access to patients'
+full-data random vector since we only get to observe the outcomes associated
+with their treatment assignments. These $n$ i.i.d. random observations are
+represented by $O_i = (W_i, A_i, Y_i)$ distributed according to the unknown
+data-generating distribution $P_0$. $W_i$ and $A_i$ are defined as before, and
+$Y_i = Y_i^{(0)}(1-A_i) + Y^{(1)}_iA_i$. Throughout the rest of the tutorial,
+we drop the index $i$ where possible to simplify notation.
 
 ### Target Parameter
 
-Define the causal parameter, and then the statistical parameter. In an RCT,
-generally identified. See papers for full details and discussion.
+Ideally, we would like to estimate the full-data parameter
+$\Psi(P_x) = (\Psi_1(P_X), \ldots, \Psi_p(P_X)$ corresponding to $p$-length
+random vector whose elements are defined as
+$$
+\Psi_j(P_X) = 
+\frac{\mathbb{E}_{P_X}\left[\left(Y^{(1)}-Y^{(0)}\right)B_j\right]}
+{\mathbb{E}_{P_X}\left[B_j^2\right]}
+$$
+for $j=1, \ldots, p$ where we assume that the biomarkers are centered at zero.
+Under the assumption that the mean difference in potential outcomes is a linear
+function of $B_j$, $\Psi(P_X)$ is the vector of expected simple linear
+regression coefficients produced by regressing the difference in potential
+outcomes against each biomarker. While the true relationship between the
+difference of potential outcomes and a predictive biomarker is almost surely
+nonlinear, $\Psi(P_X)$ is a generally informative target of inference. These
+parameters are reasonable indicators of all but pathological relationships
+between biomarkers and potential outcome differences.
+
+Under conditions that are generally satisfied in the clinical trial setting, we
+find that $\Psi(P_X)$ can be estimated from realizations of the observed
+data-generating distribution $P_0$. Further, the estimator of this parameter
+implemented in the `unicate()` function is asymptotically linear, permitting
+valid statistical inference in most RCT scenarios. In-depth details are provided
+in the manuscript.
 
 ### Example
 
-Simulated example from README.
+We simulate some randomized control trial data to demonstrate the application
+of `unicate()`. We refrain from generating a high-dimensional vector of
+biomarkers for computational convenience.
+
+```{r load-pkgs, eval=FALSE}
+library(dplyr)
+library(uniCATE)
+```
+```{r cont-sim}
+# simulate n trial participants
+n <- 200
+
+# simulate randomized control trial data
+set.seed(514)
+data <- tibble(
+    B1 = rnorm(n, mean = 2, sd = 0.2),
+    B2 = rnorm(n, mean = -2, sd = 0.2),
+    B3 = rnorm(n, mean = 0, sd = 0.1),
+    B4 = rnorm(n, mean = 0, sd = 0.1),
+    V1 = rbinom(n, 1, 0.4),
+    V2 = rnorm(n),
+    A = rbinom(n, 1, 0.5),
+    Y = A + V1 - V2 + 2 * B1 * A + B2 * A
+)
+
+# define the propensity scores
+propensity_score_ls <- list("1" = 0.5, "0" = 0.5)
+```
+
+This simulated trial is made up of 200 participants. Four pre-treatment
+biomarkers and two pre-treatment covariates are generated for each participant.
+Observations are then randomly assigned with equal probability to either the
+treatment or the control condition. From the definition of the outcome, it is
+clear that `B1` and `B2` are predictive biomarkers. Finally, we define the
+`propensity_score_ls`, a list indicating the probability that any given patient
+is assigned to the treatment condition, `"1"`, or the control condition, `"0"`.
+
+We now apply `unicate()` to this data to recover the variable importance
+measures of the biomarkers.
+
+```{r unicate-cont}
+unicate(
+  data,
+  outcome = "Y",
+  treatment = "A",
+  covariates = c("B1", "B2", "B3", "B4", "V1", "V2"),
+  biomarkers =  c("B1", "B2", "B3", "B4"),
+  propensity_score_ls = propensity_score_ls
+)
+```
+
+The output is a table summarizing the variable importance parameter estimates
+of each biomarker (`coef`), the estimators' standard errors (`se`), the
+two-sided hypothesis tests' Z-scores (`z`), and the tests' (adjusted) p-values
+(`p_value`, `p_value_bh`, and `p_value_holm`).
+
+As expected, `B1` modifies the treatment effect the most, followed by `B2`. Both
+of their variable importance measures are found to be significantly different
+from zero (using a 5% significance threshold) at the nominal level and after
+adjusting for multiple testing. As patients' `B1` and `B2` values marginally
+increase, so too does their benefit from being assigned to the treatment
+condition over the control condition. The remaining biomarkers' variable
+importance parameters are not significantly different from zero at the same
+level of significance. There is insufficient evidence to categorize them as
+predictive.
+
 
 ## Binary Outcomes
 
 ### Setup
 
+The assumed data-generating process is identical to that of the continuous
+outcome, save that $Y^{(0)}$ and $Y^{(1)}$ are binary random vectors.
+
 ### Target Causal Parameter
+
+
 
 ### Example
 
