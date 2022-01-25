@@ -39,7 +39,9 @@ Suggests:
     polspline,
     xgboost,
     ranger,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
 Imports: 
     dplyr,
     assertthat,
@@ -52,3 +54,4 @@ Imports:
     tibble,
     future
 Config/testthat/edition: 3
+VignetteBuilder: knitr
