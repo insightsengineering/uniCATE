@@ -2,6 +2,7 @@
 title: "Using uniCATE"
 author: "[Philippe Boileau](https://pboileau.ca)"
 date: "`r Sys.Date()`"
+bibliography: ../inst/REFERENCES.bib
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Using uniCATE}
@@ -20,38 +21,48 @@ knitr::opts_chunk$set(
 library(uniCATE)
 ```
 
-# Summary
+# Background
 
-`uniCATE` implements statistical inference procedures for variable importance
-measures that assess the treatment effect modification capabilities of
-individual pre-treatment biomarkers in high-dimensional randomized control
-trials. These parameters, which we dub the
-*univariate conditional average treatment effects*, are reasonable indicators of
-treatment effect modification in all but pathological biomarker-outcome
-relationships, and can therefore be used to identify predictive biomarkers.
-Assumption-lean estimation and testing procedures based on semiparametric theory
-are made available for continuous, binary, and right-censored time-to-event
-outcomes.
+Predictive biomarkers are biometric measurements that subdivide patient
+populations into groups which draw differing benefits from a given treatment.
+These biomarkers therefore play an important role in precision medicine: as
+indicators of treatment effect modification, they can inform patient treatment
+decisions. Predictive biomarkers may also inform drug target discovery, leading
+to an improved understanding of novel medications' functioning.
 
-# Statement of Need
+The discovery of predictive biomarkers through statistical techniques has, to
+date, largely been a byproduct of optimal treatment rule estimation. As implied
+by its name, this tasks consists of learning which treatment would most benefit
+a patient given their characteristics. These characteristics could include, but
+are not limited to, potentially predictive biomarkers. When interpretable
+statistical learning methods are used to estimate these rules, biomarkers found
+to be "important" might be declared predictive. For example, estimation methods
+based on regularized linear regression might define a biomarker as predictive if
+its linear regression coefficient estimate is non-zero [@tian2014].
 
-Modern semiparametric methods rely on complex statistical theory that is beyond
-the training afforded to many of the clinical scientists most interested in
-their use. These methods also rely on modern supervised machine learning
-algorithms and data-adaptive techniques, like cross-validation, to produce
-assumption-lean inference, further raising the barrier for adoption. The method
-proposed in our manuscript is no different. The `uniCATE` package therefore
-provides a rigorously-tested, open-source implementation of this methodology
-that is easy to use.
+While this approach to predictive biomarker discovery works well in traditional
+asymptotic settings, it is not so when the number of biomarkers is similar to
+or larger than the number of patients in a study. These methods offer no
+guarantee of false positive rate control [@tian2014;@chen2017], which can have
+severe consequences in practice. The inclusion of false positive biomarkers in
+diagnostic assays decreases their clinical utility, and already limited
+resources are wasted on biological validation experiments of duds in drug target
+discovery applications. Patient outcomes are ultimately negatively effected.
+
+We proposed, in recent work, a variable importance parameter that directly
+measures individual biomarkers' roles in treatment effect modification. The
+methodology, dubbed *uniCATE*, relies on semiparametric theory to perform
+assumption-lean inference about this parameter. We demonstrated that our
+procedure controls the rate of false discoveries in high-dimensional randomized
+control trials, allowing for the accurate identification of predictive
+biomarkers. This methodology is implemented in the `uniCATE` package. 
 
 
 # `uniCATE` in Action
 
-The `uniCATE` package implements statistical inference procedures targeting
-biomarkers' univariate conditional average treatment effects for a range of
-outcome types. The following subsections detail the assumed data-generating
-processes for the supported outcome classes, their target parameters, and
-examples on simulated data.
+This section provides a high-level overview of the statistical methodology for
+various outcome types, and includes brief tutorials of the package's methods
+applied to simulated data.
 
 ## Continuous Outcomes
 
