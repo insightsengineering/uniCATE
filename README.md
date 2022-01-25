@@ -54,16 +54,10 @@ identifies these biomarkers as effect modifiers.
 # load the required libraries
 library(uniCATE)
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 library(sl3)
+```
 
+``` r
 # set the seed for reproducibility
 set.seed(514)
 

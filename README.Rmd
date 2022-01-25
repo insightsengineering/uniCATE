@@ -60,12 +60,18 @@ We simulate a randomized control trial in which there is a heterogeneous
 treatment effect for biomarkers 1 and 2. `unicate()` successfully identifies
 these biomarkers as effect modifiers.
 
-```{r example}
+```{r setup, include=FALSE}
+library(uniCATE)
+library(dplyr)
+library(sl3)
+```
+```{r fake-setup, eval=FALSE}
 # load the required libraries
 library(uniCATE)
 library(dplyr)
 library(sl3)
-
+```
+```{r example}
 # set the seed for reproducibility
 set.seed(514)
 
