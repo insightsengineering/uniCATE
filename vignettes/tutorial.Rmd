@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, echo=FALSE}
+```{r setup, include=FALSE}
 library(uniCATE)
 library(dplyr)
 ```
@@ -90,7 +90,7 @@ we drop the index $i$ where possible to simplify notation.
 ### Target Parameter
 
 Ideally, we would like to estimate the full-data parameter
-$\Psi(P_x) = (\Psi_1(P_X), \ldots, \Psi_p(P_X)$ corresponding to $p$-length
+$\Psi(P_x) = (\Psi_1(P_X), \ldots, \Psi_p(P_X))$ corresponding to $p$-length
 random vector whose elements are defined as
 $$
 \Psi_j(P_X) = 
@@ -110,9 +110,9 @@ between biomarkers and potential outcome differences.
 Under conditions that are generally satisfied in the clinical trial setting, we
 find that $\Psi(P_X)$ can be estimated from realizations of the observed
 data-generating distribution $P_0$. Further, the estimator of this parameter
-implemented in the `unicate()` function is asymptotically linear, permitting
-valid statistical inference in most RCT scenarios. Details are provided in the
-manuscript.
+implemented in the `unicate()` function is consistent and asymptotically linear,
+permitting valid statistical inference in most RCT scenarios. Details are
+provided in the manuscript.
 
 ### Example
 
@@ -191,7 +191,7 @@ The assumed full-data and observed data-generating processes are identical to
 those of the continuous outcome, save that $Y^{(0)}, Y^{(1)}$ and $Y$ are binary
 random variables.
 
-### Target Causal Parameter
+### Target Parameter
 
 The full-data parameter of interest is slightly modified from the continuous
 outcome scenario to reflect the use of a binary outcome. We instead target
@@ -217,13 +217,66 @@ the observed RCT data under non-stringent assumptions about the data-generating
 process. Inference is in fact based on the same estimator used for continuous
 outcomes, and so we again use `unicate()` to learn about the biomarkers'
 marginal importance in regards to binary treatment effect modification. For
-details, please review the manuscript.
+details, please review the manuscript. We do not provide an example since it
+would be virtually identical to that given in the previous subsection.
 
 
 ## Survival Outcomes
 
 ### Setup
 
-### Target Causal Parameter
+We again perform an RCT where the outcome of interest is a potentially
+right-censored time-to-event outcome. We consider $n$ i.i.d. copies of the
+full-data random vector $X = (W, A, T^{(0)}, C^{(0)}, T^{(1)}, C^{(1)})$ 
+distributed according to $P_X$ where $W$ and $A$ are defined as in the
+continuous outcome case. $T^{(0)}$ and $T^{(1)}$ correspond to the failure times
+under control and treatment conditions, and $C^{(0)}$ and $C^{(1)}$ correspond
+to the censoring times under control and treatment conditions. As before, the
+full-data random vectors are never observed; instead, we observe $n$ i.i.d.
+copies of $O = (W, A, \Delta, \tilde{T})$ distributed according to $P_0$. Here,
+$\Delta$ is a censoring indicator and
+$\tilde{T}=(1-A)\;\text{min}(T^{(0)}, C^{(0)})+A\;\text{min}(T^{(1)}, C^{(1)})$
+is the last measurement time.
+
+### Target Parameter
+
+In this scenario, our variance important parameter is a function of the
+treatment effect on survival at time $t_0$. Recall that survival at time
+$t_0$ in the full-data is defined as
+$S^{(A)}(t_0|W) = \mathbb{P}_{P_X}(T^{(A)} > t_0 | W)$. The target parameter
+is then represented by
+$\Psi(P_X; t_0) = (\Psi_1(P_X; t_0), \ldots, \Psi_p(P_X; t_0))$ where
+$$
+\Psi_j(P_X;t_0) =
+\frac{\mathbb{E}_{P_X}\left[\left(S^{(1)}(t_0|W)-S^{(0)}(t_0|W)\right)B_j\right]}
+{\mathbb{E}_{P_X}\left[B_j^2\right]}
+$$
+for centered biomarkers indexed by $j = 1, \ldots, p$. Similarly to the binary
+outcome scenario, this variable importance measure assumes a linear relationship
+between the contrast of survival outcomes at time $t_0$ and each biomarker,
+consisting of the simple linear regression coefficients of this contrast
+regressed on each biomarker. Again, while the true relationship between the
+difference in survival probabilities and biomarkers is unlikely to be linear,
+it provides a metric by which to evaluate biomarkers' abilities to modify
+treatment effects on the absolute scale.
+
+As with the other variable importance metrics, this parameter can be
+estimated from the observed data in a RCT. The estimator of this parameter is 
+implemented in the `sunicate()` function. Under the assumption that the
+censoring mechanism is consistently estimated by the our procedure, the
+`sunicate()` estimator is consistent and asymptotically linear. Valid
+statistical inference about the strength of biomarkers' treatment effect
+modification is therefore made possible with survival outcomes. 
+
 
 ### Example
+
+
+# Session Information
+
+```{r}
+sessionInfo()
+```
+
+
+# References
