@@ -56,16 +56,16 @@
 #' @importFrom dplyr bind_rows as_tibble
 #'
 #' @keywords internal
-estimate_univariate_survival_cates <- function(long_data,
-                                               event,
-                                               censor,
-                                               treatment,
-                                               biomarkers,
-                                               cond_surv_haz_super_learner,
-                                               cond_censor_haz_super_learner,
-                                               propensity_score_ls,
-                                               v_folds,
-                                               parallel) {
+estimate_univariate_s_cates <- function(long_data,
+                                        event,
+                                        censor,
+                                        treatment,
+                                        biomarkers,
+                                        cond_surv_haz_super_learner,
+                                        cond_censor_haz_super_learner,
+                                        propensity_score_ls,
+                                        v_folds,
+                                        parallel) {
 
   # split the data into folds
   folds <- origami::make_folds(
@@ -339,7 +339,8 @@ hold_out_calculation_survival <- function(fold,
         dplyr::bind_rows() %>%
         dplyr::mutate(time = times)
     }
-  ) %>% dplyr::bind_rows()
+  ) %>%
+    dplyr::bind_rows()
 
   # create the treatment dataset and prediction task
   valid_data_treat <- surv_valid_data

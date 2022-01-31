@@ -15,7 +15,7 @@ test_that("sunicate() identifies the effect modified in a simulated example", {
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-2 - 3 * treat * biom1))) +
+    (t < 9) / (1 + exp(2 + 3 * treat * biom1)) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15

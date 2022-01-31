@@ -93,7 +93,7 @@ sunicate <- function(data,
   )
 
   # compute CV coefficients and CV influence curves
-  cv_ls <- estimate_univariate_survival_cates(
+  cv_ls <- estimate_univariate_s_cates(
     long_data, event, censor, treatment, biomarkers,
     cond_surv_haz_super_learner, cond_censor_haz_super_learner,
     propensity_score_ls, v_folds, parallel

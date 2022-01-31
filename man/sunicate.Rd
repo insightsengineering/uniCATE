@@ -2,7 +2,8 @@
 % Please edit documentation in R/sunicate.R
 \name{sunicate}
 \alias{sunicate}
-\title{Univariate Conditional Average Treatment Effect Estimation For Right-Censored Time-To-Event Outcomes}
+\title{Univariate Conditional Average Treatment Effect Estimation For Right-Censored
+Time-To-Event Outcomes}
 \usage{
 sunicate(
   data,

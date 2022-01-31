@@ -16,7 +16,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-2 - 3 * treat * biom1))) +
+    (t < 9) / (1 + exp(2 + 3 * treat * biom1)) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -144,7 +144,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
 })
 
-test_that("estimate_univariate_survival_cates() returns a vector with estimated
+test_that("estimate_univariate_s_cates() returns a vector with estimated
            lm coefficients and a table of influence curves", {
   library(dplyr)
   library(sl3)
@@ -161,7 +161,7 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-2 - 3 * treat * biom1))) +
+    (t < 9) / (1 + exp(2 + 3 * treat * biom1)) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -253,7 +253,7 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
   )
 
   # apply the cross-validation function
-  res_ls <- estimate_univariate_survival_cates(
+  res_ls <- estimate_univariate_s_cates(
     long_data = long_data,
     event = "failure",
     censor = "censor",

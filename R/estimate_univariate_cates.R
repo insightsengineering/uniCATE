@@ -291,7 +291,7 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     covariates = covar_names,
     outcome = outcome
   )
-  valid_data$Y_hat_treat <- sl_fit$predict(pred_task_treat)
+  valid_data$y_hat_treat <- sl_fit$predict(pred_task_treat)
 
   valid_data_cont <- valid_data
   valid_data_cont[treatment] <- names(propensity_score_ls)[2]
@@ -304,7 +304,7 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     covariates = covar_names,
     outcome = outcome
   )
-  valid_data$Y_hat_cont <- sl_fit$predict(pred_task_cont)
+  valid_data$y_hat_cont <- sl_fit$predict(pred_task_cont)
 
   # apply the doubly-robust A-IPTW transform to each observation for each
   # treatment level in valid_data
@@ -315,18 +315,18 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
   # return the difference of the AIPTW transformed treatment and control
   # estimates
   valid_data <- valid_data %>%
-    dplyr::mutate(Y_diff = .data$Y_aiptw_treat - .data$Y_aiptw_cont) %>%
-    dplyr::select(.data$Y_diff, dplyr::all_of(biomarkers)) %>%
+    dplyr::mutate(y_diff = .data$y_aiptw_treat - .data$y_aiptw_cont) %>%
+    dplyr::select(.data$y_diff, dplyr::all_of(biomarkers)) %>%
     tibble::as_tibble(.name_repair = "minimal") %>%
     scale(center = TRUE, scale = FALSE) %>%
     as.data.frame()
 
   # compute the coef estimates, and the influence functions of each observation
   # for each biomarker
-  Y_diff <- as.vector(
-    base::scale(valid_data$Y_diff, center = TRUE, scale = FALSE)
+  y_diff <- as.vector(
+    base::scale(valid_data$y_diff, center = TRUE, scale = FALSE)
   )
-  valid_data <- valid_data %>% dplyr::select(-Y_diff)
+  valid_data <- valid_data %>% dplyr::select(-y_diff)
   coefs_and_ic_ls <- valid_data %>%
     purrr::map(
       function(bio) {
@@ -336,10 +336,10 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
 
         # estimate the best linear approximation using the estimating equation
         # formula
-        bio_coef <- sum(Y_diff * bio) / sum(bio^2)
+        bio_coef <- sum(y_diff * bio) / sum(bio^2)
 
         # compute the unscaled empirical IC of each observation
-        unsc_inf_curves <- (Y_diff - bio_coef * bio) * bio
+        unsc_inf_curves <- (y_diff - bio_coef * bio) * bio
 
         # return the beta coefficients and the influence curves
         return(list(
@@ -420,39 +420,39 @@ apply_aiptw_transform <- function(data, outcome, treatment, propensity_score_ls,
                                   outcome_type) {
   data %>%
     dplyr::mutate(
-      Y_aiptw_treat = dplyr::if_else(
+      y_aiptw_treat = dplyr::if_else(
         !!rlang::sym(treatment) == names(propensity_score_ls)[1],
-        .data$Y_hat_treat +
+        .data$y_hat_treat +
           (1 / propensity_score_ls[[1]]) *
-            (!!rlang::sym(outcome) - .data$Y_hat_treat),
-        .data$Y_hat_treat
+            (!!rlang::sym(outcome) - .data$y_hat_treat),
+        .data$y_hat_treat
       ),
-      Y_aiptw_treat = dplyr::if_else(
-        outcome_type == "binomial" & .data$Y_aiptw_treat < 0,
+      y_aiptw_treat = dplyr::if_else(
+        outcome_type == "binomial" & .data$y_aiptw_treat < 0,
         0,
-        .data$Y_aiptw_treat
+        .data$y_aiptw_treat
       ),
-      Y_aiptw_treat = dplyr::if_else(
-        outcome_type == "binomial" & .data$Y_aiptw_treat > 1,
+      y_aiptw_treat = dplyr::if_else(
+        outcome_type == "binomial" & .data$y_aiptw_treat > 1,
         1,
-        .data$Y_aiptw_treat
+        .data$y_aiptw_treat
       ),
-      Y_aiptw_cont = dplyr::if_else(
+      y_aiptw_cont = dplyr::if_else(
         !!rlang::sym(treatment) == names(propensity_score_ls)[2],
-        .data$Y_hat_cont +
+        .data$y_hat_cont +
           (1 / propensity_score_ls[[2]]) *
-            (!!rlang::sym(outcome) - .data$Y_hat_cont),
-        .data$Y_hat_cont
+            (!!rlang::sym(outcome) - .data$y_hat_cont),
+        .data$y_hat_cont
       ),
-      Y_aiptw_cont = dplyr::if_else(
-        outcome_type == "binomial" & .data$Y_aiptw_cont < 0,
+      y_aiptw_cont = dplyr::if_else(
+        outcome_type == "binomial" & .data$y_aiptw_cont < 0,
         0,
-        .data$Y_aiptw_cont
+        .data$y_aiptw_cont
       ),
-      Y_aiptw_cont = dplyr::if_else(
-        outcome_type == "binomial" & .data$Y_aiptw_cont > 1,
+      y_aiptw_cont = dplyr::if_else(
+        outcome_type == "binomial" & .data$y_aiptw_cont > 1,
         1,
-        .data$Y_aiptw_cont
+        .data$y_aiptw_cont
       )
     )
 }
