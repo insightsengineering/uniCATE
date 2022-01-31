@@ -42,7 +42,7 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/spelling.yaml@main
   style:
     if: github.event_name == 'pull_request'
-    name: Spell Check 🆎
+    name: Style Check 👗
     uses: insightsengineering/r.pkg.template/.github/workflows/style.yaml@main
   links:
     if: github.event_name == 'pull_request'
