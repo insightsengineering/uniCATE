@@ -28,8 +28,10 @@ perform_inference <- function(biomarkers_tbl) {
       z = .data$coef / .data$se,
       p_value = purrr::map_dbl(
         .data$z, function(z_stat) {
-          2 * min(stats::pnorm(z_stat),
-                  stats::pnorm(z_stat, lower.tail = FALSE))
+          2 * min(
+            stats::pnorm(z_stat),
+            stats::pnorm(z_stat, lower.tail = FALSE)
+          )
         }
       ),
       p_value_bh = stats::p.adjust(.data$p_value, method = "BH"),
