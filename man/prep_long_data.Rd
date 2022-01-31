@@ -44,7 +44,7 @@ interest in \code{data}. \code{biomarkers} must be a subset of
 
 \item{time_cutoff}{A \code{numeric} representing the time at which to assess
 the biomarkers' importance with respect to the outcome. If not specified,
-this value is set to the maximum value in the \code{data} argument's
+this value is set to the median value in the \code{data} argument's
 \code{relative_time} variable.}
 }
 \value{

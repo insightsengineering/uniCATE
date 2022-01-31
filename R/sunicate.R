@@ -38,7 +38,7 @@
 #'   \code{covariates}.
 #' @param time_cutoff A \code{numeric} representing the time at which to assess
 #'   the biomarkers' importance with respect to the outcome. If not specified,
-#'   this value is set to the maximum value in the \code{data} argument's
+#'   this value is set to the median value of the \code{data} argument's
 #'   \code{relative_time} variable.
 #' @param cond_surv_haz_super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
 #'   object used to estimate the conditional event hazard model. If set to

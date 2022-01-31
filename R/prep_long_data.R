@@ -26,7 +26,7 @@
 #'   \code{covariates}.
 #' @param time_cutoff A \code{numeric} representing the time at which to assess
 #'   the biomarkers' importance with respect to the outcome. If not specified,
-#'   this value is set to the maximum value in the \code{data} argument's
+#'   this value is set to the median value in the \code{data} argument's
 #'   \code{relative_time} variable.
 #'
 #' @return A longitudinal \code{tibble} containing only the event indicator
@@ -39,6 +39,7 @@
 #' @importFrom tibble is_tibble
 #' @importFrom dplyr setequal mutate filter pull select all_of bind_rows
 #' @importFrom rlang sym := !!
+#' @importFrom stats median
 #'
 #' @keywords internal
 prep_long_data <- function(
@@ -171,13 +172,19 @@ prep_long_data <- function(
     )
 
   # transform the data from a wide format to a longitudinal format
+
+  # figure out the times to use in the wide format table, as well as the cutoff
   times <- data %>% dplyr::pull(relative_time)
-  if (!is.null(time_cutoff)) {
+  if (is.null(time_cutoff)) {
+    time_cutoff <- stats::median(times)
+  } else {
     if (max(times) < time_cutoff) {
       times <- c(times, time_cutoff)
     }
   }
   times <- times %>% unique() %>% sort()
+
+  # extend each observation's entry individually
   long_data <- lapply(
     seq_len(nrow(data)),
     function(idx) {
@@ -212,9 +219,8 @@ prep_long_data <- function(
   ) %>%
     dplyr::bind_rows()
 
-  # apply time cutoff if necessary
-  if (!is.null(time_cutoff))
-    long_data <- long_data %>% dplyr::filter(.data$time <= time_cutoff)
+  # apply the time cutoff
+  long_data <- long_data %>% dplyr::filter(.data$time <= time_cutoff)
 
   return(long_data)
 

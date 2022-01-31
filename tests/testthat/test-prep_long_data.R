@@ -1,5 +1,5 @@
-test_that("A wide data.frame of 3 rows with 3 unique relative times produces a
-          tibble with 6 rows",
+test_that("A wide data.frame of 3 rows with 2 unique relative times produces a
+          tibble with 5 rows",
 {
   # define the dummy data
   data <- data.frame(
@@ -24,14 +24,13 @@ test_that("A wide data.frame of 3 rows with 3 unique relative times produces a
   )
 
   # check that 6 rows are generated
-  expect_equal(nrow(long_data), 6)
+  expect_equal(nrow(long_data), 5)
 
   # check that the transformed data is a tibble object
   expect_s3_class(long_data, "tbl_df")
 })
 
-test_that("The observation with latest relative time is represented at every
-          unique time",
+test_that("The observation with latest relative time is represented twice",
 {
   # define the dummy data
   data <- tibble(
@@ -57,11 +56,10 @@ test_that("The observation with latest relative time is represented at every
 
   # check that the observation with the latest relative time is represented at
   # each unique relative time in the dataset
-  unique_times <- data %>% pull(time) %>% unique() %>% sort()
   obs_3_times <- long_data %>%
     filter(observation_id == 3) %>%
     pull(time)
-  expect_equal(obs_3_times, unique_times)
+  expect_equal(obs_3_times, c(1, 2))
 })
 
 test_that("Only data.frame or tibble objects are accepted by the data argument",
@@ -363,7 +361,7 @@ test_that("An error is reported when the censor variable is not a
   )
 })
 
-test_that("An error is thrown for observations with an event that are censored",
+test_that("An error is thrown for observations with an event that is censored",
 {
 
   data <- tibble(
@@ -634,7 +632,8 @@ test_that("Obs 3 isn't censored and doesn't have an event",
     relative_time = "time",
     treatment = "treat",
     covariates = c("biom1", "biom2", "biom3"),
-    biomarkers = c("biom1", "biom2", "biom3")
+    biomarkers = c("biom1", "biom2", "biom3"),
+    time_cutoff = 3
   )
 
   # check that the third observation's event and censor status are zero at t3
