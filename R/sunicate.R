@@ -71,21 +71,19 @@
 #'   significance.
 #'
 #' @export
-sunicate <- function(
-  data,
-  event,
-  censor,
-  relative_time,
-  treatment,
-  covariates,
-  biomarkers,
-  time_cutoff = NULL,
-  cond_surv_haz_super_learner = NULL,
-  cond_censor_haz_super_learner = NULL,
-  propensity_score_ls,
-  v_folds = 5L,
-  parallel = FALSE
-) {
+sunicate <- function(data,
+                     event,
+                     censor,
+                     relative_time,
+                     treatment,
+                     covariates,
+                     biomarkers,
+                     time_cutoff = NULL,
+                     cond_surv_haz_super_learner = NULL,
+                     cond_censor_haz_super_learner = NULL,
+                     propensity_score_ls,
+                     v_folds = 5L,
+                     parallel = FALSE) {
 
   # assess the data quality and formatting, and prepare it for analysis
   long_data <- prep_long_data(

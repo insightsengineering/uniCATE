@@ -42,10 +42,8 @@
 #' @importFrom stats quantile
 #'
 #' @keywords internal
-prep_long_data <- function(
-  data, event, censor, relative_time, treatment, covariates, biomarkers,
-  time_cutoff = NULL
-) {
+prep_long_data <- function(data, event, censor, relative_time, treatment, covariates, biomarkers,
+                           time_cutoff = NULL) {
 
   # check that data is a data.frame or tibble object
   assertthat::assert_that(
@@ -128,8 +126,10 @@ prep_long_data <- function(
   assertthat::assert_that(
     dplyr::setequal(unique(dplyr::pull(data, event)), c(0, 1)) &
       is.numeric(dplyr::pull(data, event)),
-    msg = paste0("event argument should correspond to a numeric, binary ",
-                 "variable in the data")
+    msg = paste0(
+      "event argument should correspond to a numeric, binary ",
+      "variable in the data"
+    )
   )
   assertthat::assert_that(
     dplyr::setequal(unique(dplyr::pull(data, censor)), c(0, 1)) &

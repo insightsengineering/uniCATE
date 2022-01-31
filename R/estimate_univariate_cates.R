@@ -184,8 +184,9 @@ estimate_univariate_cates <- function(data,
 #' @import sl3
 #'
 #' @keywords internal
-hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers, super_learner,
-                                 propensity_score_ls, outcome_type) {
+hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
+                                 super_learner, propensity_score_ls,
+                                 outcome_type) {
 
   # define the training and testing set
   train_data <- origami::training(data)
@@ -417,7 +418,8 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers, sup
 #' @importFrom magrittr %>%
 #'
 #' @keywords internal
-apply_aiptw_transform <- function(data, outcome, treatment, propensity_score_ls, outcome_type) {
+apply_aiptw_transform <- function(data, outcome, treatment, propensity_score_ls,
+                                  outcome_type) {
   data %>%
     dplyr::mutate(
       Y_aiptw_treat = dplyr::if_else(

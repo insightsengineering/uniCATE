@@ -1,6 +1,5 @@
 test_that("A wide data.frame of 3 rows with 2 unique relative times produces a
-          tibble with 5 rows",
-{
+          tibble with 5 rows", {
 
   # define the dummy data
   data <- data.frame(
@@ -32,8 +31,7 @@ test_that("A wide data.frame of 3 rows with 2 unique relative times produces a
 })
 
 
-test_that("The observation with latest relative time is represented twice",
-{
+test_that("The observation with latest relative time is represented twice", {
 
   # define the dummy data
   data <- tibble(
@@ -67,8 +65,7 @@ test_that("The observation with latest relative time is represented twice",
 
 test_that("If there are more than five unique relative times before the time
           cutoff, then only the quintiles of the unique relative times up to the
-          time cutoff are used to lengthen the wide data",
-{
+          time cutoff are used to lengthen the wide data", {
   # define the dummy data
   set.seed(9875)
   data <- tibble(
@@ -104,7 +101,10 @@ test_that("If there are more than five unique relative times before the time
   )
 })
 
-test_that("Only data.frame or tibble objects are accepted by the data argument", {
+test_that(paste(
+  "Only data.frame or tibble objects are accepted by the data",
+  "argument"
+), {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 1),
@@ -158,8 +158,7 @@ test_that("Only data.frame or tibble objects are accepted by the data argument",
 })
 
 test_that("Errors occure when the event, censor, relative_time, treatment,
-           covariates and biomarkers arguments are not characters",
-{
+           covariates and biomarkers arguments are not characters", {
 
   # define the dummy data
   data <- tibble(
@@ -342,8 +341,7 @@ test_that("Errors occur when variable arguments are missing from the data", {
 })
 
 test_that("An error is reported when the event variable is not a
-           binary numeric variables in the data argument",
-{
+           binary numeric variables in the data argument", {
   # define the dummy data
   data <- tibble(
     sick = c("1", "0", "1"),
@@ -394,13 +392,17 @@ test_that("An error is reported when the censor variable is not a
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3")
     ),
-    "censor argument should correspond to a numeric, binary variable in the data"
+    paste(
+      "censor argument should correspond to a numeric, binary variable in",
+      "the data"
+    )
   )
 })
 
-test_that("An error is thrown for observations with an event that is censored",
-{
-
+test_that(paste(
+  "An error is thrown for observations with an event that is",
+  "censored"
+), {
   data <- tibble(
     sick = c(1, 0, 1),
     left = c(1, 1, 0),
@@ -504,7 +506,10 @@ test_that("An error is reported when relative_time variable is not a positive
       covariates = c("biom1", "biom2", "biom3"),
       biomarkers = c("biom1", "biom2", "biom3")
     ),
-    "relative_time argument's corresponding variable should be a positive numeric variable"
+    paste(
+      "relative_time argument's corresponding variable should be a",
+      "positive numeric variable"
+    )
   )
 })
 
@@ -562,7 +567,10 @@ test_that("Warn when time cutoff not within the range of relative time", {
       biomarkers = c("biom1", "biom2", "biom3"),
       time_cutoff = 4
     ),
-    "time_cutoff is larger than or equal to the largest value in relative_time's corresponding variable: 3"
+    paste(
+      "time_cutoff is larger than or equal to the largest value in",
+      "relative_time's corresponding variable: 3"
+    )
   )
 })
 
@@ -595,7 +603,10 @@ test_that("Only relevant variables remain after data prep", {
   expect_false("unwanted_cov" %in% colnames(long_data))
 })
 
-test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events", {
+test_that(paste(
+  "Obs 2 doesn't have a censoring event, obs 3 doesn't have any",
+  "events"
+), {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -640,8 +651,7 @@ test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events",
   expect_equal(third_censor_status, 0)
 })
 
-test_that("Obs 3 isn't censored and doesn't have an event",
-{
+test_that("Obs 3 isn't censored and doesn't have an event", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
