@@ -53,16 +53,14 @@
 #' @importFrom dplyr bind_rows as_tibble
 #'
 #' @keywords internal
-estimate_univariate_cates <- function(
-  data,
-  outcome,
-  treatment,
-  biomarkers,
-  super_learner,
-  propensity_score_ls,
-  v_folds,
-  parallel
-) {
+estimate_univariate_cates <- function(data,
+                                      outcome,
+                                      treatment,
+                                      biomarkers,
+                                      super_learner,
+                                      propensity_score_ls,
+                                      v_folds,
+                                      parallel) {
 
   # split the data into folds
   folds <- origami::make_folds(
@@ -90,10 +88,11 @@ estimate_univariate_cates <- function(
   )
 
   # identify the outcome type (binary or continuous)
-  if (sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2)
+  if (sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2) {
     outcome_type <- "binomial"
-  else
+  } else {
     outcome_type <- "continuous"
+  }
 
   # compute the holdout estimated potential outcome differences
   hold_out_calculations <- origami::cross_validate(
@@ -185,10 +184,8 @@ estimate_univariate_cates <- function(
 #' @import sl3
 #'
 #' @keywords internal
-hold_out_calculation <- function(
-  fold, data, outcome, treatment, biomarkers, super_learner,
-  propensity_score_ls, outcome_type
-) {
+hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers, super_learner,
+                                 propensity_score_ls, outcome_type) {
 
   # define the training and testing set
   train_data <- origami::training(data)
@@ -243,7 +240,6 @@ hold_out_calculation <- function(
         loss_function = sl3::loss_squared_error,
         learner_function = sl3::metalearner_linear
       )
-
     } else {
 
       # define the base learners for binary outcomes
@@ -279,7 +275,6 @@ hold_out_calculation <- function(
       learners = learner_library,
       metalearner = meta_learner
     )
-
   }
 
   # train the SuperLearner on the training data
@@ -302,7 +297,8 @@ hold_out_calculation <- function(
   valid_data_cont <- valid_data
   valid_data_cont[treatment] <- names(propensity_score_ls)[2]
   valid_data_cont[treatment] <- factor(
-    dplyr::pull(valid_data_cont, treatment), levels = names(propensity_score_ls)
+    dplyr::pull(valid_data_cont, treatment),
+    levels = names(propensity_score_ls)
   )
   pred_task_cont <- sl3::make_sl3_Task(
     data = valid_data_cont,
@@ -324,7 +320,7 @@ hold_out_calculation <- function(
     dplyr::select(.data$Y_diff, dplyr::all_of(biomarkers)) %>%
     tibble::as_tibble(.name_repair = "minimal") %>%
     scale(center = TRUE, scale = FALSE) %>%
-    as.data.frame
+    as.data.frame()
 
   # compute the coef estimates, and the influence functions of each observation
   # for each biomarker
@@ -362,8 +358,10 @@ hold_out_calculation <- function(
   names(beta_coefs) <- biomarkers
 
   # extract the table of un-scaled influence curves
-  unsc_ic_mat <- lapply(seq_len(
-    length(coefs_and_ic_ls)),
+  unsc_ic_mat <- lapply(
+    seq_len(
+      length(coefs_and_ic_ls)
+    ),
     function(idx) coefs_and_ic_ls[[idx]]$unsc_inf_curves
   )
   unsc_ic_mat <- do.call(cbind, unsc_ic_mat)
@@ -385,7 +383,6 @@ hold_out_calculation <- function(
       "ic_df" = ic_df
     )
   )
-
 }
 
 ################################################################################
@@ -420,16 +417,14 @@ hold_out_calculation <- function(
 #' @importFrom magrittr %>%
 #'
 #' @keywords internal
-apply_aiptw_transform <- function(
-  data, outcome, treatment, propensity_score_ls, outcome_type
-) {
+apply_aiptw_transform <- function(data, outcome, treatment, propensity_score_ls, outcome_type) {
   data %>%
     dplyr::mutate(
       Y_aiptw_treat = dplyr::if_else(
         !!rlang::sym(treatment) == names(propensity_score_ls)[1],
         .data$Y_hat_treat +
           (1 / propensity_score_ls[[1]]) *
-          (!!rlang::sym(outcome) - .data$Y_hat_treat),
+            (!!rlang::sym(outcome) - .data$Y_hat_treat),
         .data$Y_hat_treat
       ),
       Y_aiptw_treat = dplyr::if_else(
@@ -446,7 +441,7 @@ apply_aiptw_transform <- function(
         !!rlang::sym(treatment) == names(propensity_score_ls)[2],
         .data$Y_hat_cont +
           (1 / propensity_score_ls[[2]]) *
-          (!!rlang::sym(outcome) - .data$Y_hat_cont),
+            (!!rlang::sym(outcome) - .data$Y_hat_cont),
         .data$Y_hat_cont
       ),
       Y_aiptw_cont = dplyr::if_else(

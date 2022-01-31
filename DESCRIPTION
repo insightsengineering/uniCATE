@@ -55,3 +55,6 @@ Imports:
     future
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+Language: en-US
+Remotes: tlverse/sl3@v1.4.4
+
