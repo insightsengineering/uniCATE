@@ -15,7 +15,7 @@
 #'   statistics, and (adjusted) p-values for each biomarker. The biomarkers
 #'   are ordered by significance.
 #'
-#' @importFrom purrr map
+#' @importFrom purrr map_dbl
 #' @importFrom dplyr mutate arrange .data
 #' @importFrom stats p.adjust pnorm
 #'
@@ -26,12 +26,14 @@ perform_inference <- function(biomarkers_tbl) {
   biomarkers_tbl <- biomarkers_tbl %>%
     dplyr::mutate(
       z = .data$coef / .data$se,
-      p_value = purrr::map(
-        .data$z, function(z) {
-          2 * min(stats::pnorm(z), stats::pnorm(z, lower.tail = FALSE))
+      p_value = purrr::map_dbl(
+        .data$z, function(z_stat) {
+          2 * min(
+            stats::pnorm(z_stat),
+            stats::pnorm(z_stat, lower.tail = FALSE)
+          )
         }
       ),
-      p_value = unlist(.data$p_value),
       p_value_bh = stats::p.adjust(.data$p_value, method = "BH"),
       p_value_holm = stats::p.adjust(.data$p_value, method = "holm")
     ) %>%

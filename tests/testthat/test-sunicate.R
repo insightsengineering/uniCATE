@@ -1,5 +1,4 @@
 test_that("sunicate() identifies the effect modified in a simulated example", {
-
   library(dplyr)
   library(sl3)
   library(origami)
@@ -16,7 +15,7 @@ test_that("sunicate() identifies the effect modified in a simulated example", {
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-2 - 3*treat*biom1))) +
+    (t < 9) / (1 + exp(2 + 3 * treat * biom1)) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -35,7 +34,8 @@ test_that("sunicate() identifies the effect modified in a simulated example", {
         }
       }
       return(failure_time)
-    })
+    }
+  )
 
   # generate the censoring events for t = 1 to 9
   censor_time <- sapply(
@@ -52,7 +52,8 @@ test_that("sunicate() identifies the effect modified in a simulated example", {
       }
       if (is.na(censor_time)) censor_time <- 10
       return(censor_time)
-    })
+    }
+  )
 
   status_df <- tibble(
     "failure_time" = as.integer(failure_time),
@@ -92,5 +93,4 @@ test_that("sunicate() identifies the effect modified in a simulated example", {
     filter(biomarker == "biom2") %>%
     pull(p_value)
   expect_true(biom2_pval > 0.05)
-
 })

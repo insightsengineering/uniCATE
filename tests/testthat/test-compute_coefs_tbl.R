@@ -15,7 +15,6 @@ test_that("column of coefs is the mean of validation fold coefs", {
   # are correctly calculated
   expect_equal(length(compute_coefs_tbl(cv_ls)$coef), ncol(betas_df))
   expect_equal(compute_coefs_tbl(cv_ls)$coef, colMeans(betas_df))
-
 })
 
 test_that("column of SEs is the mean of the squared of influence curves, divided
@@ -38,5 +37,4 @@ test_that("column of SEs is the mean of the squared of influence curves, divided
   expect_equal(
     compute_coefs_tbl(cv_ls)$se, sqrt(colMeans((ic_df^2)) / nrow(ic_df))
   )
-
 })

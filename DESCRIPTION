@@ -1,6 +1,6 @@
 Package: uniCATE
 Title: Univariate Conditional Average Treatment Effect Estimation
-Version: 0.2.2
+Version: 0.2.3
 Authors@R: c(
     person(given = "Philippe",
            family = "Boileau",
@@ -12,21 +12,21 @@ Authors@R: c(
            email = "laan@berkeley.edu",
            role = c("ctb", "ths"),
            comment = c(ORCID = "0000-0003-1432-5511")),
-    person(given = "Ning",
-           family = "Leng",
-           email = "nleng@gene.com",
-           role = "ctb"),
     person(given = "Sandrine",
            family = "Dudoit",
            email = "sandrine@stat.berkeley.edu",
            role = c("ctb", "ths"),
-           comment = c(ORCID = "0000-0002-6069-8629"))
+           comment = c(ORCID = "0000-0002-6069-8629")),
+    person(given = "Ning",
+           family = "Leng",
+           email = "nleng@gene.com",
+           role = "ctb")
   )
 Description: uniCATE implements statistical inference procedures for variable
   importance measures that assess the treatment effect modification
   capabilities, and therefore predictiveness, of individual pre-treatment
   biomarkers in high-dimensional randomized control trials.
-License: MIT + file LICENSE
+License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -56,3 +56,5 @@ Imports:
     future
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+Language: en-US
+Remotes: tlverse/sl3@v1.4.4

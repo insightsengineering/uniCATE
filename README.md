@@ -9,9 +9,11 @@
 
 <!-- badges: start -->
 
-[![Project Status: WIP – Initial development is in progress, but there
-has not yet been a stable, usable release suitable for the
-public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Check](https://github.com/insightsengineering/uniCATE/actions/workflows/check.yaml/badge.svg)](https://github.com/insightsengineering/uniCATE/actions/workflows/check.yaml)
+[![Docs](https://github.com/insightsengineering/uniCATE/actions/workflows/docs.yaml/badge.svg)](https://github.com/insightsengineering/uniCATE/actions/workflows/docs.yaml)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <!-- badges: end -->
 
 ------------------------------------------------------------------------
@@ -35,7 +37,6 @@ The *development version* of the package may be installed from GitHub
 using [`remotes`](https://CRAN.R-project.org/package=remotes):
 
 ``` r
-# install.packages("remotes")
 remotes::install_github("insightsengineering/uniCATE")
 ```
 
@@ -69,7 +70,7 @@ data <- tibble("treatment" = rbinom(n, 1, 0.5)) %>%
     bio2 = rnorm(n, mean = -2, sd = 0.2),
     bio3 = rnorm(n, mean = 0, sd = 0.1),
     bio4 = rnorm(n, mean = 0, sd = 0.1),
-    covar = 0.2*rbinom(n, 1, 0.4),
+    covar = 0.2 * rbinom(n, 1, 0.4),
     response = covar + bio1 * treatment + bio2 * treatment
   )
 

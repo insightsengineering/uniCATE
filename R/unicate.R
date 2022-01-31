@@ -57,17 +57,15 @@
 #'   significance.
 #'
 #' @export
-unicate <- function(
-  data,
-  outcome,
-  treatment,
-  covariates,
-  biomarkers,
-  super_learner = NULL,
-  propensity_score_ls,
-  v_folds = 5L,
-  parallel = FALSE
-) {
+unicate <- function(data,
+                    outcome,
+                    treatment,
+                    covariates,
+                    biomarkers,
+                    super_learner = NULL,
+                    propensity_score_ls,
+                    v_folds = 5L,
+                    parallel = FALSE) {
 
   # assess the data quality and formatting, and prepare it for analysis
   data <- prep_data(data, outcome, treatment, covariates, biomarkers)

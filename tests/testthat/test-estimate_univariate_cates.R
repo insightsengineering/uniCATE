@@ -1,7 +1,6 @@
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
           the validation set (continuous outcomes)", {
-
   library(dplyr)
   library(sl3)
   library(origami)
@@ -35,7 +34,8 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
   # apply the fold function
   res_ls <- hold_out_calculation(
-    fold, data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
+    fold, data, outcome, treatment, biomarkers,
+    super_learner = lrnr_sl,
     propensity_score_ls, outcome_type = "continous"
   )
 
@@ -54,7 +54,6 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
           the validation set (binary outcome)", {
-
   library(dplyr)
   library(sl3)
   library(origami)
@@ -93,7 +92,8 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
   # apply the fold function
   res_ls <- hold_out_calculation(
-    fold, data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
+    fold, data, outcome, treatment, biomarkers,
+    super_learner = lrnr_sl,
     propensity_score_ls, outcome_type = "binomial"
   )
 
@@ -111,8 +111,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
 
 test_that("estimate_univariate_cates() returns a vector with estimate lm
-          coefficients and a table of influence curves",
-{
+          coefficients and a table of influence curves", {
   library(dplyr)
   library(sl3)
   library(origami)
@@ -143,7 +142,8 @@ test_that("estimate_univariate_cates() returns a vector with estimate lm
 
   # compute the holdout potential outcome difference dataset
   res_ls <- estimate_univariate_cates(
-    data, outcome, treatment, biomarkers, super_learner = lrnr_sl,
+    data, outcome, treatment, biomarkers,
+    super_learner = lrnr_sl,
     propensity_score_ls, v_folds = 2L, parallel = FALSE
   )
 
@@ -155,5 +155,4 @@ test_that("estimate_univariate_cates() returns a vector with estimate lm
 
   # check that the column means of the IC table are zero
   expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
-
 })

@@ -1,4 +1,5 @@
-#' Univariate Conditional Average Treatment Effect Estimation For Right-Censored Time-To-Event Outcomes
+#' Univariate Conditional Average Treatment Effect Estimation For Right-Censored
+#' Time-To-Event Outcomes
 #'
 #' \code{sunicate()} performs inference about \code{biomarkers}' capacity to
 #'   modify treatment effects in randomized control trials with right-censored,
@@ -71,21 +72,19 @@
 #'   significance.
 #'
 #' @export
-sunicate <- function(
-  data,
-  event,
-  censor,
-  relative_time,
-  treatment,
-  covariates,
-  biomarkers,
-  time_cutoff = NULL,
-  cond_surv_haz_super_learner = NULL,
-  cond_censor_haz_super_learner = NULL,
-  propensity_score_ls,
-  v_folds = 5L,
-  parallel = FALSE
-) {
+sunicate <- function(data,
+                     event,
+                     censor,
+                     relative_time,
+                     treatment,
+                     covariates,
+                     biomarkers,
+                     time_cutoff = NULL,
+                     cond_surv_haz_super_learner = NULL,
+                     cond_censor_haz_super_learner = NULL,
+                     propensity_score_ls,
+                     v_folds = 5L,
+                     parallel = FALSE) {
 
   # assess the data quality and formatting, and prepare it for analysis
   long_data <- prep_long_data(
@@ -94,7 +93,7 @@ sunicate <- function(
   )
 
   # compute CV coefficients and CV influence curves
-  cv_ls <- estimate_univariate_survival_cates(
+  cv_ls <- estimate_univariate_s_cates(
     long_data, event, censor, treatment, biomarkers,
     cond_surv_haz_super_learner, cond_censor_haz_super_learner,
     propensity_score_ls, v_folds, parallel
