@@ -1,3 +1,11 @@
+## uniCATE 0.2.3 (2022-01-31)
+
+* Adding GitHub Actions for CI and CD.
+* Made largely stylistic updates to internal functions to pass linting and style
+  checks.
+* Set the license to Apache 2.0
+
+
 ## uniCATE 0.2.2 (2022-01-31)
 
 * `failure` argument in `sunicate()` has been changed to `event`.
