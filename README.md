@@ -37,7 +37,6 @@ The *development version* of the package may be installed from GitHub
 using [`remotes`](https://CRAN.R-project.org/package=remotes):
 
 ``` r
-# install.packages("remotes")
 remotes::install_github("insightsengineering/uniCATE")
 ```
 
@@ -71,7 +70,7 @@ data <- tibble("treatment" = rbinom(n, 1, 0.5)) %>%
     bio2 = rnorm(n, mean = -2, sd = 0.2),
     bio3 = rnorm(n, mean = 0, sd = 0.1),
     bio4 = rnorm(n, mean = 0, sd = 0.1),
-    covar = 0.2*rbinom(n, 1, 0.4),
+    covar = 0.2 * rbinom(n, 1, 0.4),
     response = covar + bio1 * treatment + bio2 * treatment
   )
 
