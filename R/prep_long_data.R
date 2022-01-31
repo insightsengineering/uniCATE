@@ -42,8 +42,8 @@
 #' @importFrom stats quantile
 #'
 #' @keywords internal
-prep_long_data <- function(data, event, censor, relative_time, treatment, covariates, biomarkers,
-                           time_cutoff = NULL) {
+prep_long_data <- function(data, event, censor, relative_time, treatment,
+                           covariates, biomarkers, time_cutoff = NULL) {
 
   # check that data is a data.frame or tibble object
   assertthat::assert_that(

@@ -17,15 +17,15 @@ Please delete options that are not relevant.
       not work as expected)
 - [ ] This change requires a documentation update
 
-# How Has This Been Tested?
+# Testing
 
 Please describe the tests that you ran to verify your changes.
 
-- [ ] Test A
-- [ ] Test B
+- Test A
+- Test B
 
 
-# Checklist:
+# Checklist
 
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my own code

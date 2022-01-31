@@ -122,9 +122,7 @@ estimate_univariate_survival_cates <- function(long_data,
   )
 
   # aggregate the beta coefficient vectors into a tibble
-  betas_df <- hold_out_calculations$beta_coefs %>%
-    unlist() %>%
-    matrix(nrow = v_folds, byrow = TRUE)
+  betas_df <- dplyr::bind_rows(hold_out_calculations$beta_coefs)
   colnames(betas_df) <- biomarkers
   betas_df <- betas_df %>% dplyr::as_tibble()
 

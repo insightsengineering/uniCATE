@@ -1,4 +1,5 @@
-#' Univariate Conditional Average Treatment Effect Estimation For Right-Censored Time-To-Event Outcomes
+#' Univariate Conditional Average Treatment Effect Estimation For Right-Censored
+#' Time-To-Event Outcomes
 #'
 #' \code{sunicate()} performs inference about \code{biomarkers}' capacity to
 #'   modify treatment effects in randomized control trials with right-censored,
