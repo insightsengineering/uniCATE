@@ -1,6 +1,5 @@
 # integration tests
 test_that("biomarkers 1 and 2 are found by unicate() (cont. outcome)", {
-
   library(dplyr)
   library(sl3)
   set.seed(6132451)
@@ -14,7 +13,7 @@ test_that("biomarkers 1 and 2 are found by unicate() (cont. outcome)", {
       bio2 = rnorm(n, mean = -2, sd = 0.2),
       bio3 = rnorm(n, mean = 0, sd = 0.1),
       bio4 = rnorm(n, mean = 0, sd = 0.1),
-      covar = 0.2*rbinom(n, 1, 0.4),
+      covar = 0.2 * rbinom(n, 1, 0.4),
       response = covar + bio1 * treatment + bio2 * treatment + error_terms
     )
 
@@ -81,7 +80,6 @@ test_that("biomarkers 1 and 2 are found by unicate() (cont. outcome)", {
 
 
 test_that("biomarkers 1 and 2 are found by unicate() (binary outcome)", {
-
   library(dplyr)
   library(purrr)
   set.seed(6132451)
@@ -95,10 +93,10 @@ test_that("biomarkers 1 and 2 are found by unicate() (binary outcome)", {
       bio2 = rnorm(n, mean = -2, sd = 0.2),
       bio3 = rnorm(n, mean = 0, sd = 0.1),
       bio4 = rnorm(n, mean = 0, sd = 0.1),
-      covar = 0.2*rbinom(n, 1, 0.4),
+      covar = 0.2 * rbinom(n, 1, 0.4),
       response_prob = plogis(
         covar + 10 * bio1 * treatment + 10 * bio2 * treatment + error_terms
-        ),
+      ),
       response = map_dbl(response_prob, function(x) rbinom(1, 1, x))
     )
 

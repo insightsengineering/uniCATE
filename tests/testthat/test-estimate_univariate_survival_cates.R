@@ -1,8 +1,6 @@
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of efficient influence function values for each
-          observation in the validation set",
-{
-
+          observation in the validation set", {
   library(dplyr)
   library(sl3)
   library(origami)
@@ -18,7 +16,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-2 - 3*treat*biom1))) +
+    (t < 9) / (1 + exp(-(-2 - 3 * treat * biom1))) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -37,7 +35,8 @@ test_that("fold function returns a vector of estimated biomarker coefficients
         }
       }
       return(failure_time)
-    })
+    }
+  )
 
   # generate the censoring events for t = 1 to 9
   censor_time <- sapply(
@@ -54,7 +53,8 @@ test_that("fold function returns a vector of estimated biomarker coefficients
       }
       if (is.na(censor_time)) censor_time <- 10
       return(censor_time)
-    })
+    }
+  )
 
   status_df <- tibble(
     "failure_time" = as.integer(failure_time),
@@ -142,12 +142,10 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
   # make sure that the column means of the IC table are approximately equal to 0
   expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
-
 })
 
 test_that("estimate_univariate_survival_cates() returns a vector with estimated
-           lm coefficients and a table of influence curves",
-{
+           lm coefficients and a table of influence curves", {
   library(dplyr)
   library(sl3)
   library(origami)
@@ -163,7 +161,7 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
 
   # define hazard functions
   cond_surv_hazard <- function(t, treat, biom1, biom2) {
-    (t < 9) / (1 + exp(-(-2 - 3*treat*biom1))) +
+    (t < 9) / (1 + exp(-(-2 - 3 * treat * biom1))) +
       (t == 9)
   }
   cond_cens_hazard <- function(t, treat, biom1, biom2) 0.15
@@ -182,7 +180,8 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
         }
       }
       return(failure_time)
-    })
+    }
+  )
 
   # generate the censoring events for t = 1 to 9
   censor_time <- sapply(
@@ -199,7 +198,8 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
       }
       if (is.na(censor_time)) censor_time <- 10
       return(censor_time)
-    })
+    }
+  )
 
   status_df <- tibble(
     "failure_time" = as.integer(failure_time),
@@ -274,6 +274,4 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
 
   # check that the column means of the IC table are zero
   expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
-
 })
-

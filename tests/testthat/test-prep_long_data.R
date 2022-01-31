@@ -1,6 +1,5 @@
 test_that("A wide data.frame of 3 rows with 3 unique relative times produces a
-          tibble with 6 rows",
-{
+          tibble with 6 rows", {
   # define the dummy data
   data <- data.frame(
     sick = c(1, 0, 1),
@@ -31,8 +30,7 @@ test_that("A wide data.frame of 3 rows with 3 unique relative times produces a
 })
 
 test_that("The observation with latest relative time is represented at every
-          unique time",
-{
+          unique time", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 1),
@@ -57,15 +55,17 @@ test_that("The observation with latest relative time is represented at every
 
   # check that the observation with the latest relative time is represented at
   # each unique relative time in the dataset
-  unique_times <- data %>% pull(time) %>% unique() %>% sort()
+  unique_times <- data %>%
+    pull(time) %>%
+    unique() %>%
+    sort()
   obs_3_times <- long_data %>%
     filter(observation_id == 3) %>%
     pull(time)
   expect_equal(obs_3_times, unique_times)
 })
 
-test_that("Only data.frame or tibble objects are accepted by the data argument",
-{
+test_that("Only data.frame or tibble objects are accepted by the data argument", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 1),
@@ -116,12 +116,10 @@ test_that("Only data.frame or tibble objects are accepted by the data argument",
     ),
     "data should be a data.frame or tibble object"
   )
-
 })
 
 test_that("Errors occure when the failure, censor, relative_time, treatment,
-           covariates and biomarkers arguments are not characters",
-{
+           covariates and biomarkers arguments are not characters", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 1),
@@ -217,11 +215,9 @@ test_that("Errors occure when the failure, censor, relative_time, treatment,
     ),
     "biomarkers vector is not a subset of the covariates vector"
   )
-
 })
 
-test_that("Errors occur when variable arguments are missing from the data",
-{
+test_that("Errors occur when variable arguments are missing from the data", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 1),
@@ -302,12 +298,10 @@ test_that("Errors occur when variable arguments are missing from the data",
     ),
     "some covariates are missing from the data"
   )
-
 })
 
 test_that("An error is reported when the failure variable is not a
-           binary numeric variables in the data argument",
-{
+           binary numeric variables in the data argument", {
   # define the dummy data
   data <- tibble(
     sick = c("1", "0", "1"),
@@ -335,8 +329,7 @@ test_that("An error is reported when the failure variable is not a
 })
 
 test_that("An error is reported when the censor variable is not a
-           binary numeric variables in the data argument",
-{
+           binary numeric variables in the data argument", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 1),
@@ -364,9 +357,7 @@ test_that("An error is reported when the censor variable is not a
 })
 
 test_that("An error is thrown for observations with a failure and a censoring
-          event",
-{
-
+          event", {
   data <- tibble(
     sick = c(1, 0, 1),
     left = c(1, 1, 0),
@@ -392,8 +383,7 @@ test_that("An error is thrown for observations with a failure and a censoring
 })
 
 test_that("An error is reported when the treatment variable is not a binary
-          variable in the data argument",
-{
+          variable in the data argument", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -420,8 +410,7 @@ test_that("An error is reported when the treatment variable is not a binary
   )
 })
 
-test_that("Treatment variable is coerced to a factor if not already",
-{
+test_that("Treatment variable is coerced to a factor if not already", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -449,8 +438,7 @@ test_that("Treatment variable is coerced to a factor if not already",
 })
 
 test_that("An error is reported when relative_time variable is not a positive
-          numeric",
-{
+          numeric", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -477,8 +465,7 @@ test_that("An error is reported when relative_time variable is not a positive
   )
 })
 
-test_that("The time cutoff is a numeric if non-null",
-{
+test_that("The time cutoff is a numeric if non-null", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -507,8 +494,7 @@ test_that("The time cutoff is a numeric if non-null",
   )
 })
 
-test_that("Warn when time cutoff not within the range of relative time",
-{
+test_that("Warn when time cutoff not within the range of relative time", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -537,8 +523,7 @@ test_that("Warn when time cutoff not within the range of relative time",
   )
 })
 
-test_that("Only relevant variables remain after data prep",
-{
+test_that("Only relevant variables remain after data prep", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -567,8 +552,7 @@ test_that("Only relevant variables remain after data prep",
   expect_false("unwanted_cov" %in% colnames(long_data))
 })
 
-test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events",
-{
+test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -613,8 +597,7 @@ test_that("Obs 2 doesn't have a censoring event, obs 3 doesn't have any events",
   expect_equal(third_censor_status, 0)
 })
 
-test_that("Obs 3 doesn't have a censoring or failure event",
-{
+test_that("Obs 3 doesn't have a censoring or failure event", {
   # define the dummy data
   data <- tibble(
     sick = c(1, 0, 0),
@@ -648,4 +631,3 @@ test_that("Obs 3 doesn't have a censoring or failure event",
     pull(left)
   expect_equal(third_censor_status, 0)
 })
-

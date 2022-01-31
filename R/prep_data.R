@@ -71,10 +71,10 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
   # assert that the outcome is a numeric variable (continuous or binary)
   assertthat::assert_that(
     (class(data[[outcome]]) == "numeric" &
-       length(unique(data[[outcome]])) > 2) |
+      length(unique(data[[outcome]])) > 2) |
       (class(data[[outcome]]) == "numeric" &
-         length(unique(data[[outcome]])) == 2 &
-           sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2),
+        length(unique(data[[outcome]])) == 2 &
+        sum(is.element(unique(data[[outcome]]), c(0, 1))) == 2),
     msg = "outcome variable should be a continuous or binary numeric variable"
   )
 
@@ -85,15 +85,17 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
   )
 
   # if the treatment variable isn't already a factor, then transform it
-  if (!is.factor(data[treatment]))
+  if (!is.factor(data[treatment])) {
     data <- data %>%
-    dplyr::mutate(
-      !!rlang::sym(treatment) := factor(!!rlang::sym(treatment))
-    )
+      dplyr::mutate(
+        !!rlang::sym(treatment) := factor(!!rlang::sym(treatment))
+      )
+  }
 
   # transform the data to a tibble if it is a data.frame
-  if (identical(class(data), "data.frame"))
+  if (identical(class(data), "data.frame")) {
     data <- data %>% tibble::as_tibble(.name_repair = "minimal")
+  }
 
   # retain only the treatment, outcome, and covariates
   data <- data %>%
@@ -104,5 +106,4 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
 
   # return the vetted tibble
   return(data)
-
 }

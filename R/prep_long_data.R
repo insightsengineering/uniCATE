@@ -41,10 +41,8 @@
 #' @importFrom rlang sym := !!
 #'
 #' @keywords internal
-prep_long_data <- function(
-  data, failure, censor, relative_time, treatment, covariates, biomarkers,
-  time_cutoff = NULL
-) {
+prep_long_data <- function(data, failure, censor, relative_time, treatment, covariates, biomarkers,
+                           time_cutoff = NULL) {
 
   # check that data is a data.frame or tibble object
   assertthat::assert_that(
@@ -109,9 +107,11 @@ prep_long_data <- function(
       msg = "time_cutoff should be a single numeric value when specified"
     )
     if (max(data[[relative_time]]) < time_cutoff) {
-      message(paste0("time_cutoff is larger than or equal to the largest ",
-                     "value in relative_time's corresponding variable: ",
-                     max(data[relative_time])))
+      message(paste0(
+        "time_cutoff is larger than or equal to the largest ",
+        "value in relative_time's corresponding variable: ",
+        max(data[relative_time])
+      ))
     }
   }
 
@@ -125,14 +125,18 @@ prep_long_data <- function(
   assertthat::assert_that(
     dplyr::setequal(unique(dplyr::pull(data, failure)), c(0, 1)) &
       is.numeric(dplyr::pull(data, failure)),
-    msg = paste0("failure argument should correspond to a numeric, binary ",
-                 "variable in the data")
+    msg = paste0(
+      "failure argument should correspond to a numeric, binary ",
+      "variable in the data"
+    )
   )
   assertthat::assert_that(
     dplyr::setequal(unique(dplyr::pull(data, censor)), c(0, 1)) &
       is.numeric(dplyr::pull(data, censor)),
-    msg = paste0("censor argument should correspond to a numeric, binary ",
-                 "variable in the data")
+    msg = paste0(
+      "censor argument should correspond to a numeric, binary ",
+      "variable in the data"
+    )
   )
 
   # ensure that no observation has both a censoring and a failure reported
@@ -144,8 +148,10 @@ prep_long_data <- function(
   # check that the treatment variable is binary
   assertthat::assert_that(
     identical(nrow(unique(data[treatment])), 2L),
-    msg = paste0("treatment argument should correspond to a binary variable in",
-                 " the data")
+    msg = paste0(
+      "treatment argument should correspond to a binary variable in",
+      " the data"
+    )
   )
 
   # if the treatment variable isn't already a factor, then transform it
@@ -160,8 +166,10 @@ prep_long_data <- function(
   assertthat::assert_that(
     all(dplyr::pull(data, relative_time) > 0) &
       is.numeric(dplyr::pull(data, relative_time)),
-    msg = paste0("relative_time argument's corresponding variable should be a ",
-                 "positive numeric variable")
+    msg = paste0(
+      "relative_time argument's corresponding variable should be a ",
+      "positive numeric variable"
+    )
   )
 
   # remove unnecessary variables from data
@@ -177,7 +185,9 @@ prep_long_data <- function(
       times <- c(times, time_cutoff)
     }
   }
-  times <- times %>% unique() %>% sort()
+  times <- times %>%
+    unique() %>%
+    sort()
   long_data <- lapply(
     seq_len(nrow(data)),
     function(idx) {
@@ -203,19 +213,19 @@ prep_long_data <- function(
           observation_id = idx
         )
       # if the relative time variable happens to be called "time", don't filter
-      if (relative_time != "time")
+      if (relative_time != "time") {
         long_obs <- long_obs %>% dplyr::select(-dplyr::all_of(relative_time))
+      }
 
       return(long_obs)
-
     }
   ) %>%
     dplyr::bind_rows()
 
   # apply time cutoff if necessary
-  if (!is.null(time_cutoff))
+  if (!is.null(time_cutoff)) {
     long_data <- long_data %>% dplyr::filter(.data$time <= time_cutoff)
+  }
 
   return(long_data)
-
 }

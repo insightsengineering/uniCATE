@@ -83,12 +83,10 @@ test_that("if the treatment variable is not a factor, it is turned into one", {
   mod_mtcars <- prep_data(as_tibble(mtcars), "mpg", "am", "hp", "hp")
   expect_true(is.factor(mod_mtcars$am))
   expect_true(all(levels(mod_mtcars$am) %in% c("1", "0")))
-
 })
 
 test_that("always returns a tibble with only the outcome, treatment, and
-          covariates",
-{
+          covariates", {
   data <- prep_data(mtcars, "mpg", "am", "hp", "hp")
   expect_true(is_tibble(data))
   expect_true(ncol(data) == 3)

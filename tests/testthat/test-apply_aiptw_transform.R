@@ -1,5 +1,4 @@
 test_that("can pass in a propensity score list to apply_aiptw_transform()", {
-
   library(dplyr)
 
   # prepare some mock data
@@ -16,18 +15,19 @@ test_that("can pass in a propensity score list to apply_aiptw_transform()", {
 
   # apply the AIPTW transform
   transform_data <- apply_aiptw_transform(
-    data, outcome, treatment, propensity_score_ls, outcome_type = "continuous"
+    data, outcome, treatment, propensity_score_ls,
+    outcome_type = "continuous"
   )
 
   # make sure that the calculations are correct
   transform_data <- transform_data %>%
     dplyr::mutate(
       confirm_treat = dplyr::if_else(
-        am == "1", 2 + -1/0.3, 2
+        am == "1", 2 + -1 / 0.3, 2
       ),
       confirm_treat = (confirm_treat == Y_aiptw_treat),
       confirm_cont = dplyr::if_else(
-        am == "0", 3 + -2/0.7, 3
+        am == "0", 3 + -2 / 0.7, 3
       ),
       confirm_cont = (confirm_cont == Y_aiptw_cont)
     ) %>%
@@ -39,7 +39,6 @@ test_that("can pass in a propensity score list to apply_aiptw_transform()", {
 
 test_that("apply_aiptw_transform() truncates predicted outcomes between 0 and 1
           when the outcome is a binary variable", {
-
   library(dplyr)
 
   # prepare some mock data
@@ -56,10 +55,11 @@ test_that("apply_aiptw_transform() truncates predicted outcomes between 0 and 1
 
   # apply the AIPTW transform
   transform_data <- apply_aiptw_transform(
-    data, outcome, treatment, propensity_score_ls, outcome_type = "binomial"
+    data, outcome, treatment, propensity_score_ls,
+    outcome_type = "binomial"
   )
   expect_equal(sum(transform_data$Y_aiptw_treat < 0 |
-                    transform_data$Y_aiptw_treat > 1), 0)
+    transform_data$Y_aiptw_treat > 1), 0)
   expect_equal(sum(transform_data$Y_aiptw_cont < 0 |
-                    transform_data$Y_aiptw_cont > 1), 0)
+    transform_data$Y_aiptw_cont > 1), 0)
 })

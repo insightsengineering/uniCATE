@@ -56,18 +56,16 @@
 #' @importFrom dplyr bind_rows as_tibble
 #'
 #' @keywords internal
-estimate_univariate_survival_cates <- function(
-  long_data,
-  failure,
-  censor,
-  treatment,
-  biomarkers,
-  cond_surv_haz_super_learner,
-  cond_censor_haz_super_learner,
-  propensity_score_ls,
-  v_folds,
-  parallel
-) {
+estimate_univariate_survival_cates <- function(long_data,
+                                               failure,
+                                               censor,
+                                               treatment,
+                                               biomarkers,
+                                               cond_surv_haz_super_learner,
+                                               cond_censor_haz_super_learner,
+                                               propensity_score_ls,
+                                               v_folds,
+                                               parallel) {
 
   # split the data into folds
   folds <- origami::make_folds(
@@ -81,7 +79,7 @@ estimate_univariate_survival_cates <- function(
   # treatment assignment variable, and that they sum to 1
   assertthat::assert_that(
     all(names(propensity_score_ls) %in%
-          levels(dplyr::pull(long_data, treatment))),
+      levels(dplyr::pull(long_data, treatment))),
     msg = "treatment group names and propensity_score_ls names do not match"
   )
   assertthat::assert_that(
@@ -92,14 +90,18 @@ estimate_univariate_survival_cates <- function(
   # assert that the super learners are  NULL or SL3 SuperLearner objects
   assertthat::assert_that(
     is.null(cond_surv_haz_super_learner) |
-      identical(class(cond_surv_haz_super_learner),
-                c("Lrnr_sl", "Lrnr_base", "R6")),
+      identical(
+        class(cond_surv_haz_super_learner),
+        c("Lrnr_sl", "Lrnr_base", "R6")
+      ),
     msg = "cond_surv_haz_super_learner must be NULL or an sl3::Lrnr_sl object"
   )
   assertthat::assert_that(
     is.null(cond_censor_haz_super_learner) |
-      identical(class(cond_censor_haz_super_learner),
-                c("Lrnr_sl", "Lrnr_base", "R6")),
+      identical(
+        class(cond_censor_haz_super_learner),
+        c("Lrnr_sl", "Lrnr_base", "R6")
+      ),
     msg = "cond_censor_haz_super_learner must be NULL or an sl3::Lrnr_sl object"
   )
 
@@ -194,11 +196,9 @@ estimate_univariate_survival_cates <- function(
 #' @import sl3
 #'
 #' @keywords internal
-hold_out_calculation_survival <- function(
-  fold, long_data, failure, censor, treatment, biomarkers,
-  cond_surv_haz_super_learner, cond_censor_haz_super_learner,
-  propensity_score_ls
-) {
+hold_out_calculation_survival <- function(fold, long_data, failure, censor, treatment, biomarkers,
+                                          cond_surv_haz_super_learner, cond_censor_haz_super_learner,
+                                          propensity_score_ls) {
 
   # define the training and testing set
   train_data <- origami::training(long_data)
@@ -258,7 +258,6 @@ hold_out_calculation_survival <- function(
       learners = learner_library,
       metalearner = meta_learner
     )
-
   }
 
   # estimate the conditional hazard function
@@ -313,7 +312,6 @@ hold_out_calculation_survival <- function(
       learners = learner_library,
       metalearner = meta_learner
     )
-
   }
 
   # estimate the conditional hazard function
@@ -323,7 +321,9 @@ hold_out_calculation_survival <- function(
   # estimate variable important parameters #####################################
 
   # estimate the survival probs under treatment and control at t0
-  times <- c(valid_data$time, train_data$time) %>% unique %>% sort()
+  times <- c(valid_data$time, train_data$time) %>%
+    unique() %>%
+    sort()
   n_times <- length(times)
   surv_valid_data <- valid_data %>%
     dplyr::select(-dplyr::all_of(c(failure, censor, "time"))) %>%
@@ -353,7 +353,8 @@ hold_out_calculation_survival <- function(
   valid_data_cont <- surv_valid_data
   valid_data_cont[treatment] <- names(propensity_score_ls)[2]
   valid_data_cont[treatment] <- factor(
-    dplyr::pull(valid_data_cont, treatment), levels = names(propensity_score_ls)
+    dplyr::pull(valid_data_cont, treatment),
+    levels = names(propensity_score_ls)
   )
   pred_task_cont <- sl3::make_sl3_Task(
     data = valid_data_cont,
@@ -397,7 +398,8 @@ hold_out_calculation_survival <- function(
       surv_cens = cumprod(1 - .data$cond_cens_haz),
       surv_cens_prev = dplyr::lag(.data$surv_cens),
       surv_cens_prev = dplyr::if_else(is.na(.data$surv_cens_prev), 1,
-                                      .data$surv_cens_prev),
+        .data$surv_cens_prev
+      ),
       h1 = dplyr::if_else(
         !!rlang::sym(treatment) != names(propensity_score_ls)[1], 0,
         -.data$surv_t0_treat /
@@ -456,7 +458,8 @@ hold_out_calculation_survival <- function(
   names(beta_coefs) <- biomarkers
 
   # extract the table of un-scaled influence curves
-  ic_ls <- lapply(seq_len(length(coefs_and_ic_ls)),
+  ic_ls <- lapply(
+    seq_len(length(coefs_and_ic_ls)),
     function(idx) coefs_and_ic_ls[[idx]]$inf_curves
   )
   ic_df <- do.call(cbind, ic_ls) %>% dplyr::as_tibble(.name_repair = "minimal")
@@ -469,6 +472,4 @@ hold_out_calculation_survival <- function(
       "ic_df" = ic_df
     )
   )
-
-
 }
