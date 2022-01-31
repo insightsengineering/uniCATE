@@ -232,7 +232,7 @@ We again perform an RCT where the outcome of interest is a potentially
 right-censored time-to-event outcome. We consider $n$ i.i.d. copies of the
 full-data random vector $X = (W, A, T^{(0)}, C^{(0)}, T^{(1)}, C^{(1)})$ 
 distributed according to $P_X$ where $W$ and $A$ are defined as in the
-continuous outcome case. $T^{(0)}$ and $T^{(1)}$ correspond to the failure times
+continuous outcome case. $T^{(0)}$ and $T^{(1)}$ correspond to the event times
 under control and treatment conditions, and $C^{(0)}$ and $C^{(1)}$ correspond
 to the censoring times under control and treatment conditions. As before, the
 full-data random vectors are never observed; instead, we observe $n$ i.i.d.
@@ -291,27 +291,27 @@ baseline_data <- tibble(
   B2 = rnorm(n)
 )
 
-# simulate failure and censoring times
+# simulate event and censoring times
 # define hazard functions
 cond_surv_hazard <- function(t, A, B1) {
   (t < 9) / (1 + exp(-(-2 - 3*A*B1))) +
     (t == 9)
 }
 
-# generate the failure events for t = 1 to 9
-failure_time <- sapply(
+# generate the event indicators for t = 1 to 9
+event_time <- sapply(
   seq_len(n),
   function(obs) {
-    failure_time <- NA
+    event_time <- NA
     for (t in 1:9) {
       prob <- cond_surv_hazard(t, baseline_data$A[obs], baseline_data$B1[obs])
       status <- rbinom(1, 1, prob)
       if (status == 1) {
-        failure_time <- t
+        event_time <- t
         break
       }
     }
-    return(failure_time)
+    return(event_time)
   })
 
 # generate the censoring events for t = 1 to 9
@@ -330,15 +330,15 @@ censor_time <- sapply(
     return(censor_time)
   })
 
-# assemble the failure and censoring times into a tibble
+# assemble the event and censoring times into a tibble
 status_df <- tibble(
-    "failure_time" = as.integer(failure_time),
+    "event_time" = as.integer(event_time),
     "censor_time" = as.integer(censor_time)
   ) %>%
     transmute(
-      time = if_else(censor_time < failure_time, censor_time, failure_time),
-      censor = if_else(censor_time < failure_time, 1, 0),
-      failure = if_else(censor_time >= failure_time, 1, 0)
+      time = if_else(censor_time < event_time, censor_time, event_time),
+      censor = if_else(censor_time < event_time, 1, 0),
+      event = if_else(censor_time >= event_time, 1, 0)
     )
 
 # assemble the complete RCT data
@@ -354,12 +354,12 @@ data <- baseline_data %>%
 head(data)
 ```
 The data simulated in the previous chunk relies on an uninformative censoring
-mechanism and a failure mechanism that is a function of the interaction between
-the treatment assignment $A$ and the biomarker $B1$. These failure and censoring
-events occur at one of 9 discrete relative follow-up times for all 500 study
-participants. Take special notice of the `censor` and `failure` columns that
+mechanism and a event mechanism that is a function of the interaction between
+the treatment assignment $A$ and the biomarker $B1$. These event and censoring
+times occur at one of 9 discrete relative follow-up times for all 500 study
+participants. Take special notice of the `censor` and `event` columns that
 describe the relative time measurement in `time`: the former is a binary
-indicator of censoring, and the later of failure. Finally, note that
+indicator of censoring, and the later of event. Finally, note that
 `sunicate()` (and `unicate()`) accept treatment indicators that are factor
 variables, like `A`.
 
@@ -369,7 +369,7 @@ at time $t_0=6$ by setting the `time_cutoff` argument to `6`.
 ```{r apply-sunicate}
 sunicate(
   data = data,
-  failure = "failure",
+  event = "event",
   censor = "censor",
   relative_time = "time",
   treatment = "A",
