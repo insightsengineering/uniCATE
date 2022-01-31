@@ -13,18 +13,18 @@
 #'
 #' @param long_data A \code{tibble} object containing the longitudinal data
 #'   output by \code{prep_long_data()}.
-#' @param failure A \code{character} defining the name of the binary variable in
-#'   the \code{data} argument that indicates a failure event. Observations
-#'   can have a failure or a censoring event, but not both.
+#' @param event A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates whether an event occurred.
+#'   Observations can have an event or be censored, but not both.
 #' @param censor A \code{character} defining the name of the binary variable in
 #'   the \code{data} argument that indicates a right-censoring event.
-#'   Observations can have a failure or a censoring event, but not both.
+#'   Observations can have an event or be censored, but not both.
 #' @param treatment A \code{character} indicating the name of the binary
 #'   treatment variable in \code{data}.
 #' @param biomarkers A \code{character} vector listing the biomarkers of
 #'   interest in \code{data}.
 #' @param cond_surv_haz_super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
-#'   object used to estimate the conditional failure hazard model. If set to
+#'   object used to estimate the conditional event hazard model. If set to
 #'   \code{NULL}, the default SuperLearner is used. The default's library
 #'   consists of a linear model, penalized linear models (LASSO and elasticnet),
 #'   a Random Forest, and the mean model.
@@ -56,16 +56,18 @@
 #' @importFrom dplyr bind_rows as_tibble
 #'
 #' @keywords internal
-estimate_univariate_survival_cates <- function(long_data,
-                                               failure,
-                                               censor,
-                                               treatment,
-                                               biomarkers,
-                                               cond_surv_haz_super_learner,
-                                               cond_censor_haz_super_learner,
-                                               propensity_score_ls,
-                                               v_folds,
-                                               parallel) {
+estimate_univariate_survival_cates <- function(
+  long_data,
+  event,
+  censor,
+  treatment,
+  biomarkers,
+  cond_surv_haz_super_learner,
+  cond_censor_haz_super_learner,
+  propensity_score_ls,
+  v_folds,
+  parallel
+) {
 
   # split the data into folds
   folds <- origami::make_folds(
@@ -110,7 +112,7 @@ estimate_univariate_survival_cates <- function(long_data,
     cv_fun = hold_out_calculation_survival,
     folds = folds,
     long_data = long_data,
-    failure = failure,
+    event = event,
     censor = censor,
     treatment = treatment,
     biomarkers = biomarkers,
@@ -158,18 +160,18 @@ estimate_univariate_survival_cates <- function(long_data,
 #' @param fold A \code{fold} object (from \code{\link[origami]{make_folds}()}).
 #' @param long_data A \code{tibble} object containing the longitudinal data
 #'   output by \code{prep_long_data()}.
-#' @param failure A \code{character} defining the name of the binary variable in
-#'   the \code{data} argument that indicates a failure event. Observations
-#'   can have a failure or a censoring event, but not both.
+#' @param event A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates whether an event occurred.
+#'   Observations can have an event or be censored, but not both.
 #' @param censor A \code{character} defining the name of the binary variable in
 #'   the \code{data} argument that indicates a right-censoring event.
-#'   Observations can have a failure or a censoring event, but not both.
+#'   Observations can have an event or be censored, but not both.
 #' @param treatment A \code{character} indicating the name of the binary
 #'   treatment variable in \code{data}.
 #' @param biomarkers A \code{character} vector listing the biomarkers of
 #'   interest in \code{data}.
 #' @param cond_surv_haz_super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
-#'   object used to estimate the conditional failure hazard model. If set to
+#'   object used to estimate the conditional event hazard model. If set to
 #'   \code{NULL}, the default SuperLearner is used. The default's library
 #'   consists of a linear model, penalized linear models (LASSO and elasticnet),
 #'   a Random Forest, and the mean model.
@@ -196,9 +198,11 @@ estimate_univariate_survival_cates <- function(long_data,
 #' @import sl3
 #'
 #' @keywords internal
-hold_out_calculation_survival <- function(fold, long_data, failure, censor, treatment, biomarkers,
-                                          cond_surv_haz_super_learner, cond_censor_haz_super_learner,
-                                          propensity_score_ls) {
+hold_out_calculation_survival <- function(
+  fold, long_data, event, censor, treatment, biomarkers,
+  cond_surv_haz_super_learner, cond_censor_haz_super_learner,
+  propensity_score_ls
+) {
 
   # define the training and testing set
   train_data <- origami::training(long_data)
@@ -206,7 +210,7 @@ hold_out_calculation_survival <- function(fold, long_data, failure, censor, trea
 
   # grab the covariates' column names
   covar_names <- colnames(train_data)
-  rm_noncovar_regex <- "(failure|censor|observation_id)"
+  rm_noncovar_regex <- "(event|censor|observation_id)"
   covar_names <- covar_names[which(!grepl(rm_noncovar_regex, covar_names))]
 
 
@@ -216,7 +220,7 @@ hold_out_calculation_survival <- function(fold, long_data, failure, censor, trea
   surv_haz_train_task <- sl3::make_sl3_Task(
     data = train_data,
     covariates = covar_names,
-    outcome = failure,
+    outcome = event,
     outcome_type = "binomial"
   )
 
@@ -326,7 +330,7 @@ hold_out_calculation_survival <- function(fold, long_data, failure, censor, trea
     sort()
   n_times <- length(times)
   surv_valid_data <- valid_data %>%
-    dplyr::select(-dplyr::all_of(c(failure, censor, "time"))) %>%
+    dplyr::select(-dplyr::all_of(c(event, censor, "time"))) %>%
     dplyr::distinct()
   surv_valid_data <- lapply(
     seq_len(nrow(valid_data)),
@@ -410,7 +414,7 @@ hold_out_calculation_survival <- function(fold, long_data, failure, censor, trea
         -.data$surv_t0_cont /
           (propensity_score_ls[[2]] * .data$surv_cens_prev * .data$surv)
       ),
-      haz_prod = ((!!rlang::sym(failure) == 1) - .data$cond_surv_haz),
+      haz_prod = ((!!rlang::sym(event) == 1) - .data$cond_surv_haz),
       inner_sum_t = (.data$h1 - .data$h0) * .data$haz_prod
     ) %>%
     dplyr::summarise(

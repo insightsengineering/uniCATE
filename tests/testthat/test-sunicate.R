@@ -73,7 +73,7 @@ test_that("sunicate() identifies the effect modified in a simulated example", {
   # run sunicate
   res_tbl <- sunicate(
     data = data,
-    failure = "failure",
+    event = "failure",
     censor = "censor",
     relative_time = "time",
     treatment = "treat",

@@ -74,7 +74,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   # transform into long data
   long_data <- prep_long_data(
     data = data,
-    failure = "failure",
+    event = "failure",
     censor = "censor",
     relative_time = "time",
     treatment = "treat",
@@ -119,7 +119,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   res_ls <- hold_out_calculation_survival(
     fold,
     long_data = long_data,
-    failure = "failure",
+    event = "failure",
     censor = "censor",
     treatment = "treat",
     biomarkers = c("biom1", "biom2"),
@@ -219,7 +219,7 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
   # transform into long data
   long_data <- prep_long_data(
     data = data,
-    failure = "failure",
+    event = "failure",
     censor = "censor",
     relative_time = "time",
     treatment = "treat",
@@ -255,7 +255,7 @@ test_that("estimate_univariate_survival_cates() returns a vector with estimated
   # apply the cross-validation function
   res_ls <- estimate_univariate_survival_cates(
     long_data = long_data,
-    failure = "failure",
+    event = "failure",
     censor = "censor",
     treatment = "treat",
     biomarkers = c("biom1", "biom2"),

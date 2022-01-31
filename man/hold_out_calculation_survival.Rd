@@ -7,7 +7,7 @@
 hold_out_calculation_survival(
   fold,
   long_data,
-  failure,
+  event,
   censor,
   treatment,
   biomarkers,
@@ -22,13 +22,13 @@ hold_out_calculation_survival(
 \item{long_data}{A \code{tibble} object containing the longitudinal data
 output by \code{prep_long_data()}.}
 
-\item{failure}{A \code{character} defining the name of the binary variable in
-the \code{data} argument that indicates a failure event. Observations
-can have a failure or a censoring event, but not both.}
+\item{event}{A \code{character} defining the name of the binary variable in
+the \code{data} argument that indicates whether an event occurred.
+Observations can have an event or be censored, but not both.}
 
 \item{censor}{A \code{character} defining the name of the binary variable in
 the \code{data} argument that indicates a right-censoring event.
-Observations can have a failure or a censoring event, but not both.}
+Observations can have an event or be censored, but not both.}
 
 \item{treatment}{A \code{character} indicating the name of the binary
 treatment variable in \code{data}.}
@@ -37,7 +37,7 @@ treatment variable in \code{data}.}
 interest in \code{data}.}
 
 \item{cond_surv_haz_super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
-object used to estimate the conditional failure hazard model. If set to
+object used to estimate the conditional event hazard model. If set to
 \code{NULL}, the default SuperLearner is used. The default's library
 consists of a linear model, penalized linear models (LASSO and elasticnet),
 a Random Forest, and the mean model.}

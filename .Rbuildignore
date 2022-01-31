@@ -4,3 +4,5 @@
 ^LICENSE\.md$
 ^\.github$
 ^paper
+^doc$
+^Meta$

@@ -9,12 +9,12 @@
 #'   status (event variable), relative time of the event, treatment indicator,
 #'   and covariates. Note that the biomarkers must be a subset of the
 #'   covariates, and that there should only be one row per observation.
-#' @param failure A \code{character} defining the name of the binary variable in
-#'   the \code{data} argument that indicates a failure event. Observations
-#'   can have a failure or a censoring event, but not both.
+#' @param event A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates whether an event occurred.
+#'   Observations can have an event or be censored, but not both.
 #' @param censor A \code{character} defining the name of the binary variable in
 #'   the \code{data} argument that indicates a right-censoring event.
-#'   Observations can have a failure or a censoring event, but not both.
+#'   Observations can have an event or be censored, but not both.
 #' @param relative_time A \code{character} providing the name of the time
 #'   variable in \code{data}.
 #' @param treatment A \code{character} indicating the name of the binary
@@ -26,7 +26,7 @@
 #'   \code{covariates}.
 #' @param time_cutoff A \code{numeric} representing the time at which to assess
 #'   the biomarkers' importance with respect to the outcome. If not specified,
-#'   this value is set to the maximum value in the \code{data} argument's
+#'   this value is set to the median value in the \code{data} argument's
 #'   \code{relative_time} variable.
 #'
 #' @return A longitudinal \code{tibble} containing only the event indicator
@@ -39,10 +39,13 @@
 #' @importFrom tibble is_tibble
 #' @importFrom dplyr setequal mutate filter pull select all_of bind_rows
 #' @importFrom rlang sym := !!
+#' @importFrom stats quantile
 #'
 #' @keywords internal
-prep_long_data <- function(data, failure, censor, relative_time, treatment, covariates, biomarkers,
-                           time_cutoff = NULL) {
+prep_long_data <- function(
+  data, event, censor, relative_time, treatment, covariates, biomarkers,
+  time_cutoff = NULL
+) {
 
   # check that data is a data.frame or tibble object
   assertthat::assert_that(
@@ -51,11 +54,11 @@ prep_long_data <- function(data, failure, censor, relative_time, treatment, cova
     msg = "data should be a data.frame or tibble object"
   )
 
-  # check that the failure, censor, relative_time, treatment, covariates, and
+  # check that the event, censor, relative_time, treatment, covariates, and
   # biomarkers are characters
   assertthat::assert_that(
-    identical(length(failure), 1L) & identical(class(failure), "character"),
-    msg = "failure argument should be a character"
+    identical(length(event), 1L) & identical(class(event), "character"),
+    msg = "event argument should be a character"
   )
   assertthat::assert_that(
     identical(length(censor), 1L) & identical(class(censor), "character"),
@@ -79,11 +82,11 @@ prep_long_data <- function(data, failure, censor, relative_time, treatment, cova
     msg = "biomarkers vector is not a subset of the covariates vector"
   )
 
-  # assert that the failure, censor, relative_time, treatment, covariates, and
+  # assert that the event, censor, relative_time, treatment, covariates, and
   # time_cutoff are contained in the data
   assertthat::assert_that(
-    failure %in% colnames(data),
-    msg = "failure argument's variable is missing from the data"
+    event %in% colnames(data),
+    msg = "event argument's variable is missing from the data"
   )
   assertthat::assert_that(
     censor %in% colnames(data),
@@ -123,12 +126,10 @@ prep_long_data <- function(data, failure, censor, relative_time, treatment, cova
   # check that the failur and censor arguments' variables are binary numeric
   # variables
   assertthat::assert_that(
-    dplyr::setequal(unique(dplyr::pull(data, failure)), c(0, 1)) &
-      is.numeric(dplyr::pull(data, failure)),
-    msg = paste0(
-      "failure argument should correspond to a numeric, binary ",
-      "variable in the data"
-    )
+    dplyr::setequal(unique(dplyr::pull(data, event)), c(0, 1)) &
+      is.numeric(dplyr::pull(data, event)),
+    msg = paste0("event argument should correspond to a numeric, binary ",
+                 "variable in the data")
   )
   assertthat::assert_that(
     dplyr::setequal(unique(dplyr::pull(data, censor)), c(0, 1)) &
@@ -139,10 +140,10 @@ prep_long_data <- function(data, failure, censor, relative_time, treatment, cova
     )
   )
 
-  # ensure that no observation has both a censoring and a failure reported
+  # ensure that no observation has both a censoring and a event reported
   assertthat::assert_that(
-    !any(data[[failure]] == 1 & data[[censor]] == 1),
-    msg = "observations may not have a both failure and a censoring event"
+    !any(data[[event]] == 1 & data[[censor]] == 1),
+    msg = "observations may not have a both an event and be censored"
   )
 
   # check that the treatment variable is binary
@@ -175,12 +176,17 @@ prep_long_data <- function(data, failure, censor, relative_time, treatment, cova
   # remove unnecessary variables from data
   data <- data %>%
     dplyr::select(
-      dplyr::all_of(c(failure, censor, relative_time, treatment, covariates))
+      dplyr::all_of(c(event, censor, relative_time, treatment, covariates))
     )
 
   # transform the data from a wide format to a longitudinal format
+
+  # figure out the times to use in the wide format table, as well as the cutoff
   times <- data %>% dplyr::pull(relative_time)
-  if (!is.null(time_cutoff)) {
+  if (is.null(time_cutoff)) {
+    time_cutoff <- stats::quantile(times, probs = 0.5, type = 1)
+    times <- c(times, time_cutoff)
+  } else {
     if (max(times) < time_cutoff) {
       times <- c(times, time_cutoff)
     }
@@ -188,28 +194,46 @@ prep_long_data <- function(data, failure, censor, relative_time, treatment, cova
   times <- times %>%
     unique() %>%
     sort()
+  times <- times[which(times <= time_cutoff)]
+
+  # extend each observation's entry individually
   long_data <- lapply(
     seq_len(nrow(data)),
     function(idx) {
 
       # lengthen data
-      n_times <- which(data[[idx, relative_time]] == times)
-      if (n_times > 1) {
-        long_obs <- replicate(n_times - 1, data[idx, ], simplify = FALSE) %>%
+      # how many rows to add for this observation
+      n_times <- sum(times < data[[idx, relative_time]])
+      if (n_times > 5) {
+        n_times <- 5
+        min_time <- min(data[[idx, relative_time]], time_cutoff)
+        obs_times <- times[which(times <= min_time)]
+        obs_times <- as.vector(
+          stats::quantile(obs_times, probs = c(0.2, .4, .6, .8, 1), type = 1)
+        )
+      } else {
+        obs_times <- times
+      }
+
+      # add the rows
+      if (n_times > 0) {
+        long_obs <- replicate(n_times, data[idx, ], simplify = FALSE) %>%
           dplyr::bind_rows() %>%
           dplyr::mutate(
-            !!rlang::sym(failure) := 0,
+            !!rlang::sym(event) := 0,
             !!rlang::sym(censor) := 0
           ) %>%
           dplyr::bind_rows(data[idx, ])
+        time_col <- c(obs_times[1:n_times], data[[idx, relative_time]])
       } else {
         long_obs <- data[idx, ]
+        time_col <- data[[idx, relative_time]]
       }
 
       # add the relative time back, along with an observation id
       long_obs <- long_obs %>%
         dplyr::mutate(
-          time = times[1:n_times],
+          time = time_col,
           observation_id = idx
         )
       # if the relative time variable happens to be called "time", don't filter
@@ -222,10 +246,8 @@ prep_long_data <- function(data, failure, censor, relative_time, treatment, cova
   ) %>%
     dplyr::bind_rows()
 
-  # apply time cutoff if necessary
-  if (!is.null(time_cutoff)) {
-    long_data <- long_data %>% dplyr::filter(.data$time <= time_cutoff)
-  }
+  # apply the time cutoff
+  long_data <- long_data %>% dplyr::filter(.data$time <= time_cutoff)
 
   return(long_data)
 }
