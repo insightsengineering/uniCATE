@@ -39,7 +39,7 @@
 #' @importFrom tibble is_tibble
 #' @importFrom dplyr setequal mutate filter pull select all_of bind_rows
 #' @importFrom rlang sym := !!
-#' @importFrom stats median
+#' @importFrom stats quantile
 #'
 #' @keywords internal
 prep_long_data <- function(
@@ -176,13 +176,15 @@ prep_long_data <- function(
   # figure out the times to use in the wide format table, as well as the cutoff
   times <- data %>% dplyr::pull(relative_time)
   if (is.null(time_cutoff)) {
-    time_cutoff <- stats::median(times)
+    time_cutoff <- stats::quantile(times, probs = 0.5, type = 1)
+    times <- c(times, time_cutoff)
   } else {
     if (max(times) < time_cutoff) {
       times <- c(times, time_cutoff)
     }
   }
   times <- times %>% unique() %>% sort()
+  times <- times[which(times <= time_cutoff)]
 
   # extend each observation's entry individually
   long_data <- lapply(
@@ -190,23 +192,38 @@ prep_long_data <- function(
     function(idx) {
 
       # lengthen data
-      n_times <- which(data[[idx, relative_time]] == times)
-      if (n_times > 1) {
-        long_obs <- replicate(n_times - 1, data[idx, ], simplify = FALSE) %>%
+      # how many rows to add for this observation
+      n_times <- sum(times < data[[idx, relative_time]])
+      if (n_times > 5) {
+        n_times <- 5
+        min_time <- min(data[[idx, relative_time]], time_cutoff)
+        obs_times <- times[which(times <= min_time)]
+        obs_times <- as.vector(
+          stats::quantile(obs_times, probs = c(0.2, .4, .6, .8, 1), type = 1)
+        )
+      } else {
+        obs_times <- times
+      }
+
+      # add the rows
+      if (n_times > 0) {
+        long_obs <- replicate(n_times, data[idx, ], simplify = FALSE) %>%
           dplyr::bind_rows() %>%
           dplyr::mutate(
             !!rlang::sym(event) := 0,
             !!rlang::sym(censor) := 0
           ) %>%
           dplyr::bind_rows(data[idx, ])
+        time_col <- c(obs_times[1:n_times], data[[idx, relative_time]])
       } else {
         long_obs <- data[idx, ]
+        time_col <- data[[idx, relative_time]]
       }
 
       # add the relative time back, along with an observation id
       long_obs <- long_obs %>%
         dplyr::mutate(
-          time = times[1:n_times],
+          time = time_col,
           observation_id = idx
         )
       # if the relative time variable happens to be called "time", don't filter

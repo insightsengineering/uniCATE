@@ -62,6 +62,45 @@ test_that("The observation with latest relative time is represented twice",
   expect_equal(obs_3_times, c(1, 2))
 })
 
+test_that("If there are more than five unique relative times before the time
+          cutoff, then only the quintiles of the unique relative times up to the
+          time cutoff are used to lengthen the wide data",
+{
+  # define the dummy data
+  set.seed(9875)
+  data <- tibble(
+    sick = rbinom(10, 1, 0.3),
+    left = rbinom(10, 1, 0.2),
+    time = seq_len(10),
+    treat = rep(c("t", "c"), 5),
+    biom1 = seq_len(10),
+    biom2 = seq_len(10),
+    biom3 = seq_len(10)
+  )
+
+  # generate the long data format
+  long_data <- prep_long_data(
+    data = data,
+    event = "sick",
+    censor = "left",
+    relative_time = "time",
+    treatment = "treat",
+    covariates = c("biom1", "biom2", "biom3"),
+    biomarkers = c("biom1", "biom2", "biom3"),
+    time_cutoff = 8
+  )
+
+  # pull out the 10th individual with 10 times.  They should only have
+  # times corresponding to the approximate quintiles of 1 through 8
+  longest_obs_times <- long_data %>%
+    filter(observation_id == 10) %>%
+    pull(time)
+  expect_equal(
+    longest_obs_times,
+    as.vector(quantile(seq_len(8), probs = c(.2, .4, .6, .8, 1), type = 1))
+  )
+})
+
 test_that("Only data.frame or tibble objects are accepted by the data argument",
 {
   # define the dummy data
