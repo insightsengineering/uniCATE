@@ -9,12 +9,12 @@
 #'   status (event variable), relative time of the event, treatment indicator,
 #'   and covariates. Note that the biomarkers must be a subset of the
 #'   covariates, and that there should only be one row per observation.
-#' @param failure A \code{character} defining the name of the binary variable in
-#'   the \code{data} argument that indicates a failure event. Observations
-#'   can have a failure or a censoring event, but not both.
+#' @param event A \code{character} defining the name of the binary variable in
+#'   the \code{data} argument that indicates whether an event occurred.
+#'   Observations can have an event or be censored, but not both.
 #' @param censor A \code{character} defining the name of the binary variable in
 #'   the \code{data} argument that indicates a right-censoring event.
-#'   Observations can have a failure or a censoring event, but not both.
+#'   Observations can have an event or be censored, but not both.
 #' @param relative_time A \code{character} providing the name of the time
 #'   variable in \code{data}.
 #' @param treatment A \code{character} indicating the name of the binary
@@ -42,7 +42,7 @@
 #'
 #' @keywords internal
 prep_long_data <- function(
-  data, failure, censor, relative_time, treatment, covariates, biomarkers,
+  data, event, censor, relative_time, treatment, covariates, biomarkers,
   time_cutoff = NULL
 ) {
 
@@ -53,11 +53,11 @@ prep_long_data <- function(
     msg = "data should be a data.frame or tibble object"
   )
 
-  # check that the failure, censor, relative_time, treatment, covariates, and
+  # check that the event, censor, relative_time, treatment, covariates, and
   # biomarkers are characters
   assertthat::assert_that(
-    identical(length(failure), 1L) & identical(class(failure), "character"),
-    msg = "failure argument should be a character"
+    identical(length(event), 1L) & identical(class(event), "character"),
+    msg = "event argument should be a character"
   )
   assertthat::assert_that(
     identical(length(censor), 1L) & identical(class(censor), "character"),
@@ -81,11 +81,11 @@ prep_long_data <- function(
     msg = "biomarkers vector is not a subset of the covariates vector"
   )
 
-  # assert that the failure, censor, relative_time, treatment, covariates, and
+  # assert that the event, censor, relative_time, treatment, covariates, and
   # time_cutoff are contained in the data
   assertthat::assert_that(
-    failure %in% colnames(data),
-    msg = "failure argument's variable is missing from the data"
+    event %in% colnames(data),
+    msg = "event argument's variable is missing from the data"
   )
   assertthat::assert_that(
     censor %in% colnames(data),
@@ -123,9 +123,9 @@ prep_long_data <- function(
   # check that the failur and censor arguments' variables are binary numeric
   # variables
   assertthat::assert_that(
-    dplyr::setequal(unique(dplyr::pull(data, failure)), c(0, 1)) &
-      is.numeric(dplyr::pull(data, failure)),
-    msg = paste0("failure argument should correspond to a numeric, binary ",
+    dplyr::setequal(unique(dplyr::pull(data, event)), c(0, 1)) &
+      is.numeric(dplyr::pull(data, event)),
+    msg = paste0("event argument should correspond to a numeric, binary ",
                  "variable in the data")
   )
   assertthat::assert_that(
@@ -135,10 +135,10 @@ prep_long_data <- function(
                  "variable in the data")
   )
 
-  # ensure that no observation has both a censoring and a failure reported
+  # ensure that no observation has both a censoring and a event reported
   assertthat::assert_that(
-    !any(data[[failure]] == 1 & data[[censor]] == 1),
-    msg = "observations may not have a both failure and a censoring event"
+    !any(data[[event]] == 1 & data[[censor]] == 1),
+    msg = "observations may not have a both an event and be censored"
   )
 
   # check that the treatment variable is binary
@@ -167,7 +167,7 @@ prep_long_data <- function(
   # remove unnecessary variables from data
   data <- data %>%
     dplyr::select(
-      dplyr::all_of(c(failure, censor, relative_time, treatment, covariates))
+      dplyr::all_of(c(event, censor, relative_time, treatment, covariates))
     )
 
   # transform the data from a wide format to a longitudinal format
@@ -188,7 +188,7 @@ prep_long_data <- function(
         long_obs <- replicate(n_times - 1, data[idx, ], simplify = FALSE) %>%
           dplyr::bind_rows() %>%
           dplyr::mutate(
-            !!rlang::sym(failure) := 0,
+            !!rlang::sym(event) := 0,
             !!rlang::sym(censor) := 0
           ) %>%
           dplyr::bind_rows(data[idx, ])

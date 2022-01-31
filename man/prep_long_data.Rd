@@ -6,7 +6,7 @@
 \usage{
 prep_long_data(
   data,
-  failure,
+  event,
   censor,
   relative_time,
   treatment,
@@ -21,13 +21,13 @@ status (event variable), relative time of the event, treatment indicator,
 and covariates. Note that the biomarkers must be a subset of the
 covariates, and that there should only be one row per observation.}
 
-\item{failure}{A \code{character} defining the name of the binary variable in
-the \code{data} argument that indicates a failure event. Observations
-can have a failure or a censoring event, but not both.}
+\item{event}{A \code{character} defining the name of the binary variable in
+the \code{data} argument that indicates whether an event occurred.
+Observations can have an event or be censored, but not both.}
 
 \item{censor}{A \code{character} defining the name of the binary variable in
 the \code{data} argument that indicates a right-censoring event.
-Observations can have a failure or a censoring event, but not both.}
+Observations can have an event or be censored, but not both.}
 
 \item{relative_time}{A \code{character} providing the name of the time
 variable in \code{data}.}
