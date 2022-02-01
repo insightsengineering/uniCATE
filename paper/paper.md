@@ -26,7 +26,7 @@ date: "\\today"
 bibliography: paper.bib
 ---
 
-# Summary
+## Summary
 
 Predictive biomarkers are biometric measurements that split patient
 populations into groups which draw differing benefits from a given treatment
