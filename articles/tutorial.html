@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">uniCATE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
       </span>
     </div>
 
@@ -63,15 +63,6 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -108,10 +99,10 @@ Other releases
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>Predictive biomarkers are biometric measurements that subdivide patient populations into groups which draw differing benefits from a given treatment. These biomarkers therefore play an important role in precision medicine: as indicators of treatment effect modification, they can inform patient treatment decisions. Predictive biomarkers may also inform drug target discovery, leading to an improved understanding of novel medications’ functioning.</p>
-<p>The discovery of predictive biomarkers through statistical techniques has, to date, largely been a byproduct of optimal treatment rule estimation. As implied by its name, this tasks consists of learning which treatment would most benefit a patient given their characteristics. These characteristics could include, but are not limited to, potentially predictive biomarkers. When interpretable statistical learning methods are used to estimate these rules, biomarkers found to be “important” might be declared predictive. For example, estimation methods based on regularized linear regression might define a biomarker as predictive if its linear regression coefficient estimate is non-zero <span class="citation">(Tian et al. 2014)</span>.</p>
-<p>While this approach to predictive biomarker discovery works well in traditional asymptotic settings, it is not so when the number of biomarkers is similar to or larger than the number of patients in a study. These methods offer no guarantee of false positive rate control <span class="citation">(Tian et al. 2014; Chen et al. 2017)</span>, which can have severe consequences in practice. The inclusion of false positive biomarkers in diagnostic assays decreases their clinical utility, and already limited resources are wasted on biological validation experiments of duds in drug target discovery applications. Patient outcomes are ultimately negatively effected.</p>
-<p>We proposed, in recent work, a variable importance parameter that directly measures individual biomarkers’ roles in treatment effect modification. The methodology, dubbed <em>uniCATE</em>, relies on semiparametric theory to perform assumption-lean inference about this parameter. We demonstrated that our procedure controls the rate of false discoveries in high-dimensional randomized control trials, allowing for the accurate identification of predictive biomarkers. This methodology is implemented in the <code>uniCATE</code> package.</p>
+<p>Predictive biomarkers are biometric measurements that subdivide patient populations into groups which draw differing benefits from a given treatment. These biomarkers therefore play an important role in precision medicine: as indicators of treatment effect modification, they can inform patient treatment decisions. Predictive biomarkers may also be used for drug target discovery, leading to an improved understanding of novel medications’ functioning.</p>
+<p>The discovery of predictive biomarkers through statistical techniques has, to date, largely been a byproduct of treatment rule estimation. As implied by its name, this tasks consists of learning which treatment would most benefit a patient given their characteristics. These characteristics could include, but are not limited to, potentially predictive biomarkers. When interpretable statistical learning methods are used to estimate these rules, biomarkers found to be “important” might be declared predictive. For example, estimation methods based on regularized linear regression might define a biomarker as predictive if its treatment interaction coefficient estimate is non-zero <span class="citation">(Tian et al. 2014)</span>.</p>
+<p>While this approach to predictive biomarker discovery works well in traditional asymptotic settings, it is not so when the number of biomarkers is similar to or larger than the number of patients in a study. These methods offer no guarantee of false positive rate control <span class="citation">(Tian et al. 2014; Chen et al. 2017)</span>, which can have severe consequences in practice. The inclusion of false positive biomarkers in diagnostic assays decreases their clinical utility, and already limited resources are wasted on biological validation experiments of duds for drug target discovery purposes. Patient outcomes are ultimately negatively effected.</p>
+<p>We proposed in recent work a variable importance parameter that directly measures individual biomarkers’ roles in treatment effect modification. The methodology, dubbed <em>uniCATE</em>, relies on semiparametric theory to perform assumption-lean inference about this parameter. We demonstrated that our procedure controls the rate of false discoveries in high-dimensional randomized control trials, allowing for the accurate identification of predictive biomarkers. This methodology is implemented in the <code>uniCATE</code> package.</p>
 </div>
 <div class="section level2">
 <h2 id="unicate-in-action">
@@ -134,7 +125,7 @@ Other releases
 \frac{\mathbb{E}_{P_X}\left[\left(Y^{(1)}-Y^{(0)}\right)B_j\right]}
 {\mathbb{E}_{P_X}\left[B_j^2\right]}
 \]</span> for <span class="math inline">\(j=1, \ldots, p\)</span> where we assume that the biomarkers are centered at zero. Under the assumption that the mean difference in potential outcomes is a linear function of <span class="math inline">\(B_j\)</span>, <span class="math inline">\(\Psi(P_X)\)</span> is the vector of expected simple linear regression coefficients produced by regressing the difference in potential outcomes against each biomarker. While the true relationship between the difference of potential outcomes and a predictive biomarker is almost surely nonlinear, <span class="math inline">\(\Psi(P_X)\)</span> is a generally informative target of inference. These parameters are reasonable indicators of all but pathological relationships between biomarkers and potential outcome differences.</p>
-<p>Under conditions that are generally satisfied in the clinical trial setting, we find that <span class="math inline">\(\Psi(P_X)\)</span> can be estimated from realizations of the observed data-generating distribution <span class="math inline">\(P_0\)</span>. Further, the estimator of this parameter implemented in the <code><a href="../reference/unicate.html">unicate()</a></code> function is consistent and asymptotically linear, permitting valid statistical inference in most RCT scenarios. Details are provided in the manuscript.</p>
+<p>Under conditions that are generally satisfied in the clinical trial setting, we find that <span class="math inline">\(\Psi(P_X)\)</span> can be estimated from realizations of the observed data-generating distribution. Further, the estimator of this parameter implemented in the <code><a href="../reference/unicate.html">unicate()</a></code> function is consistent and asymptotically linear, permitting valid statistical inference in most RCT scenarios. Details are provided in the manuscript.</p>
 </div>
 <div class="section level4">
 <h4 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -142,7 +133,12 @@ Other releases
 <p>We simulate some RCT data to demonstrate the application of <code><a href="../reference/unicate.html">unicate()</a></code>. We refrain from generating a high-dimensional vector of biomarkers for computational convenience.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">uniCATE</span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">uniCATE</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glmnet.stanford.edu" class="external-link">glmnet</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">speedglm</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">polspline</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/imbs-hl/ranger" class="external-link">ranger</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dmlc/xgboost" class="external-link">xgboost</a></span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># simulate n trial participants</span>
 <span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span>
@@ -174,7 +170,7 @@ Other releases
 <span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  2.20 -<span style="color: #BB0000;">2.08</span> -<span style="color: #BB0000;">0.094</span><span style="color: #BB0000; text-decoration: underline;">2</span>  0.096<span style="text-decoration: underline;">4</span>     1  0.534      1  3.79 </span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  2.31 -<span style="color: #BB0000;">1.71</span> -<span style="color: #BB0000;">0.047</span><span style="color: #BB0000; text-decoration: underline;">7</span> -<span style="color: #BB0000;">0.070</span><span style="color: #BB0000; text-decoration: underline;">0</span>     1  0.648      0  0.352</span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  2.35 -<span style="color: #BB0000;">1.96</span> -<span style="color: #BB0000;">0.088</span><span style="color: #BB0000; text-decoration: underline;">8</span> -<span style="color: #BB0000;">0.103</span>      1  1.93       0 -<span style="color: #BB0000;">0.928</span></span></code></pre></div>
-<p>This simulated trial is made up of 200 participants. Four pre-treatment biomarkers and two pre-treatment covariates are generated for each participant. Observations are then randomly assigned with equal probability to either the treatment or the control condition. From the definition of the outcome, it is clear that <code>B1</code> and <code>B2</code> are predictive biomarkers. Finally, we define the <code>propensity_score_ls</code>, a list indicating the probability that any given patient is assigned to the treatment condition, <code>"1"</code>, or the control condition, <code>"0"</code>.</p>
+<p>This simulated trial is made up of 200 participants. Four pre-treatment biomarkers and two pre-treatment covariates are generated for each participant. Observations are then randomly assigned with equal probability to either the treatment or the control condition. From the definition of the outcome, it is clear that <code>B1</code> and <code>B2</code> are predictive biomarkers. Finally, we define the <code>propensity_score_ls</code>, a list indicating the probability that any given patient is assigned to the treatment condition, <code>"1"</code>, or the control condition, <code>"0"</code>. Note that the treatment condition’s entry in this list always precedes the control condition’s.</p>
 <p>We now apply <code><a href="../reference/unicate.html">unicate()</a></code> to this data to recover the variable importance measures of the biomarkers.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/unicate.html">unicate</a></span><span class="op">(</span>
@@ -200,18 +196,18 @@ Other releases
 <div class="section level4">
 <h4 id="setup-1">Setup<a class="anchor" aria-label="anchor" href="#setup-1"></a>
 </h4>
-<p>The assumed full-data and observed data-generating processes are identical to those of the continuous outcome, save that <span class="math inline">\(Y^{(0)}, Y^{(1)}\)</span> and <span class="math inline">\(Y\)</span> are binary random variables.</p>
+<p>The assumed full-data and observed data-generating processes are identical to those of the continuous outcome save that <span class="math inline">\(Y^{(0)}, Y^{(1)}\)</span> and <span class="math inline">\(Y\)</span> are binary random variables.</p>
 </div>
 <div class="section level4">
 <h4 id="target-parameter-1">Target Parameter<a class="anchor" aria-label="anchor" href="#target-parameter-1"></a>
 </h4>
-<p>The full-data parameter of interest is slightly modified from the continuous outcome scenario to reflect the use of a binary outcome. We instead target <span class="math inline">\(\Psi(P_X) = (\Psi_1(P_X), \ldots, \Psi_p(P_X))\)</span> where <span class="math display">\[
+<p>The full-data parameter of interest looks slightly different from the continuous outcome scenario to reflect the use of a binary outcome. We target <span class="math inline">\(\Psi(P_X) = (\Psi_1(P_X), \ldots, \Psi_p(P_X))\)</span> where <span class="math display">\[
 \Psi_j(P_X) =
 \frac{\mathbb{E}_{P_X}\left[\left(\mathbb{P}_{P_X}(Y^{(1)} =1| W)
   - \mathbb{P}_{P_X}(Y^{(0)} = 1| W)\right)B_j\right]}
 {\mathbb{E}_{P_X}\left[B_j^2\right]}
-\]</span> for centered biomarkers indexed by <span class="math inline">\(j = 1, \ldots, p\)</span>. Assuming a linear relationship between the difference of the potential outcomes’ probability of success and the covariates, this variable importance parameter consists of the simple linear regression coefficients of the difference in the conditional potential outcome success probabilities regressed on each biomarker. While the true relationship between potential outcome probabilities and covariates is unlikely to be linear, this parameter is telling of biomarkers’ predictive capacities. Biomarkers with the largest absolute values will correspond to those that meaningfully modify the treatment effect.</p>
-<p>As in the continuous case, this parameter can generally be estimated from the observed RCT data under non-stringent assumptions about the data-generating process. Inference is in fact based on the same estimator used for continuous outcomes, and so we again use <code><a href="../reference/unicate.html">unicate()</a></code> to learn about the biomarkers’ marginal importance in regards to binary treatment effect modification. For details, please review the manuscript. We do not provide an example since it would be virtually identical to that given in the previous subsection.</p>
+\]</span> for centered biomarkers indexed by <span class="math inline">\(j = 1, \ldots, p\)</span>. Assuming a linear relationship between the difference of the potential outcomes’ probability of success and the covariates, this variable importance parameter consists of the simple linear regression coefficients of the difference in the conditional potential outcome success probabilities regressed on each biomarker. While the true relationship between potential outcome probabilities and covariates is again unlikely to be linear, this parameter is telling of biomarkers’ predictive capacities. Biomarkers with the largest absolute values will correspond to those that meaningfully modify the treatment effect. In truth, this is the same variable importance parameter as the for continuous outcomes, but written in a more intuitive form.</p>
+<p>As in the continuous case, this parameter can generally be estimated from the observed RCT data under non-stringent assumptions about the data-generating process. Inference is in fact based on the same estimator used for continuous outcomes, and so we again use <code><a href="../reference/unicate.html">unicate()</a></code> to learn about the biomarkers’ marginal importance in regards to binary treatment effect modification. For details, please review the manuscript. We do not provide an example since it would be nearly identical to that given in the previous subsection.</p>
 </div>
 </div>
 <div class="section level3">
@@ -220,7 +216,7 @@ Other releases
 <div class="section level4">
 <h4 id="setup-2">Setup<a class="anchor" aria-label="anchor" href="#setup-2"></a>
 </h4>
-<p>We again perform an RCT where the outcome of interest is a potentially right-censored time-to-event outcome. We consider <span class="math inline">\(n\)</span> i.i.d. copies of the full-data random vector <span class="math inline">\(X = (W, A, T^{(0)}, C^{(0)}, T^{(1)}, C^{(1)})\)</span> distributed according to <span class="math inline">\(P_X\)</span> where <span class="math inline">\(W\)</span> and <span class="math inline">\(A\)</span> are defined as in the continuous outcome case. <span class="math inline">\(T^{(0)}\)</span> and <span class="math inline">\(T^{(1)}\)</span> correspond to the event times under control and treatment conditions, and <span class="math inline">\(C^{(0)}\)</span> and <span class="math inline">\(C^{(1)}\)</span> correspond to the censoring times under control and treatment conditions. As before, the full-data random vectors are never observed; instead, we observe <span class="math inline">\(n\)</span> i.i.d. copies of <span class="math inline">\(O = (W, A, \Delta, \tilde{T})\)</span> distributed according to <span class="math inline">\(P_0\)</span>. Here, <span class="math inline">\(\Delta\)</span> is a censoring indicator and <span class="math inline">\(\tilde{T}=(1-A)\;\text{min}(T^{(0)}, C^{(0)})+A\;\text{min}(T^{(1)}, C^{(1)})\)</span> is the last measurement time.</p>
+<p>We perform an RCT where the outcome of interest is a right-censored time-to-event outcome. We consider <span class="math inline">\(n\)</span> i.i.d. copies of the full-data random vector <span class="math inline">\(X = (W, A, T^{(0)}, C^{(0)}, T^{(1)}, C^{(1)})\)</span> distributed according to <span class="math inline">\(P_X\)</span> where <span class="math inline">\(W\)</span> and <span class="math inline">\(A\)</span> are defined as in the continuous outcome case. <span class="math inline">\(T^{(0)}\)</span> and <span class="math inline">\(T^{(1)}\)</span> correspond to the event times under control and treatment conditions, and <span class="math inline">\(C^{(0)}\)</span> and <span class="math inline">\(C^{(1)}\)</span> correspond to the censoring times under control and treatment conditions. As before, the full-data random vectors are never observed; instead, we observe <span class="math inline">\(n\)</span> i.i.d. copies of <span class="math inline">\(O = (W, A, \Delta, \tilde{T})\)</span> distributed according to <span class="math inline">\(P_0\)</span>. Here, <span class="math inline">\(\Delta\)</span> is a censoring indicator and <span class="math inline">\(\tilde{T}=(1-A)\;\text{min}(T^{(0)}, C^{(0)})+A\;\text{min}(T^{(1)}, C^{(1)})\)</span> is the last measurement time.</p>
 </div>
 <div class="section level4">
 <h4 id="target-parameter-2">Target Parameter<a class="anchor" aria-label="anchor" href="#target-parameter-2"></a>
@@ -229,8 +225,8 @@ Other releases
 \Psi_j(P_X;t_0) =
 \frac{\mathbb{E}_{P_X}\left[\left(S^{(1)}(t_0|W)-S^{(0)}(t_0|W)\right)B_j\right]}
 {\mathbb{E}_{P_X}\left[B_j^2\right]}
-\]</span> for centered biomarkers indexed by <span class="math inline">\(j = 1, \ldots, p\)</span>. Similarly to the binary outcome scenario, this variable importance measure assumes a linear relationship between the contrast of survival outcomes at time <span class="math inline">\(t_0\)</span> and each biomarker, consisting of the simple linear regression coefficients of this contrast regressed on each biomarker. Again, while the true relationship between the difference in survival probabilities and biomarkers is unlikely to be linear, it provides a metric by which to evaluate biomarkers’ abilities to modify treatment effects on the absolute scale.</p>
-<p>As with the other variable importance metrics, this parameter can be estimated from the observed data in a RCT. The estimator of this parameter is implemented in the <code><a href="../reference/sunicate.html">sunicate()</a></code> function. Under the assumption that the censoring mechanism is consistently estimated by the our procedure, the <code><a href="../reference/sunicate.html">sunicate()</a></code> estimator is consistent and asymptotically linear. Valid statistical inference about the strength of biomarkers’ treatment effect modification is therefore made possible with survival outcomes.</p>
+\]</span> for centered biomarkers indexed by <span class="math inline">\(j = 1, \ldots, p\)</span>. Similarly to the binary outcome scenario, this variable importance measure assumes a linear relationship between the contrast of survival outcomes at time <span class="math inline">\(t_0\)</span> and each biomarker, and consists of the simple linear regression coefficients of this contrast regressed on each biomarker. Again, while the true relationship between the difference in survival probabilities and biomarkers is unlikely to be linear, it provides a metric by which to evaluate biomarkers’ abilities to modify treatment effects on the absolute scale.</p>
+<p>As with the other variable importance metrics, this parameter can often be estimated from the observed data in a RCT. The estimator of this parameter is implemented in the <code><a href="../reference/sunicate.html">sunicate()</a></code> function. Under the assumption that the censoring mechanism is consistently estimated by our procedure, the <code><a href="../reference/sunicate.html">sunicate()</a></code> estimator is consistent and asymptotically linear. Valid statistical inference about the strength of biomarkers’ treatment effect modification is therefore made possible with survival outcomes.</p>
 </div>
 <div class="section level4">
 <h4 id="example-1">Example<a class="anchor" aria-label="anchor" href="#example-1"></a>
@@ -320,7 +316,7 @@ Other releases
 <span class="co">#&gt; <span style="color: #BCBCBC;">5</span> control    0.601  -<span style="color: #BB0000;">1.40</span>   1.58   0.239     8      0     1</span>
 <span class="co">#&gt; <span style="color: #BCBCBC;">6</span> treatment -<span style="color: #BB0000;">1.51</span>   -<span style="color: #BB0000;">0.310</span>  0.108 -<span style="color: #BB0000;">0.498</span>     1      0     1</span></code></pre></div>
 <p>The data simulated in the previous chunk relies on an uninformative censoring mechanism and a event mechanism that is a function of the interaction between the treatment assignment <span class="math inline">\(A\)</span> and the biomarker <span class="math inline">\(B1\)</span>. These event and censoring times occur at one of 9 discrete relative follow-up times for all 500 study participants. Take special notice of the <code>censor</code> and <code>event</code> columns that describe the relative time measurement in <code>time</code>: the former is a binary indicator of censoring, and the later of event. Finally, note that <code><a href="../reference/sunicate.html">sunicate()</a></code> (and <code><a href="../reference/unicate.html">unicate()</a></code>) accept treatment indicators that are factor variables, like <code>A</code>.</p>
-<p>We now assess the predictive importance of biomarkers with respect to survival at time <span class="math inline">\(t_0=6\)</span> by setting the <code>time_cutoff</code> argument to <code>6</code>.</p>
+<p>We now assess the predictive importance of biomarkers with respect to survival at time <span class="math inline">\(t_0=6\)</span> by setting the <code>time_cutoff</code> argument to <code>6</code>. Note when the <code>time_cutoff</code> argument is not specified, <span class="math inline">\(t_0\)</span> defaults to the median relative time in the <code>data</code> argument.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/sunicate.html">sunicate</a></span><span class="op">(</span>
   data <span class="op">=</span> <span class="va">data</span>,
@@ -371,7 +367,9 @@ Other releases
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] dplyr_1.0.7   uniCATE_0.2.3</span>
+<span class="co">#&gt; [1] xgboost_1.5.0.2  ranger_0.13.1    polspline_1.1.19 speedglm_0.3-3  </span>
+<span class="co">#&gt; [5] MASS_7.3-55      glmnet_4.1-3     Matrix_1.4-0     dplyr_1.0.7     </span>
+<span class="co">#&gt; [9] uniCATE_0.3.0   </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;   [1] nlme_3.1-155         matrixStats_0.61.0   fs_1.5.2            </span>
@@ -380,37 +378,35 @@ Other releases
 <span class="co">#&gt;  [10] utf8_1.2.2           R6_2.5.1             rpart_4.1.16        </span>
 <span class="co">#&gt;  [13] DBI_1.1.2            colorspace_2.0-2     nnet_7.3-17         </span>
 <span class="co">#&gt;  [16] withr_2.4.3          tidyselect_1.1.1     prettyunits_1.1.1   </span>
-<span class="co">#&gt;  [19] compiler_4.1.2       glmnet_4.1-3         textshaping_0.3.6   </span>
-<span class="co">#&gt;  [22] cli_3.1.1            desc_1.4.0           sass_0.4.0          </span>
-<span class="co">#&gt;  [25] scales_1.1.1         checkmate_2.0.0      polspline_1.1.19    </span>
-<span class="co">#&gt;  [28] randomForest_4.6-14  speedglm_0.3-3       pkgdown_2.0.2       </span>
-<span class="co">#&gt;  [31] systemfonts_1.0.3    stringr_1.4.0        digest_0.6.29       </span>
-<span class="co">#&gt;  [34] rmarkdown_2.11       pkgconfig_2.0.3      htmltools_0.5.2     </span>
-<span class="co">#&gt;  [37] parallelly_1.30.0    fastmap_1.1.0        htmlwidgets_1.5.4   </span>
-<span class="co">#&gt;  [40] rlang_1.0.0          BBmisc_1.11          shape_1.4.6         </span>
-<span class="co">#&gt;  [43] visNetwork_2.1.0     jquerylib_0.1.4      generics_0.1.1      </span>
-<span class="co">#&gt;  [46] jsonlite_1.7.3       ModelMetrics_1.2.2.2 magrittr_2.0.2      </span>
-<span class="co">#&gt;  [49] delayed_0.3.0        Matrix_1.4-0         Rcpp_1.0.8          </span>
-<span class="co">#&gt;  [52] munsell_0.5.0        fansi_1.0.2          abind_1.4-5         </span>
-<span class="co">#&gt;  [55] lifecycle_1.0.1      pROC_1.18.0          stringi_1.7.6       </span>
-<span class="co">#&gt;  [58] yaml_2.2.2           MASS_7.3-55          plyr_1.8.6          </span>
-<span class="co">#&gt;  [61] recipes_0.1.17       grid_4.1.2           parallel_4.1.2      </span>
-<span class="co">#&gt;  [64] listenv_0.8.0        crayon_1.4.2         lattice_0.20-45     </span>
-<span class="co">#&gt;  [67] splines_4.1.2        hms_1.1.1            knitr_1.37          </span>
-<span class="co">#&gt;  [70] pillar_1.6.5         ranger_0.13.1        igraph_1.2.11       </span>
-<span class="co">#&gt;  [73] uuid_1.0-3           origami_1.0.5        xgboost_1.5.0.2     </span>
-<span class="co">#&gt;  [76] stats4_4.1.2         reshape2_1.4.4       future.apply_1.8.1  </span>
-<span class="co">#&gt;  [79] codetools_0.2-18     glue_1.6.1           evaluate_0.14       </span>
-<span class="co">#&gt;  [82] data.table_1.14.2    vctrs_0.3.8          Rdpack_2.1.3        </span>
-<span class="co">#&gt;  [85] foreach_1.5.1        gtable_0.3.0         purrr_0.3.4         </span>
-<span class="co">#&gt;  [88] rstackdeque_1.1.1    future_1.23.0        assertthat_0.2.1    </span>
-<span class="co">#&gt;  [91] cachem_1.0.6         ggplot2_3.3.5        xfun_0.29           </span>
-<span class="co">#&gt;  [94] sl3_1.4.4            gower_0.2.2          rbibutils_2.2.7     </span>
-<span class="co">#&gt;  [97] prodlim_2019.11.13   ragg_1.2.1           class_7.3-20        </span>
-<span class="co">#&gt; [100] survival_3.2-13      timeDate_3043.102    tibble_3.1.6        </span>
-<span class="co">#&gt; [103] iterators_1.0.13     memoise_2.0.1        lava_1.6.10         </span>
-<span class="co">#&gt; [106] globals_0.14.0       imputeMissings_0.0.3 ellipsis_0.3.2      </span>
-<span class="co">#&gt; [109] caret_6.0-90         ROCR_1.0-11          ipred_0.9-12</span></code></pre></div>
+<span class="co">#&gt;  [19] compiler_4.1.2       textshaping_0.3.6    cli_3.1.1           </span>
+<span class="co">#&gt;  [22] desc_1.4.0           sass_0.4.0           scales_1.1.1        </span>
+<span class="co">#&gt;  [25] checkmate_2.0.0      randomForest_4.6-14  pkgdown_2.0.2       </span>
+<span class="co">#&gt;  [28] systemfonts_1.0.3    stringr_1.4.0        digest_0.6.29       </span>
+<span class="co">#&gt;  [31] rmarkdown_2.11       pkgconfig_2.0.3      htmltools_0.5.2     </span>
+<span class="co">#&gt;  [34] parallelly_1.30.0    fastmap_1.1.0        htmlwidgets_1.5.4   </span>
+<span class="co">#&gt;  [37] rlang_1.0.0          BBmisc_1.11          shape_1.4.6         </span>
+<span class="co">#&gt;  [40] visNetwork_2.1.0     jquerylib_0.1.4      generics_0.1.2      </span>
+<span class="co">#&gt;  [43] jsonlite_1.7.3       ModelMetrics_1.2.2.2 magrittr_2.0.2      </span>
+<span class="co">#&gt;  [46] delayed_0.3.0        Rcpp_1.0.8           munsell_0.5.0       </span>
+<span class="co">#&gt;  [49] fansi_1.0.2          abind_1.4-5          lifecycle_1.0.1     </span>
+<span class="co">#&gt;  [52] pROC_1.18.0          stringi_1.7.6        yaml_2.2.2          </span>
+<span class="co">#&gt;  [55] plyr_1.8.6           recipes_0.1.17       grid_4.1.2          </span>
+<span class="co">#&gt;  [58] parallel_4.1.2       listenv_0.8.0        crayon_1.4.2        </span>
+<span class="co">#&gt;  [61] lattice_0.20-45      splines_4.1.2        hms_1.1.1           </span>
+<span class="co">#&gt;  [64] knitr_1.37           pillar_1.7.0         igraph_1.2.11       </span>
+<span class="co">#&gt;  [67] uuid_1.0-3           origami_1.0.5        stats4_4.1.2        </span>
+<span class="co">#&gt;  [70] reshape2_1.4.4       future.apply_1.8.1   codetools_0.2-18    </span>
+<span class="co">#&gt;  [73] glue_1.6.1           evaluate_0.14        data.table_1.14.2   </span>
+<span class="co">#&gt;  [76] vctrs_0.3.8          Rdpack_2.1.3         foreach_1.5.1       </span>
+<span class="co">#&gt;  [79] gtable_0.3.0         purrr_0.3.4          rstackdeque_1.1.1   </span>
+<span class="co">#&gt;  [82] future_1.23.0        assertthat_0.2.1     cachem_1.0.6        </span>
+<span class="co">#&gt;  [85] ggplot2_3.3.5        xfun_0.29            sl3_1.4.4           </span>
+<span class="co">#&gt;  [88] gower_0.2.2          rbibutils_2.2.7      prodlim_2019.11.13  </span>
+<span class="co">#&gt;  [91] ragg_1.2.1           class_7.3-20         survival_3.2-13     </span>
+<span class="co">#&gt;  [94] timeDate_3043.102    tibble_3.1.6         iterators_1.0.13    </span>
+<span class="co">#&gt;  [97] memoise_2.0.1        lava_1.6.10          globals_0.14.0      </span>
+<span class="co">#&gt; [100] imputeMissings_0.0.3 ellipsis_0.3.2       caret_6.0-90        </span>
+<span class="co">#&gt; [103] ROCR_1.0-11          ipred_0.9-12</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
