@@ -114,7 +114,7 @@ between biomarkers and potential outcome differences.
 
 Under conditions that are generally satisfied in the clinical trial setting, we
 find that $\Psi(P_X)$ can be estimated from realizations of the observed
-data-generating distribution $P_0$. Further, the estimator of this parameter
+data-generating distribution. Further, the estimator of this parameter
 implemented in the `unicate()` function is consistent and asymptotically linear,
 permitting valid statistical inference in most RCT scenarios. Details are
 provided in the manuscript.
@@ -165,6 +165,8 @@ treatment or the control condition. From the definition of the outcome, it is
 clear that `B1` and `B2` are predictive biomarkers. Finally, we define the
 `propensity_score_ls`, a list indicating the probability that any given patient
 is assigned to the treatment condition, `"1"`, or the control condition, `"0"`.
+Note that the treatment condition's entry in this list always precedes the
+control condition's.
 
 We now apply `unicate()` to this data to recover the variable importance
 measures of the biomarkers.
@@ -201,13 +203,13 @@ predictive.
 ### Setup
 
 The assumed full-data and observed data-generating processes are identical to
-those of the continuous outcome, save that $Y^{(0)}, Y^{(1)}$ and $Y$ are binary
+those of the continuous outcome save that $Y^{(0)}, Y^{(1)}$ and $Y$ are binary
 random variables.
 
 ### Target Parameter
 
-The full-data parameter of interest is slightly modified from the continuous
-outcome scenario to reflect the use of a binary outcome. We instead target
+The full-data parameter of interest looks slightly different from the continuous
+outcome scenario to reflect the use of a binary outcome. We target
 $\Psi(P_X) = (\Psi_1(P_X), \ldots, \Psi_p(P_X))$ where
 $$
 \Psi_j(P_X) =
@@ -215,15 +217,17 @@ $$
   - \mathbb{P}_{P_X}(Y^{(0)} = 1| W)\right)B_j\right]}
 {\mathbb{E}_{P_X}\left[B_j^2\right]}
 $$
-for centered biomarkers indexed by $j = 1, \ldots, p$.  Assuming a linear
+for centered biomarkers indexed by $j = 1, \ldots, p$. Assuming a linear
 relationship between the difference of the potential outcomes' probability of
 success and the covariates, this variable importance parameter consists of the
 simple linear regression coefficients of the difference in the conditional
 potential outcome success probabilities regressed on each biomarker. While the
 true relationship between potential outcome probabilities and covariates is
-unlikely to be linear, this parameter is telling of biomarkers' predictive
+again unlikely to be linear, this parameter is telling of biomarkers' predictive
 capacities. Biomarkers with the largest absolute values will correspond to those
-that meaningfully modify the treatment effect.
+that meaningfully modify the treatment effect. In truth, this is the same
+variable importance parameter as the for continuous outcomes, but written in a
+more intuitive form.
 
 As in the continuous case, this parameter can generally be estimated from
 the observed RCT data under non-stringent assumptions about the data-generating
@@ -231,23 +235,23 @@ process. Inference is in fact based on the same estimator used for continuous
 outcomes, and so we again use `unicate()` to learn about the biomarkers'
 marginal importance in regards to binary treatment effect modification. For
 details, please review the manuscript. We do not provide an example since it
-would be virtually identical to that given in the previous subsection.
+would be nearly identical to that given in the previous subsection.
 
 
 ## Survival Outcomes
 
 ### Setup
 
-We again perform an RCT where the outcome of interest is a potentially
-right-censored time-to-event outcome. We consider $n$ i.i.d. copies of the
-full-data random vector $X = (W, A, T^{(0)}, C^{(0)}, T^{(1)}, C^{(1)})$ 
-distributed according to $P_X$ where $W$ and $A$ are defined as in the
-continuous outcome case. $T^{(0)}$ and $T^{(1)}$ correspond to the event times
-under control and treatment conditions, and $C^{(0)}$ and $C^{(1)}$ correspond
-to the censoring times under control and treatment conditions. As before, the
-full-data random vectors are never observed; instead, we observe $n$ i.i.d.
-copies of $O = (W, A, \Delta, \tilde{T})$ distributed according to $P_0$. Here,
-$\Delta$ is a censoring indicator and
+We perform an RCT where the outcome of interest is a right-censored
+time-to-event outcome. We consider $n$ i.i.d. copies of the full-data random
+vector $X = (W, A, T^{(0)}, C^{(0)}, T^{(1)}, C^{(1)})$  distributed according
+to $P_X$ where $W$ and $A$ are defined as in the continuous outcome case.
+$T^{(0)}$ and $T^{(1)}$ correspond to the event times under control and
+treatment conditions, and $C^{(0)}$ and $C^{(1)}$ correspond to the censoring
+times under control and treatment conditions. As before, the full-data random
+vectors are never observed; instead, we observe $n$ i.i.d. copies of
+$O = (W, A, \Delta, \tilde{T})$ distributed according to $P_0$. Here, $\Delta$
+is a censoring indicator and
 $\tilde{T}=(1-A)\;\text{min}(T^{(0)}, C^{(0)})+A\;\text{min}(T^{(1)}, C^{(1)})$
 is the last measurement time.
 
@@ -266,17 +270,17 @@ $$
 $$
 for centered biomarkers indexed by $j = 1, \ldots, p$. Similarly to the binary
 outcome scenario, this variable importance measure assumes a linear relationship
-between the contrast of survival outcomes at time $t_0$ and each biomarker,
-consisting of the simple linear regression coefficients of this contrast
+between the contrast of survival outcomes at time $t_0$ and each biomarker, and
+consists of the simple linear regression coefficients of this contrast
 regressed on each biomarker. Again, while the true relationship between the
 difference in survival probabilities and biomarkers is unlikely to be linear,
 it provides a metric by which to evaluate biomarkers' abilities to modify
 treatment effects on the absolute scale.
 
-As with the other variable importance metrics, this parameter can be
+As with the other variable importance metrics, this parameter can often be
 estimated from the observed data in a RCT. The estimator of this parameter is 
 implemented in the `sunicate()` function. Under the assumption that the
-censoring mechanism is consistently estimated by the our procedure, the
+censoring mechanism is consistently estimated by our procedure, the
 `sunicate()` estimator is consistent and asymptotically linear. Valid
 statistical inference about the strength of biomarkers' treatment effect
 modification is therefore made possible with survival outcomes. 
@@ -374,7 +378,9 @@ indicator of censoring, and the later of event. Finally, note that
 variables, like `A`.
 
 We now assess the predictive importance of biomarkers with respect to survival
-at time $t_0=6$ by setting the `time_cutoff` argument to `6`.
+at time $t_0=6$ by setting the `time_cutoff` argument to `6`. Note when the
+`time_cutoff` argument is not specified, $t_0$ defaults to the median relative
+time in the `data` argument.
 
 ```{r apply-sunicate}
 sunicate(
