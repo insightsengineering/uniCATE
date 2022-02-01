@@ -1,3 +1,7 @@
+## uniCATE 0.3.0 (2022-02-01)
+
+* `uniCATE` is going public!
+
 ## uniCATE 0.2.3 (2022-01-31)
 
 * Adding GitHub Actions for CI and CD.
