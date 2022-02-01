@@ -26,7 +26,6 @@ date: "\\today"
 bibliography: paper.bib
 ---
 
-
 # Summary
 
 Predictive biomarkers are biometric measurements that split patient
@@ -65,10 +64,9 @@ theory to perform assumption-lean inference about this parameter. We
 demonstrated that our procedure controls the rate of false discoveries in
 high-dimensional randomized control trials, allowing for the accurate
 identification of predictive biomarkers. This methodology is implemented in the
-`uniCATE` package. 
+`uniCATE` package.
 
-
-# Statement of Need
+## Statement of Need
 
 Modern semiparametric methods rely on complex statistical theory that is beyond
 the training afforded to many of the clinical scientists most interested in
@@ -79,7 +77,7 @@ know-how required for one-off implementations. Our method is no different. The
 this methodology for the `R` language and environment for statistical computing
 [@rlang] that is ready for use by members of the clinical research community.
 
-# Availability
+## Availability
 
 The `uniCATE` package is publicly available on GitHub at
 [`insightsengineering/uniCATE`](https://github.com/insightsengineering/uniCATE).
@@ -87,10 +85,10 @@ The package's `README` provides installation instructions and a minimal example,
 and comprehensive documentation and a tutorial are included in its `pkgdown`
 [documentation website](https://insightsengineering.github.io/uniCATE).
 
-# Acknowledgements
+## Acknowledgements
 
 PB gratefully acknowledges the support of the Fonds de recherche du Qu\'{e}bec -
 Nature et technologies and the Natural Sciences and Engineering Research Council
 of Canada.
 
-# References
+## References

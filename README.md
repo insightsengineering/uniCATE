@@ -130,7 +130,5 @@ The contents of this repository are distributed under the Apache 2.0
 license. See the
 [`LICENSE.md`](https://github.com/insightsengineering/uniCATE/blob/main/LICENSE.md)
 and
-[‘LICENSE’](https://github.com/insightsengineering/uniCATE/blob/main/LICENSE)
+[`LICENSE`](https://github.com/insightsengineering/uniCATE/blob/main/LICENSE)
 files for details.
-
-*Note: This license is a placeholder until the legal team is consulted.*
