@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 ```{r setup, include=FALSE}
 library(uniCATE)
 library(dplyr)
+library(glmnet)
+library(speedglm)
+library(polspline)
+library(ranger)
+library(xgboost)
 ```
 
 
@@ -29,18 +34,18 @@ Predictive biomarkers are biometric measurements that subdivide patient
 populations into groups which draw differing benefits from a given treatment.
 These biomarkers therefore play an important role in precision medicine: as
 indicators of treatment effect modification, they can inform patient treatment
-decisions. Predictive biomarkers may also inform drug target discovery, leading
-to an improved understanding of novel medications' functioning.
+decisions. Predictive biomarkers may also be used for drug target discovery,
+leading to an improved understanding of novel medications' functioning.
 
 The discovery of predictive biomarkers through statistical techniques has, to
-date, largely been a byproduct of optimal treatment rule estimation. As implied
-by its name, this tasks consists of learning which treatment would most benefit
-a patient given their characteristics. These characteristics could include, but
+date, largely been a byproduct of treatment rule estimation. As implied by its
+name, this tasks consists of learning which treatment would most benefit a
+patient given their characteristics. These characteristics could include, but
 are not limited to, potentially predictive biomarkers. When interpretable
 statistical learning methods are used to estimate these rules, biomarkers found
 to be "important" might be declared predictive. For example, estimation methods
 based on regularized linear regression might define a biomarker as predictive if
-its linear regression coefficient estimate is non-zero [@tian2014].
+its treatment interaction coefficient estimate is non-zero [@tian2014].
 
 While this approach to predictive biomarker discovery works well in traditional
 asymptotic settings, it is not so when the number of biomarkers is similar to
@@ -48,10 +53,10 @@ or larger than the number of patients in a study. These methods offer no
 guarantee of false positive rate control [@tian2014;@chen2017], which can have
 severe consequences in practice. The inclusion of false positive biomarkers in
 diagnostic assays decreases their clinical utility, and already limited
-resources are wasted on biological validation experiments of duds in drug target
-discovery applications. Patient outcomes are ultimately negatively effected.
+resources are wasted on biological validation experiments of duds for drug
+target discovery purposes. Patient outcomes are ultimately negatively effected.
 
-We proposed, in recent work, a variable importance parameter that directly
+We proposed in recent work a variable importance parameter that directly
 measures individual biomarkers' roles in treatment effect modification. The
 methodology, dubbed *uniCATE*, relies on semiparametric theory to perform
 assumption-lean inference about this parameter. We demonstrated that our
@@ -123,6 +128,11 @@ computational convenience.
 ```{r load-pkgs, eval=FALSE}
 library(dplyr)
 library(uniCATE)
+library(glmnet)
+library(speedglm)
+library(polspline)
+library(ranger)
+library(xgboost)
 ```
 ```{r cont-sim}
 # simulate n trial participants
