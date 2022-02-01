@@ -309,7 +309,7 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
   # apply the doubly-robust A-IPTW transform to each observation for each
   # treatment level in valid_data
   valid_data <- apply_aiptw_transform(
-    valid_data, outcome, treatment, propensity_score_ls, outcome_type
+    valid_data, outcome, treatment, propensity_score_ls
   )
 
   # return the difference of the AIPTW transformed treatment and control
@@ -404,9 +404,6 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
 #'   propensity scores for the treatment conditions. The first element of the
 #'   list should correspond to the "treatment" condition, and the second to the
 #'   "control" condition, whatever their names may be.
-#' @param outcome_type A \code{character} indicating the type of outcome.
-#'   Currently supported outcomes are \code{"continuous"} and
-#'   \code{"binomial"}. Here, \code{"binomial"} is used for binary outcomes.
 #'
 #' @return A \code{tibble} containing the AIPTW transformed predicted outcomes
 #'   under treatment and control conditions of all observations in \code{data}.
@@ -416,8 +413,10 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
 #' @importFrom magrittr %>%
 #'
 #' @keywords internal
-apply_aiptw_transform <- function(data, outcome, treatment, propensity_score_ls,
-                                  outcome_type) {
+apply_aiptw_transform <- function(data,
+                                  outcome,
+                                  treatment,
+                                  propensity_score_ls) {
   data %>%
     dplyr::mutate(
       y_aiptw_treat = dplyr::if_else(
@@ -427,32 +426,12 @@ apply_aiptw_transform <- function(data, outcome, treatment, propensity_score_ls,
             (!!rlang::sym(outcome) - .data$y_hat_treat),
         .data$y_hat_treat
       ),
-      y_aiptw_treat = dplyr::if_else(
-        outcome_type == "binomial" & .data$y_aiptw_treat < 0,
-        0,
-        .data$y_aiptw_treat
-      ),
-      y_aiptw_treat = dplyr::if_else(
-        outcome_type == "binomial" & .data$y_aiptw_treat > 1,
-        1,
-        .data$y_aiptw_treat
-      ),
       y_aiptw_cont = dplyr::if_else(
         !!rlang::sym(treatment) == names(propensity_score_ls)[2],
         .data$y_hat_cont +
           (1 / propensity_score_ls[[2]]) *
             (!!rlang::sym(outcome) - .data$y_hat_cont),
         .data$y_hat_cont
-      ),
-      y_aiptw_cont = dplyr::if_else(
-        outcome_type == "binomial" & .data$y_aiptw_cont < 0,
-        0,
-        .data$y_aiptw_cont
-      ),
-      y_aiptw_cont = dplyr::if_else(
-        outcome_type == "binomial" & .data$y_aiptw_cont > 1,
-        1,
-        .data$y_aiptw_cont
       )
     )
 }
