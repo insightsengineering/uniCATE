@@ -63,15 +63,6 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -143,6 +134,7 @@ Other releases
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">uniCATE</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tlverse.org/sl3" class="external-link">sl3</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glmnet.stanford.edu" class="external-link">glmnet</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">speedglm</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">polspline</span><span class="op">)</span>
@@ -190,11 +182,13 @@ Other releases
   biomarkers <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B1"</span>, <span class="st">"B2"</span>, <span class="st">"B3"</span>, <span class="st">"B4"</span><span class="op">)</span>,
   propensity_score_ls <span class="op">=</span> <span class="va">propensity_score_ls</span>
 <span class="op">)</span>
-<span class="co">#&gt; Warning in origami::cross_validate(cv_fun = hold_out_calculation, folds =</span>
-<span class="co">#&gt; folds, : All iterations resulted in errors</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 7</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 7 variables: biomarker &lt;chr&gt;, coef &lt;dbl&gt;, se &lt;dbl&gt;, z &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   p_value &lt;dbl&gt;, p_value_bh &lt;dbl&gt;, p_value_holm &lt;dbl&gt;</span></span></code></pre></div>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 7</span></span>
+<span class="co">#&gt;   biomarker   coef     se      z   p_value p_value_bh p_value_holm</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> B1         1.99  0.063<span style="text-decoration: underline;">5</span> 31.4   3.32<span style="color: #949494;">e</span><span style="color: #BB0000;">-216</span>  1.33<span style="color: #949494;">e</span><span style="color: #BB0000;">-215</span>    1.33<span style="color: #949494;">e</span><span style="color: #BB0000;">-215</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> B2         1.04  0.154   6.73  1.75<span style="color: #949494;">e</span><span style="color: #BB0000;">- 11</span>  3.49<span style="color: #949494;">e</span><span style="color: #BB0000;">- 11</span>    5.24<span style="color: #949494;">e</span><span style="color: #BB0000;">- 11</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> B4         0.607 0.365   1.66  9.65<span style="color: #949494;">e</span><span style="color: #BB0000;">-  2</span>  1.29<span style="color: #949494;">e</span><span style="color: #BB0000;">-  1</span>    1.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-  1</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> B3        -<span style="color: #BB0000;">0.160</span> 0.329  -<span style="color: #BB0000;">0.486</span> 6.27<span style="color: #949494;">e</span><span style="color: #BB0000;">-  1</span>  6.27<span style="color: #949494;">e</span><span style="color: #BB0000;">-  1</span>    6.27<span style="color: #949494;">e</span><span style="color: #BB0000;">-  1</span></span></code></pre></div>
 <p>The output is a table summarizing the variable importance parameter estimates of each biomarker (<code>coef</code>), the estimators’ standard errors (<code>se</code>), the two-sided hypothesis tests’ Z-scores (<code>z</code>), and the tests’ (adjusted) p-values (<code>p_value</code>, <code>p_value_bh</code>, and <code>p_value_holm</code>).</p>
 <p>As expected, <code>B1</code> modifies the treatment effect the most, followed by <code>B2</code>. Both of their variable importance measures are found to be significantly different from zero (using a 5% significance threshold) at the nominal level and after adjusting for multiple testing. As patients’ <code>B1</code> and <code>B2</code> values marginally increase, so too does their benefit from being assigned to the treatment condition over the control condition. The remaining biomarkers’ variable importance parameters are not significantly different from zero at the same level of significance. There is insufficient evidence to categorize them as predictive.</p>
 </div>
@@ -316,14 +310,14 @@ Other releases
 <span class="co"># glimpse of data structure</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span>
-<span class="co">#&gt;   A              V1     V2     B1     B2  time censor event</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> control    0.020<span style="text-decoration: underline;">9</span> -<span style="color: #BB0000;">0.257</span>  1.12  -<span style="color: #BB0000;">1.13</span>      2      1     0</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> control   -<span style="color: #BB0000;">3.34</span>    0.994 -<span style="color: #BB0000;">0.772</span>  0.398     3      1     0</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> treatment  1.16    0.600 -<span style="color: #BB0000;">0.684</span> -<span style="color: #BB0000;">1.46</span>      2      0     1</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> control   -<span style="color: #BB0000;">0.677</span>  -<span style="color: #BB0000;">1.15</span>  -<span style="color: #BB0000;">0.879</span>  0.647     2      1     0</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> control    0.601  -<span style="color: #BB0000;">1.40</span>   1.58   0.239     8      0     1</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> treatment -<span style="color: #BB0000;">1.51</span>   -<span style="color: #BB0000;">0.310</span>  0.108 -<span style="color: #BB0000;">0.498</span>     1      0     1</span></code></pre></div>
+<span class="co">#&gt;   A              V1      V2      B1      B2  time censor event</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> control   -<span style="color: #BB0000;">1.65</span>   -<span style="color: #BB0000;">0.538</span>   0.063<span style="text-decoration: underline;">3</span> -<span style="color: #BB0000;">0.084</span><span style="color: #BB0000; text-decoration: underline;">9</span>     3      0     1</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> treatment  0.820  -<span style="color: #BB0000;">0.624</span>   0.353   0.320      4      1     0</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> control    0.034<span style="text-decoration: underline;">6</span> -<span style="color: #BB0000;">1.64</span>   -<span style="color: #BB0000;">1.59</span>   -<span style="color: #BB0000;">0.335</span>      2      1     0</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> treatment -<span style="color: #BB0000;">0.620</span>   1.34   -<span style="color: #BB0000;">1.37</span>   -<span style="color: #BB0000;">0.802</span>      1      0     1</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> control   -<span style="color: #BB0000;">0.957</span>  -<span style="color: #BB0000;">0.580</span>  -<span style="color: #BB0000;">0.916</span>   0.638      1      0     1</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> control    1.64    0.032<span style="text-decoration: underline;">1</span>  1.15    0.433      3      1     0</span></code></pre></div>
 <p>The data simulated in the previous chunk relies on an uninformative censoring mechanism and a event mechanism that is a function of the interaction between the treatment assignment <span class="math inline">\(A\)</span> and the biomarker <span class="math inline">\(B1\)</span>. These event and censoring times occur at one of 9 discrete relative follow-up times for all 500 study participants. Take special notice of the <code>censor</code> and <code>event</code> columns that describe the relative time measurement in <code>time</code>: the former is a binary indicator of censoring, and the later of event. Finally, note that <code><a href="../reference/sunicate.html">sunicate()</a></code> (and <code><a href="../reference/unicate.html">unicate()</a></code>) accept treatment indicators that are factor variables, like <code>A</code>.</p>
 <p>We now assess the predictive importance of biomarkers with respect to survival at time <span class="math inline">\(t_0=6\)</span> by setting the <code>time_cutoff</code> argument to <code>6</code>. Note when the <code>time_cutoff</code> argument is not specified, <span class="math inline">\(t_0\)</span> defaults to the median relative time in the <code>data</code> argument.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -338,11 +332,11 @@ Other releases
   time_cutoff <span class="op">=</span> <span class="fl">6</span>,
   propensity_score_ls <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"treatment"</span> <span class="op">=</span> <span class="fl">0.5</span>, <span class="st">"control"</span> <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
 <span class="op">)</span>
-<span class="co">#&gt; Warning in origami::cross_validate(cv_fun = hold_out_calculation_survival, : All</span>
-<span class="co">#&gt; iterations resulted in errors</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 0 × 7</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 7 variables: biomarker &lt;chr&gt;, coef &lt;dbl&gt;, se &lt;dbl&gt;, z &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   p_value &lt;dbl&gt;, p_value_bh &lt;dbl&gt;, p_value_holm &lt;dbl&gt;</span></span></code></pre></div>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 7</span></span>
+<span class="co">#&gt;   biomarker    coef     se     z  p_value p_value_bh p_value_holm</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> B1         0.399  0.031<span style="text-decoration: underline;">5</span> 12.7  8.19<span style="color: #949494;">e</span><span style="color: #BB0000;">-37</span>   1.64<span style="color: #949494;">e</span><span style="color: #BB0000;">-36</span>     1.64<span style="color: #949494;">e</span><span style="color: #BB0000;">-36</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> B2        -<span style="color: #BB0000;">0.061</span><span style="color: #BB0000; text-decoration: underline;">6</span> 0.041<span style="text-decoration: underline;">4</span> -<span style="color: #BB0000;">1.49</span> 1.37<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>   1.37<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>     1.37<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></code></pre></div>
 <p><code><a href="../reference/sunicate.html">sunicate()</a></code> produces a table identical to that generated by <code><a href="../reference/unicate.html">unicate()</a></code>. It provides very strong evidence that <code>B1</code> is a treatment effect modifier with a non-zero variance important parameter. <code>B2</code>, on the other hand, does not appear to be a predictive biomarker since we fail to reject its associated test. These results capture the ground truth of our data-generating process.</p>
 </div>
 </div>
@@ -376,46 +370,46 @@ Other releases
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] xgboost_1.5.0.2  ranger_0.13.1    polspline_1.1.19 speedglm_0.3-3  </span>
-<span class="co">#&gt; [5] MASS_7.3-55      glmnet_4.1-3     Matrix_1.4-0     dplyr_1.0.7     </span>
-<span class="co">#&gt; [9] uniCATE_0.3.0   </span>
+<span class="co">#&gt;  [1] xgboost_1.5.0.2  ranger_0.13.1    polspline_1.1.19 speedglm_0.3-3  </span>
+<span class="co">#&gt;  [5] MASS_7.3-55      glmnet_4.1-3     Matrix_1.4-0     sl3_1.4.4       </span>
+<span class="co">#&gt;  [9] dplyr_1.0.7      uniCATE_0.3.0   </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;   [1] nlme_3.1-155         matrixStats_0.61.0   fs_1.5.2            </span>
-<span class="co">#&gt;   [4] lubridate_1.8.0      progress_1.2.2       rprojroot_2.0.2     </span>
-<span class="co">#&gt;   [7] tools_4.1.2          backports_1.4.1      bslib_0.3.1         </span>
-<span class="co">#&gt;  [10] utf8_1.2.2           R6_2.5.1             rpart_4.1.16        </span>
-<span class="co">#&gt;  [13] DBI_1.1.2            colorspace_2.0-2     nnet_7.3-17         </span>
-<span class="co">#&gt;  [16] withr_2.4.3          tidyselect_1.1.1     prettyunits_1.1.1   </span>
-<span class="co">#&gt;  [19] compiler_4.1.2       textshaping_0.3.6    cli_3.1.1           </span>
-<span class="co">#&gt;  [22] desc_1.4.0           sass_0.4.0           scales_1.1.1        </span>
-<span class="co">#&gt;  [25] checkmate_2.0.0      randomForest_4.6-14  pkgdown_2.0.2       </span>
-<span class="co">#&gt;  [28] systemfonts_1.0.3    stringr_1.4.0        digest_0.6.29       </span>
-<span class="co">#&gt;  [31] rmarkdown_2.11       pkgconfig_2.0.3      htmltools_0.5.2     </span>
-<span class="co">#&gt;  [34] parallelly_1.30.0    fastmap_1.1.0        htmlwidgets_1.5.4   </span>
-<span class="co">#&gt;  [37] rlang_1.0.0          BBmisc_1.11          shape_1.4.6         </span>
-<span class="co">#&gt;  [40] visNetwork_2.1.0     jquerylib_0.1.4      generics_0.1.2      </span>
-<span class="co">#&gt;  [43] jsonlite_1.7.3       ModelMetrics_1.2.2.2 magrittr_2.0.2      </span>
-<span class="co">#&gt;  [46] delayed_0.3.0        Rcpp_1.0.8           munsell_0.5.0       </span>
-<span class="co">#&gt;  [49] fansi_1.0.2          abind_1.4-5          lifecycle_1.0.1     </span>
-<span class="co">#&gt;  [52] pROC_1.18.0          stringi_1.7.6        yaml_2.2.2          </span>
-<span class="co">#&gt;  [55] plyr_1.8.6           recipes_0.1.17       grid_4.1.2          </span>
-<span class="co">#&gt;  [58] parallel_4.1.2       listenv_0.8.0        crayon_1.4.2        </span>
-<span class="co">#&gt;  [61] lattice_0.20-45      splines_4.1.2        hms_1.1.1           </span>
-<span class="co">#&gt;  [64] knitr_1.37           pillar_1.7.0         igraph_1.2.11       </span>
-<span class="co">#&gt;  [67] uuid_1.0-3           origami_1.0.5        stats4_4.1.2        </span>
-<span class="co">#&gt;  [70] reshape2_1.4.4       future.apply_1.8.1   codetools_0.2-18    </span>
-<span class="co">#&gt;  [73] glue_1.6.1           evaluate_0.14        data.table_1.14.2   </span>
-<span class="co">#&gt;  [76] vctrs_0.3.8          Rdpack_2.1.3         foreach_1.5.1       </span>
-<span class="co">#&gt;  [79] gtable_0.3.0         purrr_0.3.4          rstackdeque_1.1.1   </span>
-<span class="co">#&gt;  [82] future_1.23.0        assertthat_0.2.1     cachem_1.0.6        </span>
-<span class="co">#&gt;  [85] ggplot2_3.3.5        xfun_0.29            sl3_1.4.4           </span>
-<span class="co">#&gt;  [88] gower_0.2.2          rbibutils_2.2.7      prodlim_2019.11.13  </span>
-<span class="co">#&gt;  [91] ragg_1.2.1           class_7.3-20         survival_3.2-13     </span>
-<span class="co">#&gt;  [94] timeDate_3043.102    tibble_3.1.6         iterators_1.0.13    </span>
-<span class="co">#&gt;  [97] memoise_2.0.1        lava_1.6.10          globals_0.14.0      </span>
-<span class="co">#&gt; [100] imputeMissings_0.0.3 ellipsis_0.3.2       caret_6.0-90        </span>
-<span class="co">#&gt; [103] ROCR_1.0-11          ipred_0.9-12</span></code></pre></div>
+<span class="co">#&gt;   [1] colorspace_2.0-2     ellipsis_0.3.2       class_7.3-20        </span>
+<span class="co">#&gt;   [4] rprojroot_2.0.2      fs_1.5.2             listenv_0.8.0       </span>
+<span class="co">#&gt;   [7] prodlim_2019.11.13   fansi_1.0.2          lubridate_1.8.0     </span>
+<span class="co">#&gt;  [10] codetools_0.2-18     splines_4.1.2        cachem_1.0.6        </span>
+<span class="co">#&gt;  [13] knitr_1.37           jsonlite_1.7.3       pROC_1.18.0         </span>
+<span class="co">#&gt;  [16] caret_6.0-90         compiler_4.1.2       backports_1.4.1     </span>
+<span class="co">#&gt;  [19] assertthat_0.2.1     fastmap_1.1.0        rstackdeque_1.1.1   </span>
+<span class="co">#&gt;  [22] cli_3.1.1            visNetwork_2.1.0     htmltools_0.5.2     </span>
+<span class="co">#&gt;  [25] prettyunits_1.1.1    tools_4.1.2          igraph_1.2.11       </span>
+<span class="co">#&gt;  [28] gtable_0.3.0         glue_1.6.1           reshape2_1.4.4      </span>
+<span class="co">#&gt;  [31] Rcpp_1.0.8           jquerylib_0.1.4      pkgdown_2.0.2       </span>
+<span class="co">#&gt;  [34] vctrs_0.3.8          nlme_3.1-155         iterators_1.0.13    </span>
+<span class="co">#&gt;  [37] timeDate_3043.102    origami_1.0.5        gower_0.2.2         </span>
+<span class="co">#&gt;  [40] xfun_0.29            stringr_1.4.0        globals_0.14.0      </span>
+<span class="co">#&gt;  [43] rbibutils_2.2.7      delayed_0.3.0        lifecycle_1.0.1     </span>
+<span class="co">#&gt;  [46] future_1.23.0        scales_1.1.1         ipred_0.9-12        </span>
+<span class="co">#&gt;  [49] ragg_1.2.1           hms_1.1.1            parallel_4.1.2      </span>
+<span class="co">#&gt;  [52] BBmisc_1.11          yaml_2.2.2           memoise_2.0.1       </span>
+<span class="co">#&gt;  [55] ggplot2_3.3.5        sass_0.4.0           rpart_4.1.16        </span>
+<span class="co">#&gt;  [58] stringi_1.7.6        desc_1.4.0           foreach_1.5.1       </span>
+<span class="co">#&gt;  [61] randomForest_4.6-14  checkmate_2.0.0      lava_1.6.10         </span>
+<span class="co">#&gt;  [64] truncnorm_1.0-8      shape_1.4.6          Rdpack_2.1.3        </span>
+<span class="co">#&gt;  [67] rlang_1.0.0          pkgconfig_2.0.3      systemfonts_1.0.3   </span>
+<span class="co">#&gt;  [70] matrixStats_0.61.0   Rsolnp_1.16          evaluate_0.14       </span>
+<span class="co">#&gt;  [73] lattice_0.20-45      ROCR_1.0-11          purrr_0.3.4         </span>
+<span class="co">#&gt;  [76] recipes_0.1.17       htmlwidgets_1.5.4    tidyselect_1.1.1    </span>
+<span class="co">#&gt;  [79] parallelly_1.30.0    plyr_1.8.6           magrittr_2.0.2      </span>
+<span class="co">#&gt;  [82] R6_2.5.1             generics_0.1.2       DBI_1.1.2           </span>
+<span class="co">#&gt;  [85] pillar_1.7.0         withr_2.4.3          survival_3.2-13     </span>
+<span class="co">#&gt;  [88] abind_1.4-5          nnet_7.3-17          tibble_3.1.6        </span>
+<span class="co">#&gt;  [91] future.apply_1.8.1   crayon_1.4.2         uuid_1.0-3          </span>
+<span class="co">#&gt;  [94] utf8_1.2.2           rmarkdown_2.11       imputeMissings_0.0.3</span>
+<span class="co">#&gt;  [97] progress_1.2.2       grid_4.1.2           data.table_1.14.2   </span>
+<span class="co">#&gt; [100] ModelMetrics_1.2.2.2 digest_0.6.29        textshaping_0.3.6   </span>
+<span class="co">#&gt; [103] stats4_4.1.2         munsell_0.5.0        bslib_0.3.1</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
