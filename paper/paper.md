@@ -30,7 +30,7 @@ bibliography: paper.bib
 
 Predictive biomarkers are biometric measurements that split patient
 populations into groups which draw differing benefits from a given treatment
-[@royston2008,@kraus2018]. These biomarkers play an important role in precision
+[@royston2008; @kraus2018]. These biomarkers play an important role in precision
 medicine: as indicators of treatment effect modification, they can inform
 patient treatment decisions. Predictive biomarkers have other applications as
 well. When used in drug target discovery, they may provide insight on the
@@ -51,7 +51,7 @@ While this approach to predictive biomarker discovery works well in traditional
 asymptotic settings, it is not so when the number of biomarkers is similar to
 or larger than the number of patients in a study. Popular treatment rule
 estimation methods do not guarantee false positive rate control
-[@tian2014;@chen2017], which can have severe consequences in practice. For
+[@tian2014; @chen2017], which can have severe consequences in practice. For
 example, the inclusion of false positive predictive biomarkers in diagnostic
 assays decreases their clinical utility, and already limited resources are
 wasted on biological validation experiments of duds for drug target discovery
