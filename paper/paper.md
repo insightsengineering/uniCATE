@@ -87,7 +87,7 @@ and comprehensive documentation and a tutorial are included in its `pkgdown`
 
 ## Acknowledgements
 
-PB gratefully acknowledges the support of the Fonds de recherche du Qu\'{e}bec -
+PB gratefully acknowledges the support of the Fonds de recherche du Québec -
 Nature et technologies and the Natural Sciences and Engineering Research Council
 of Canada.
 
