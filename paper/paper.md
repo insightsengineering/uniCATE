@@ -28,8 +28,8 @@ bibliography: paper.bib
 
 ## Summary
 
-Predictive biomarkers are biometric measurements that split patient
-populations into groups which draw differing benefits from a given treatment
+Predictive biomarkers are biometric measurements delineating patient
+populations into groups that draw differing benefits from a given treatment
 [@royston2008; @kraus2018]. These biomarkers play an important role in precision
 medicine: as indicators of treatment effect modification, they can inform
 patient treatment decisions. Predictive biomarkers have other applications as
@@ -42,27 +42,29 @@ the methods of @tian2014 and @chen2017. This tasks consists of learning which
 treatment would most benefit a patient given their characteristics. These
 characteristics could include, but are not limited to, potentially predictive
 biomarkers. When interpretable statistical learning methods are used to estimate
-these rules, biomarkers found to be "important" might be labeled predictive.
-For example, estimation procedures based on regularized linear regression
-define a biomarker as predictive if its treatment interaction coefficient
-estimate is non-zero.
+these rules, biomarkers thought to most meaningfully modify the treatment effect
+might be labeled predictive. In clinical trials, for example, estimation
+procedures based on regularized linear regression that include
+treatment-biomarker interactions in the model define a biomarker as predictive
+if its treatment interaction coefficient estimate is non-zero.
 
 While this approach to predictive biomarker discovery works well in traditional
-asymptotic settings, it is not so when the number of biomarkers is similar to
-or larger than the number of patients in a study. Popular treatment rule
-estimation methods do not guarantee false positive rate control
-[@tian2014; @chen2017], which can have severe consequences in practice. For
-example, the inclusion of false positive predictive biomarkers in diagnostic
-assays decreases their clinical utility, and already limited resources are
-wasted on biological validation experiments of duds for drug target discovery
-purposes. Patient outcomes are ultimately negatively effected.
+asymptotic settings --- assuming that the relationship between the outcome, the
+treatment, and the biomarkers admits a linear form ---, it is not so when the
+number of biomarkers is similar to or larger than the number of patients in a
+study. Popular treatment rule estimation methods do not guarantee false positive
+rate control [@tian2014; @chen2017], which can have severe consequences in
+practice. In particular, the inclusion of false positive predictive biomarkers
+in diagnostic assays decreases their clinical utility, and already limited
+resources are wasted on biological validation experiments of duds for drug
+target discovery purposes. Patient outcomes are ultimately negatively affected.
 
-We proposed in recent work a variable importance parameter that directly
+We proposed in recent work a causal variable importance parameter that directly
 measures individual biomarkers' roles in treatment effect modification
 [@boileau2022]. The methodology, dubbed *uniCATE*, relies on semiparametric
-theory to perform assumption-lean inference about this parameter. We
-demonstrated that our procedure controls the rate of false discoveries in
-high-dimensional randomized control trials, allowing for the accurate
+theory to perform assumption-lean inference about this parameter in randomized
+control trials. We demonstrated that our procedure controls the rate of false
+discoveries in high-dimensional clinical trials, allowing for the accurate
 identification of predictive biomarkers. This methodology is implemented in the
 `uniCATE` package.
 
