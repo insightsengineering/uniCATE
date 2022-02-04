@@ -70,14 +70,12 @@ identification of predictive biomarkers. This methodology is implemented in the
 
 ## Statement of Need
 
-Modern semiparametric methods rely on complex statistical theory that is beyond
-the training afforded to many of the clinical scientists most interested in
-their use. These methods also rely on modern machine learning algorithms to
-provide assumption-lean inference, further increasing the amount technical
-know-how required for one-off implementations. Our method is no different. The
-`uniCATE` package provides a rigorously-tested, open-source implementation of
-this methodology for the `R` language and environment for statistical computing
-[@rlang] that is ready for use by members of the clinical research community.
+Currently available methods for the discovery of predictive biomarkers are
+insufficient. The `uniCATE` package provides a rigorously-tested, open-source
+implementation of the uniCATE methodology for the `R` language and environment
+for statistical computing [@rlang]. Further, our software integrates seamlessly
+with the the `sl3` `R` package [@sl3], permitting the use of state of the art
+machine learning methods in the semiparametric inference routines.
 
 ## Availability
 
