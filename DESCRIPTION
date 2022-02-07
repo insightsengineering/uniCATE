@@ -1,6 +1,6 @@
 Package: uniCATE
 Title: Univariate Conditional Average Treatment Effect Estimation
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: c(
     person(given = "Philippe",
            family = "Boileau",

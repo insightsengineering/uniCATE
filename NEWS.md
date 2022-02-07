@@ -1,3 +1,12 @@
+## uniCATE 0.4.0 (2022-02-07)
+
+* When the super learning arguments are set to `NULL` in `unicate()` and
+  `sunicate()`, cross-validated elastic net regressions are fit to estimate
+  nuisance parameters instead of the previously used default `sl3` super
+  learners. This speeds up computation time, and makes it easier to apply these
+  methods to small datasets by default. This doesn't affect the asymptotic
+  behaviour of the `unicate()` estimator, either.
+
 ## uniCATE 0.3.0 (2022-02-01)
 
 * `uniCATE` is going public!
