@@ -332,7 +332,7 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
 
           # set the coefficient to zero, and make the influence curve enormous
           bio_coef <- 0
-          inf_curves <- rep(1000000, length(surv_diff))
+          inf_curves <- rep(1000000, length(y_diff))
           message(paste("Biomarker", bio_name, "has low variability. Remove",
                         "it and repeat the analysis."))
 
