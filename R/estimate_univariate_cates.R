@@ -22,14 +22,10 @@
 #' @param biomarkers A \code{character} vector listing the pre-treatment
 #'   biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
 #'   \code{covariates}.
-#' @param super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object. If set
-#'   to \code{NULL}, a default SuperLearner is used. If the outcome variable is
-#'   continuous, the default's library of base learners is made up of a
-#'   linear model, penalized linear models (LASSO and elasticnet), a spline
-#'   regression, XGBoost, a Random Forest, and the mean model. When the outcome
-#'   variable is binary, the base learner library consists of (penalized)
-#'   logistic regression models, XGBoost, a Random Forests, and the mean model.
-#'   The type of outcome is automatically detected.
+#' @param super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object used to
+#'   estimate the conditional outcome regression. If set to \code{NULL}, the
+#'   default, an elastic net regression is used instead. It is best to use this
+#'   default behaviour when analyzing small datasets.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
 #'   propensity scores for the treatment conditions. The first element of the
 #'   list should correspond to the "treatment" condition, and the second to the
@@ -151,14 +147,10 @@ estimate_univariate_cates <- function(data,
 #' @param biomarkers A \code{character} vector listing the pre-treatment
 #'   biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
 #'   \code{covariates}.
-#' @param super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object. If set
-#'   to \code{NULL}, a default SuperLearner is used. If the outcome variable is
-#'   continuous, the default's library of base learners is made up of a
-#'   linear model, penalized linear models (LASSO and elasticnet), a spline
-#'   regression, XGBoost, a Random Forest, and the mean model. When the outcome
-#'   variable is binary, the base learner library consists of (penalized)
-#'   logistic regression models, XGBoost, a Random Forests, and the mean model.
-#'   The type of outcome is automatically detected.
+#' @param super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object used to
+#'   estimate the conditional outcome regression. If set to \code{NULL}, the
+#'   default, an elastic net regression is used instead. It is best to use this
+#'   default behaviour when analyzing small datasets.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
 #'   propensity scores for the treatment conditions. The first element of the
 #'   list should correspond to the "treatment" condition, and the second to the
@@ -179,6 +171,7 @@ estimate_univariate_cates <- function(data,
 #' @importFrom stats var coef lm
 #' @importFrom purrr map
 #' @importFrom matrixStats colVars
+#' @importFrom glmnet cv.glmnet predict.glmnet
 #' @import sl3
 #'
 #' @keywords internal
@@ -190,121 +183,102 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
   train_data <- origami::training(data)
   valid_data <- origami::validation(data)
 
-  # construct the SuperLearner task for the outcome regression
-  covar_names <- colnames(train_data)
-  covar_names <- covar_names[which(!grepl(outcome, covar_names))]
-  train_task <- sl3::make_sl3_Task(
-    data = train_data,
-    covariates = covar_names,
-    outcome = outcome,
-    outcome_type = outcome_type
-  )
-
-  # should the built-in SuperLearner be used to estimate the outcome regression?
-  if (is.null(super_learner)) {
-
-    # define the treatment-covariate interaction for certain learners
-    covars <- covar_names[which(!grepl(treatment, covar_names))]
-    interactions <- lapply(covars, function(w) c(w, treatment))
-    lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
-
-    if (outcome_type == "continuous") {
-
-      # define the base learners for continuous outcomes
-      lrnr_glm <- sl3::make_learner(
-        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
-      )
-      lrnr_lasso <- sl3::make_learner(
-        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
-      )
-      lrnr_enet <- sl3::make_learner(
-        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
-      )
-      lrnr_spline <- sl3::make_learner(
-        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_polspline$new()
-      )
-      lrnr_xgboost <- sl3::Lrnr_xgboost$new()
-      lrnr_rf <- sl3::Lrnr_ranger$new()
-      lrnr_mean <- sl3::Lrnr_mean$new()
-
-      # assemble learners
-      learner_library <- sl3::make_learner(
-        sl3::Stack, lrnr_glm, lrnr_spline, lrnr_lasso, lrnr_enet, lrnr_xgboost,
-        lrnr_rf, lrnr_mean
-      )
-
-      # define the metalearner
-      meta_learner <- sl3::make_learner(
-        sl3::Lrnr_solnp,
-        loss_function = sl3::loss_squared_error,
-        learner_function = sl3::metalearner_linear
-      )
-    } else {
-
-      # define the base learners for binary outcomes
-      lrnr_glm <- sl3::make_learner(
-        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
-      )
-      lrnr_lasso <- sl3::make_learner(
-        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
-      )
-      lrnr_enet <- sl3::make_learner(
-        sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
-      )
-      lrnr_xgboost <- sl3::Lrnr_xgboost$new()
-      lrnr_rf <- sl3::Lrnr_ranger$new()
-      lrnr_mean <- sl3::Lrnr_mean$new()
-
-      # assemble learners
-      learner_library <- sl3::make_learner(
-        sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_xgboost, lrnr_rf,
-        lrnr_mean
-      )
-
-      # define the metalearner
-      meta_learner <- sl3::make_learner(
-        sl3::Lrnr_solnp,
-        loss_function = sl3::loss_loglik_binomial,
-        learner_function = sl3::metalearner_logistic_binomial
-      )
-    }
-
-    # intialize the SuperLearner
-    super_learner <- sl3::Lrnr_sl$new(
-      learners = learner_library,
-      metalearner = meta_learner
-    )
-  }
-
-  # train the SuperLearner on the training data
-  sl_fit <- super_learner$train(train_task)
-
-  # estimate the outcome of each observation for each treatment level
+  # construct the modified validation data with fixed treatment assignments
   valid_data_treat <- valid_data
   valid_data_treat[treatment] <- names(propensity_score_ls)[1]
   valid_data_treat[treatment] <- factor(
     dplyr::pull(valid_data_treat, treatment),
     levels = names(propensity_score_ls)
   )
-  pred_task_treat <- sl3::make_sl3_Task(
-    data = valid_data_treat,
-    covariates = covar_names,
-    outcome = outcome
-  )
-  valid_data$y_hat_treat <- sl_fit$predict(pred_task_treat)
-
   valid_data_cont <- valid_data
   valid_data_cont[treatment] <- names(propensity_score_ls)[2]
   valid_data_cont[treatment] <- factor(
     dplyr::pull(valid_data_cont, treatment),
     levels = names(propensity_score_ls)
   )
-  pred_task_cont <- sl3::make_sl3_Task(
-    data = valid_data_cont,
-    covariates = covar_names,
-    outcome = outcome
-  )
-  valid_data$y_hat_cont <- sl_fit$predict(pred_task_cont)
+
+  # should the built-in learner be used to estimate the outcome regression?
+  if (is.null(super_learner)) {
+
+    # specify the outcome
+    y_train <- train_data[[outcome]]
+    covar_names <- colnames(train_data)
+    covar_names <- covar_names[which(!grepl(outcome, covar_names))]
+    x_train <- training_data %>%
+      dplyr::select(dplyr::all_of(covar_names)) %>%
+      as.matrix()
+
+    if (outcome_type == "continuous") {
+
+      # train the elastic net
+      glmnet_fit <- cv.glmnet(
+        x = x_train,
+        y = y_train,
+        nfolds = 5,
+        alpha = 0.5,
+        family = "gaussian"
+      )
+
+    } else {
+
+      # train the elastic net
+      glmnet_fit <- cv.glmnet(
+        x = x_train,
+        y = y_train,
+        nfolds = 5,
+        alpha = 0.5,
+        family = "binomial"
+      )
+    }
+
+    # predict the outcomes in the validation sets with fixed treatments
+    x_data_treat <- valid_data_treat %>%
+      dplyr::select(dplyr::all_of(covar_names)) %>%
+      as.matrix()
+    valid_data$y_hat_treat <- glmnet::predict.glmnet(
+      glmnet_fit,
+      newx = x_data_treat,
+      s = "lambda.min"
+    )
+    x_data_cont <- valid_data_cont %>%
+      dplyr::select(dplyr::all_of(covar_names)) %>%
+      as.matrix()
+    valid_data$y_hat_cont <- glmnet::predict.glmnet(
+      glmnet_fit,
+      newx = x_data_cont,
+      s = "lambda.min"
+    )
+
+  } else {
+
+    # construct the SuperLearner task for the outcome regression
+    covar_names <- colnames(train_data)
+    covar_names <- covar_names[which(!grepl(outcome, covar_names))]
+    train_task <- sl3::make_sl3_Task(
+      data = train_data,
+      covariates = covar_names,
+      outcome = outcome,
+      outcome_type = outcome_type
+    )
+
+    # train the SuperLearner on the training data
+    sl_fit <- super_learner$train(train_task)
+
+    # estimate the outcome of each observation for each treatment level
+    pred_task_treat <- sl3::make_sl3_Task(
+      data = valid_data_treat,
+      covariates = covar_names,
+      outcome = outcome
+    )
+    valid_data$y_hat_treat <- sl_fit$predict(pred_task_treat)
+    pred_task_cont <- sl3::make_sl3_Task(
+      data = valid_data_cont,
+      covariates = covar_names,
+      outcome = outcome
+    )
+    valid_data$y_hat_cont <- sl_fit$predict(pred_task_cont)
+
+  }
 
   # apply the doubly-robust A-IPTW transform to each observation for each
   # treatment level in valid_data
@@ -333,18 +307,19 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
 
         # center the biomarker measurements
         bio <- as.vector(base::scale(bio, center = TRUE, scale = FALSE))
+        var_bio <- mean(bio^2)
 
         # estimate the best linear approximation using the estimating equation
         # formula
-        bio_coef <- sum(y_diff * bio) / sum(bio^2)
+        bio_coef <- mean(y_diff * bio) / var_bio
 
-        # compute the unscaled empirical IC of each observation
-        unsc_inf_curves <- (y_diff - bio_coef * bio) * bio
+        # compute the empirical IC of each observation
+        inf_curves <- ((y_diff - bio_coef * bio) * bio) / var_bio
 
         # return the beta coefficients and the influence curves
         return(list(
           "bio_coef" = bio_coef,
-          "unsc_inf_curves" = unsc_inf_curves
+          "inf_curves" = inf_curves
         ))
       }
     )
@@ -357,23 +332,12 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
   names(beta_coefs) <- biomarkers
 
   # extract the table of un-scaled influence curves
-  unsc_ic_mat <- lapply(
-    seq_len(
-      length(coefs_and_ic_ls)
-    ),
-    function(idx) coefs_and_ic_ls[[idx]]$unsc_inf_curves
+  ic_ls <- lapply(
+    seq_len(length(coefs_and_ic_ls)),
+    function(idx) coefs_and_ic_ls[[idx]]$inf_curves
   )
-  unsc_ic_mat <- do.call(cbind, unsc_ic_mat)
-
-  # scale the un-scaled influence curves by the training set's biomarkers' vars
-  train_var_bio_vec <- train_data %>%
-    dplyr::select(dplyr::all_of(biomarkers)) %>%
-    as.matrix() %>%
-    matrixStats::colVars()
-  ic_df <- tcrossprod(unsc_ic_mat, diag(1 / train_var_bio_vec)) %>%
-    dplyr::as_tibble(.name_repair = "minimal")
+  ic_df <- do.call(cbind, ic_ls) %>% dplyr::as_tibble(.name_repair = "minimal")
   colnames(ic_df) <- biomarkers
-
 
   # return the vector of coefficients and the table of empirical IC values
   return(
