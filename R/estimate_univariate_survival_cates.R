@@ -187,7 +187,7 @@ estimate_univariate_s_cates <- function(long_data,
 #' @importFrom magrittr %>%
 #' @importFrom origami training validation
 #' @importFrom purrr map
-#' @importFrom stats predict
+#' @importFrom stats as.formula model.matrix predict
 #' @importFrom glmnet cv.glmnet
 #' @import sl3
 #'
@@ -251,8 +251,15 @@ hold_out_calculation_survival <- function(fold,
 
     # prepare the data for glmnet
     y_train <- train_data[[event]]
-    x_train <- train_data %>% dplyr::select(dplyr::all_of(covar_names))
-    x_train <- matrix(as.numeric(unlist(x_train)), nrow = nrow(x_train))
+    glm_covar_names <- covar_names[which(covar_names != treatment)]
+    formula_string <- paste(
+      "~", treatment, "+", paste(glm_covar_names, collapse = " + "), "+",
+      paste(paste(glm_covar_names, treatment, sep = ":"), collapse = " + ")
+    )
+    x_train <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = train_data
+    )
 
     # train the elastic net
     glmnet_fit <- cv.glmnet(
@@ -265,11 +272,9 @@ hold_out_calculation_survival <- function(fold,
 
     # estimate the conditional hazard under treatment and control in
     # surv_valid_data to eventually compute the survival prob
-    x_data_treat <- valid_data_treat %>%
-      dplyr::select(dplyr::all_of(covar_names))
-    x_data_treat <- matrix(
-      as.numeric(unlist(x_data_treat)),
-      nrow = nrow(x_data_treat)
+    x_data_treat <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data_treat
     )
     surv_valid_data$cond_surv_haz_treat <- stats::predict(
       glmnet_fit,
@@ -277,10 +282,9 @@ hold_out_calculation_survival <- function(fold,
       s = "lambda.min",
       type = "response"
     )
-    x_data_cont <- valid_data_cont %>% dplyr::select(dplyr::all_of(covar_names))
-    x_data_cont <- matrix(
-      as.numeric(unlist(x_data_cont)),
-      nrow = nrow(x_data_cont)
+    x_data_cont <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data_cont
     )
     surv_valid_data$cond_surv_haz_control <- stats::predict(
       glmnet_fit,
@@ -290,8 +294,10 @@ hold_out_calculation_survival <- function(fold,
     )
 
     # estimate the conditional survival hazard in the validation data
-    x_valid <- valid_data %>% dplyr::select(dplyr::all_of(covar_names))
-    x_valid <- matrix(as.numeric(unlist(x_valid)), nrow = nrow(x_valid))
+    x_valid <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data
+    )
     valid_data$cond_surv_haz <- stats::predict(
       glmnet_fit,
       newx = x_valid,
@@ -355,8 +361,15 @@ hold_out_calculation_survival <- function(fold,
 
     # prepare the data for glmnet
     y_train <- train_data[[censor]]
-    x_train <- train_data %>% dplyr::select(dplyr::all_of(covar_names))
-    x_train <- matrix(as.numeric(unlist(x_train)), nrow = nrow(x_train))
+    glm_covar_names <- covar_names[which(covar_names != treatment)]
+    formula_string <- paste(
+      "~", treatment, "+", paste(glm_covar_names, collapse = " + "), "+",
+      paste(paste(glm_covar_names, treatment, sep = ":"), collapse = " + ")
+    )
+    x_train <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = train_data
+    )
 
     # train the elastic net
     glmnet_fit <- cv.glmnet(
@@ -368,8 +381,10 @@ hold_out_calculation_survival <- function(fold,
     )
 
     # predict the conditional censoring hazard at each time for each treatment
-    x_valid <- valid_data %>% dplyr::select(dplyr::all_of(covar_names))
-    x_valid <- matrix(as.numeric(unlist(x_valid)), nrow = nrow(x_valid))
+    x_valid <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data
+    )
     valid_data$cond_cens_haz <- stats::predict(
       glmnet_fit,
       newx = x_valid,
@@ -462,11 +477,13 @@ hold_out_calculation_survival <- function(fold,
           inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
 
         } else {
+
           # set the coefficient to zero, and make the influence curve enormous
           bio_coef <- 0
           inf_curves <- rep(1000000, length(surv_diff))
           message(paste("Biomarker", bio_name, "has low variability. Remove",
                         "it and repeat the analysis."))
+
         }
         # return the beta coefficients and the influence curves
         return(list(

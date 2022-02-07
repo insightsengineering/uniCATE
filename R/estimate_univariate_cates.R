@@ -168,7 +168,7 @@ estimate_univariate_cates <- function(data,
 #' @importFrom rlang !! enquo
 #' @importFrom magrittr %>%
 #' @importFrom origami training validation
-#' @importFrom stats predict
+#' @importFrom stats as.formula model.matrix predict
 #' @importFrom purrr map
 #' @importFrom matrixStats colVars
 #' @importFrom glmnet cv.glmnet
@@ -203,9 +203,16 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     # specify the outcome
     y_train <- train_data[[outcome]]
     covar_names <- colnames(train_data)
-    covar_names <- covar_names[which(!grepl(outcome, covar_names))]
-    x_train <- train_data %>% dplyr::select(dplyr::all_of(covar_names))
-    x_train <- matrix(as.numeric(unlist(x_train)), nrow = nrow(x_train))
+    covar_names <- covar_names[which(!grepl(paste0(outcome, "|", treatment),
+                                            covar_names))]
+    formula_string <- paste(
+      "~", treatment, "+", paste(covar_names, collapse = " + "), "+",
+      paste(paste(covar_names, treatment, sep = ":"), collapse = " + ")
+    )
+    x_train <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = train_data
+    )
 
     if (outcome_type == "continuous") {
 
@@ -230,11 +237,9 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     }
 
     # predict the outcomes in the validation sets with fixed treatments
-    x_data_treat <- valid_data_treat %>%
-      dplyr::select(dplyr::all_of(covar_names))
-    x_data_treat <- matrix(
-      as.numeric(unlist(x_data_treat)),
-      nrow = nrow(x_data_treat)
+    x_data_treat <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data_treat
     )
     valid_data$y_hat_treat <- stats::predict(
       glmnet_fit,
@@ -242,11 +247,9 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
       s = "lambda.min",
       type = "response"
     )
-    x_data_cont <- valid_data_cont %>%
-      dplyr::select(dplyr::all_of(covar_names))
-    x_data_cont <- matrix(
-      as.numeric(unlist(x_data_cont)),
-      nrow = nrow(x_data_cont)
+    x_data_cont <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data_cont
     )
     valid_data$y_hat_cont <- stats::predict(
       glmnet_fit,
@@ -306,19 +309,34 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
   )
   valid_data <- valid_data %>% dplyr::select(-y_diff)
   coefs_and_ic_ls <- valid_data %>%
-    purrr::map(
-      function(bio) {
+    purrr::map2(
+      colnames(valid_data),
+      function(bio, bio_name) {
 
         # center the biomarker measurements
         bio <- as.vector(base::scale(bio, center = TRUE, scale = FALSE))
         var_bio <- mean(bio^2)
 
-        # estimate the best linear approximation using the estimating equation
-        # formula
-        bio_coef <- mean(y_diff * bio) / var_bio
+        # if the variance of the biomarker is nonzero, then proceed
+        # otherwise, fail gracefully
+        if (var_bio > 0) {
 
-        # compute the empirical IC of each observation
-        inf_curves <- ((y_diff - bio_coef * bio) * bio) / var_bio
+          # estimate the best linear approximation using the estimating equation
+          # formula
+          bio_coef <- mean(y_diff * bio) / var_bio
+
+          # compute the empirical IC of each observation
+          inf_curves <- ((y_diff - bio_coef * bio) * bio) / var_bio
+
+        } else {
+
+          # set the coefficient to zero, and make the influence curve enormous
+          bio_coef <- 0
+          inf_curves <- rep(1000000, length(surv_diff))
+          message(paste("Biomarker", bio_name, "has low variability. Remove",
+                        "it and repeat the analysis."))
+
+        }
 
         # return the beta coefficients and the influence curves
         return(list(
