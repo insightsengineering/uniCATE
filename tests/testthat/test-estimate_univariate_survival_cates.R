@@ -80,7 +80,8 @@ test_that("fold function returns a vector of estimated biomarker coefficients
     treatment = "treat",
     covariates = c("biom1", "biom2"),
     biomarkers = c("biom1", "biom2"),
-    time_cutoff = 6
+    time_cutoff = 6,
+    propensity_score_ls = list("treatment" = 0.5, "control" = 0.5)
   )
 
   # create the super learners
@@ -225,7 +226,8 @@ test_that("fold function returns a vector of estimated biomarker coefficients
     treatment = "treat",
     covariates = c("biom1", "biom2"),
     biomarkers = c("biom1", "biom2"),
-    time_cutoff = 6
+    time_cutoff = 6,
+    propensity_score_ls = list("treatment" = 0.5, "control" = 0.5)
   )
 
   # create the fold to test on
@@ -346,7 +348,8 @@ test_that("estimate_univariate_s_cates() returns a vector with estimated
     treatment = "treat",
     covariates = c("biom1", "biom2"),
     biomarkers = c("biom1", "biom2"),
-    time_cutoff = 6
+    time_cutoff = 6,
+    propensity_score_ls = list("treatment" = 0.5, "control" = 0.5)
   )
 
   # create the super learners

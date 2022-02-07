@@ -87,7 +87,7 @@ sunicate <- function(data,
   # assess the data quality and formatting, and prepare it for analysis
   long_data <- prep_long_data(
     data, event, censor, relative_time, treatment, covariates, biomarkers,
-    time_cutoff
+    time_cutoff, propensity_score_ls
   )
 
   # compute CV coefficients and CV influence curves

@@ -221,7 +221,7 @@ hold_out_calculation_survival <- function(fold,
     dplyr::select(-dplyr::all_of(c(event, censor, "time"))) %>%
     dplyr::distinct()
   surv_valid_data <- lapply(
-    seq_len(nrow(valid_data)),
+    seq_len(nrow(surv_valid_data)),
     function(idx) {
       replicate(n_times, surv_valid_data[idx, ], simplify = FALSE) %>%
         dplyr::bind_rows() %>%
@@ -442,20 +442,32 @@ hold_out_calculation_survival <- function(fold,
     dplyr::select(dplyr::all_of(biomarkers)) %>%
     dplyr::distinct()
   coefs_and_ic_ls <- valid_data %>%
-    purrr::map(
-      function(bio) {
+    purrr::map2(
+      colnames(valid_data),
+      function(bio, bio_name) {
 
         # center the biomarker measurements
         bio <- as.vector(base::scale(bio, center = TRUE, scale = FALSE))
         var_bio <- mean(bio^2)
 
-        # estimate the best linear approximation using the estimating equation
-        # formula
-        bio_coef <- mean(surv_diff * bio) / var_bio
+        # if the variance of the biomarker is nonzero, then proceed
+        # otherwise, fail gracefully
+        if (var_bio > 0) {
 
-        # compute the empirical IC of each observation
-        inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
+          # estimate the best linear approximation using the estimating equation
+          # formula
+          bio_coef <- mean(surv_diff * bio) / var_bio
 
+          # compute the empirical IC of each observation
+          inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
+
+        } else {
+          # set the coefficient to zero, and make the influence curve enormous
+          bio_coef <- 0
+          inf_curves <- rep(1000000, length(surv_diff))
+          message(paste("Biomarker", bio_name, "has low variability. Remove",
+                        "it and repeat the analysis."))
+        }
         # return the beta coefficients and the influence curves
         return(list(
           "bio_coef" = bio_coef,

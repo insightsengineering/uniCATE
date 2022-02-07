@@ -64,7 +64,8 @@ unicate <- function(data,
                     parallel = FALSE) {
 
   # assess the data quality and formatting, and prepare it for analysis
-  data <- prep_data(data, outcome, treatment, covariates, biomarkers)
+  data <- prep_data(data, outcome, treatment, covariates, biomarkers,
+                    propensity_score_ls)
 
   # compute CV coefficients and CV influence curves
   cv_ls <- estimate_univariate_cates(
