@@ -55,7 +55,7 @@ guarantee of false positive rate control [@tian2014;@chen2017], which can have
 severe consequences in practice. The inclusion of false positive biomarkers in
 diagnostic assays decreases their clinical utility, and already limited
 resources are wasted on biological validation experiments of duds for drug
-target discovery purposes. Patient outcomes are ultimately negatively effected.
+target discovery purposes. Patient outcomes are ultimately negatively affected.
 
 We proposed in recent work a variable importance parameter that directly
 measures individual biomarkers' roles in treatment effect modification. The

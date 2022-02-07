@@ -217,7 +217,6 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
         alpha = 0.5,
         family = "gaussian"
       )
-
     } else {
 
       # train the elastic net
@@ -234,7 +233,8 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     x_data_treat <- valid_data_treat %>%
       dplyr::select(dplyr::all_of(covar_names))
     x_data_treat <- matrix(
-      as.numeric(unlist(x_data_treat)), nrow = nrow(x_data_treat)
+      as.numeric(unlist(x_data_treat)),
+      nrow = nrow(x_data_treat)
     )
     valid_data$y_hat_treat <- stats::predict(
       glmnet_fit,
@@ -245,7 +245,8 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     x_data_cont <- valid_data_cont %>%
       dplyr::select(dplyr::all_of(covar_names))
     x_data_cont <- matrix(
-      as.numeric(unlist(x_data_cont)), nrow = nrow(x_data_cont)
+      as.numeric(unlist(x_data_cont)),
+      nrow = nrow(x_data_cont)
     )
     valid_data$y_hat_cont <- stats::predict(
       glmnet_fit,
@@ -253,7 +254,6 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
       s = "lambda.min",
       type = "response"
     )
-
   } else {
 
     # construct the SuperLearner task for the outcome regression
@@ -282,7 +282,6 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
       outcome = outcome
     )
     valid_data$y_hat_cont <- sl_fit$predict(pred_task_cont)
-
   }
 
   # apply the doubly-robust A-IPTW transform to each observation for each

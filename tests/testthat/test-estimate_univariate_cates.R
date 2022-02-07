@@ -54,7 +54,6 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
           the validation set using default learner (continuous outcomes)", {
-
   library(dplyr)
   library(origami)
   set.seed(61345)
@@ -152,7 +151,6 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
           the validation set using default learner (binary outcome)", {
-
   library(dplyr)
   library(sl3)
   library(origami)

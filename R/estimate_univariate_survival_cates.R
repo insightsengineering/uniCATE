@@ -208,7 +208,7 @@ hold_out_calculation_survival <- function(fold,
 
   # grab the covariates' column names
   covar_names <- colnames(train_data)
-  rm_noncovar_regex <- paste0("(",event,"|",censor,"|observation_id)")
+  rm_noncovar_regex <- paste0("(", event, "|", censor, "|observation_id)")
   covar_names <- covar_names[which(!grepl(rm_noncovar_regex, covar_names))]
 
   # remove event and censor indicators, and add times up to t_0 for each
@@ -268,7 +268,8 @@ hold_out_calculation_survival <- function(fold,
     x_data_treat <- valid_data_treat %>%
       dplyr::select(dplyr::all_of(covar_names))
     x_data_treat <- matrix(
-      as.numeric(unlist(x_data_treat)), nrow = nrow(x_data_treat)
+      as.numeric(unlist(x_data_treat)),
+      nrow = nrow(x_data_treat)
     )
     surv_valid_data$cond_surv_haz_treat <- stats::predict(
       glmnet_fit,
@@ -278,7 +279,8 @@ hold_out_calculation_survival <- function(fold,
     )
     x_data_cont <- valid_data_cont %>% dplyr::select(dplyr::all_of(covar_names))
     x_data_cont <- matrix(
-      as.numeric(unlist(x_data_cont)), nrow = nrow(x_data_cont)
+      as.numeric(unlist(x_data_cont)),
+      nrow = nrow(x_data_cont)
     )
     surv_valid_data$cond_surv_haz_control <- stats::predict(
       glmnet_fit,
@@ -296,8 +298,6 @@ hold_out_calculation_survival <- function(fold,
       s = "lambda.min",
       type = "response"
     )
-
-
   } else {
 
     # define an sl3 task
@@ -336,7 +336,6 @@ hold_out_calculation_survival <- function(fold,
       covariates = covar_names
     )
     valid_data$cond_surv_haz <- cond_surv_haz_fit$predict(pred_task_valid)
-
   }
 
   # estimate the survival probs under treatment and control at t0
@@ -377,8 +376,6 @@ hold_out_calculation_survival <- function(fold,
       s = "lambda.min",
       type = "response"
     )
-
-
   } else {
 
     # define an sl3 task
