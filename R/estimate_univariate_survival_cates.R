@@ -454,8 +454,9 @@ hold_out_calculation_survival <- function(fold,
 
   # estimate variable important parameters and emp EIFs ########################
   valid_data <- valid_data %>%
-    dplyr::select(dplyr::all_of(biomarkers)) %>%
-    dplyr::distinct()
+    dplyr::select(dplyr::all_of(biomarkers), .data$observation_id) %>%
+    dplyr::distinct() %>%
+    dplyr::select(-.data$observation_id)
   coefs_and_ic_ls <- valid_data %>%
     purrr::map2(
       colnames(valid_data),
