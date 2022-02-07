@@ -309,8 +309,8 @@ baseline_data <- tibble(
 
 # simulate event and censoring times
 # define hazard functions
-cond_surv_hazard <- function(t, A, B1) {
-  (t < 9) / (1 + exp(-(-2 - 3*A*B1))) +
+cond_surv_hazard <- function(t, a, b1) {
+  (t < 9) / (1 + exp(- (-2 - 3 * a * b1))) +
     (t == 9)
 }
 
