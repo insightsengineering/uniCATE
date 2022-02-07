@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">uniCATE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
       </span>
     </div>
 
@@ -44,15 +44,6 @@
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/insightsengineering/uniCATE" class="external-link">
     <span class="fa fa-github"></span>
@@ -72,6 +63,10 @@ Other releases
       
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.4.0" id="unicate-040-2022-02-07">uniCATE 0.4.0 (2022-02-07)<a class="anchor" aria-label="anchor" href="#unicate-040-2022-02-07"></a></h2>
+<ul><li>When the super learning arguments are set to <code>NULL</code> in <code><a href="../reference/unicate.html">unicate()</a></code> and <code><a href="../reference/sunicate.html">sunicate()</a></code>, cross-validated elastic net regressions are fit to estimate nuisance parameters instead of the previously used default <code>sl3</code> super learners. This speeds up computation time, and makes it easier to apply these methods to small datasets by default. This doesn’t affect the asymptotic behaviour of the <code><a href="../reference/unicate.html">unicate()</a></code> estimator, either.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.3.0" id="unicate-030-2022-02-01">uniCATE 0.3.0 (2022-02-01)<a class="anchor" aria-label="anchor" href="#unicate-030-2022-02-01"></a></h2>
 <ul><li>

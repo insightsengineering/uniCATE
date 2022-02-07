@@ -32,7 +32,7 @@ functions."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">uniCATE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
       </span>
     </div>
 
@@ -53,15 +53,6 @@ functions."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/insightsengineering/uniCATE" class="external-link">
     <span class="fa fa-github"></span>
@@ -126,14 +117,10 @@ treatment variable in <code>data</code>.</p></dd>
 biomarkers variables in <code>data</code>. <code>biomarkers</code> must be a subset of
 <code>covariates</code>.</p></dd>
 <dt>super_learner</dt>
-<dd><p>A <code><a href="https://tlverse.org/sl3/reference/Lrnr_sl.html" class="external-link">Lrnr_sl</a></code> object. If set
-to <code>NULL</code>, a default SuperLearner is used. If the outcome variable is
-continuous, the default's library of base learners is made up of a
-linear model, penalized linear models (LASSO and elasticnet), a spline
-regression, XGBoost, a Random Forest, and the mean model. When the outcome
-variable is binary, the base learner library consists of (penalized)
-logistic regression models, XGBoost, a Random Forests, and the mean model.
-The type of outcome is automatically detected.</p></dd>
+<dd><p>A <code><a href="https://tlverse.org/sl3/reference/Lrnr_sl.html" class="external-link">Lrnr_sl</a></code> object used to
+estimate the conditional outcome regression. If set to <code>NULL</code>, the
+default, an elastic net regression is used instead. It is best to use this
+default behaviour when analyzing small datasets.</p></dd>
 <dt>propensity_score_ls</dt>
 <dd><p>A named <code>numeric</code> <code>list</code> providing the
 propensity scores for the treatment conditions. The first element of the

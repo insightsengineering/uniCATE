@@ -26,7 +26,7 @@ already)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">uniCATE</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.0</span>
       </span>
     </div>
 
@@ -47,15 +47,6 @@ already)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/m
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
-<!-- start_releases -->
-<li class="dropdown">
-	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-Other releases
-<span class="caret"></span></a><ul class="dropdown-menu" role="menu">
-   <li><a href="../index.html">latest</a></li>
-   <li><a href="..//index.html"></a></li>
-</ul></li>
-<!-- end_releases -->
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/insightsengineering/uniCATE" class="external-link">
     <span class="fa fa-github"></span>
@@ -84,7 +75,14 @@ already).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">prep_data</span><span class="op">(</span><span class="va">data</span>, <span class="va">outcome</span>, <span class="va">treatment</span>, <span class="va">covariates</span>, <span class="va">biomarkers</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">prep_data</span><span class="op">(</span>
+  <span class="va">data</span>,
+  <span class="va">outcome</span>,
+  <span class="va">treatment</span>,
+  <span class="va">covariates</span>,
+  <span class="va">biomarkers</span>,
+  propensity_score_ls <span class="op">=</span> <span class="cn">NULL</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -107,6 +105,11 @@ covariates variables in <code>data</code>.</p></dd>
 <dd><p>A <code>character</code> vector listing the pre-treatment
 biomarkers variables in <code>data</code>. <code>biomarkers</code> must be a subset of
 <code>covariates</code>.</p></dd>
+<dt>propensity_score_ls</dt>
+<dd><p>A named <code>numeric</code> <code>list</code> providing the
+propensity scores for the treatment conditions. The first element of the
+list should correspond to the "treatment" condition, and the second to the
+"control" condition, whatever their names may be.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
