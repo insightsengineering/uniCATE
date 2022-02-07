@@ -475,15 +475,15 @@ hold_out_calculation_survival <- function(fold,
 
           # compute the empirical IC of each observation
           inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
-
         } else {
 
           # set the coefficient to zero, and make the influence curve enormous
           bio_coef <- 0
           inf_curves <- rep(1000000, length(surv_diff))
-          message(paste("Biomarker", bio_name, "has low variability. Remove",
-                        "it and repeat the analysis."))
-
+          message(paste(
+            "Biomarker", bio_name, "has low variability. Remove",
+            "it and repeat the analysis."
+          ))
         }
         # return the beta coefficients and the influence curves
         return(list(

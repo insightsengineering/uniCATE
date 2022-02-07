@@ -94,7 +94,8 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers,
     data <- data %>%
       dplyr::mutate(
         !!rlang::sym(treatment) := factor(!!rlang::sym(treatment),
-                                          levels = names(propensity_score_ls))
+          levels = names(propensity_score_ls)
+        )
       )
   }
 

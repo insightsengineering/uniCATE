@@ -165,7 +165,8 @@ prep_long_data <- function(data, event, censor, relative_time, treatment,
     data <- data %>%
       dplyr::mutate(
         !!rlang::sym(treatment) := factor(!!rlang::sym(treatment),
-                                          levels = names(propensity_score_ls))
+          levels = names(propensity_score_ls)
+        )
       )
   }
 

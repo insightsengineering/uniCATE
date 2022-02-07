@@ -203,8 +203,10 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     # specify the outcome
     y_train <- train_data[[outcome]]
     covar_names <- colnames(train_data)
-    covar_names <- covar_names[which(!grepl(paste0(outcome, "|", treatment),
-                                            covar_names))]
+    covar_names <- covar_names[which(!grepl(
+      paste0(outcome, "|", treatment),
+      covar_names
+    ))]
     formula_string <- paste(
       "~", treatment, "+", paste(covar_names, collapse = " + "), "+",
       paste(paste(covar_names, treatment, sep = ":"), collapse = " + ")
@@ -327,15 +329,15 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
 
           # compute the empirical IC of each observation
           inf_curves <- ((y_diff - bio_coef * bio) * bio) / var_bio
-
         } else {
 
           # set the coefficient to zero, and make the influence curve enormous
           bio_coef <- 0
           inf_curves <- rep(1000000, length(y_diff))
-          message(paste("Biomarker", bio_name, "has low variability. Remove",
-                        "it and repeat the analysis."))
-
+          message(paste(
+            "Biomarker", bio_name, "has low variability. Remove",
+            "it and repeat the analysis."
+          ))
         }
 
         # return the beta coefficients and the influence curves
