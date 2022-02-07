@@ -1,6 +1,6 @@
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
-          the validation set (continuous outcomes)", {
+          the validation set using super learner (continuous outcomes)", {
   library(dplyr)
   library(sl3)
   library(origami)
@@ -36,7 +36,7 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   res_ls <- hold_out_calculation(
     fold, data, outcome, treatment, biomarkers,
     super_learner = lrnr_sl,
-    propensity_score_ls, outcome_type = "continous"
+    propensity_score_ls, outcome_type = "continuous"
   )
 
   # make sure that the coefficients vector is a numeric vector
@@ -53,7 +53,47 @@ test_that("fold function returns a vector of estimated biomarker coefficients
 
 test_that("fold function returns a vector of estimated biomarker coefficients
           and a tibble of influence curve calculations for each observation in
-          the validation set (binary outcome)", {
+          the validation set using default learner (continuous outcomes)", {
+
+  library(dplyr)
+  library(origami)
+  set.seed(61345)
+
+  # prepare some mock data
+  data <- mtcars %>%
+    dplyr::mutate(am = factor(am)) %>%
+    dplyr::select(mpg, am, disp, hp, wt)
+  data <- bind_rows(data, data, data, data)
+  outcome <- "mpg"
+  treatment <- "am"
+  biomarkers <- c("hp", "wt")
+  propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
+
+  # create the fold to test on
+  fold <- make_folds(data, fold_fun = folds_vfold, V = 5)[[1]]
+
+  # apply the fold function
+  res_ls <- hold_out_calculation(
+    fold, data, outcome, treatment, biomarkers,
+    super_learner = NULL,
+    propensity_score_ls, outcome_type = "continuous"
+  )
+
+  # make sure that the coefficients vector is a numeric vector
+  expect_equal(class(res_ls$beta_coefs), "numeric")
+  expect_length(res_ls$beta_coefs, 2)
+
+  # make sure that the IC table is a tibble of appropriate dimensions
+  expect_equal(nrow(res_ls$ic_df), length(fold$validation_set))
+  expect_equal(ncol(res_ls$ic_df), 2)
+
+  # make sure that the column means of the IC table are approximately equal to 0
+  expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
+})
+
+test_that("fold function returns a vector of estimated biomarker coefficients
+          and a tibble of influence curve calculations for each observation in
+          the validation set using super learner (binary outcome)", {
   library(dplyr)
   library(sl3)
   library(origami)
@@ -109,6 +149,46 @@ test_that("fold function returns a vector of estimated biomarker coefficients
   expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
 })
 
+test_that("fold function returns a vector of estimated biomarker coefficients
+          and a tibble of influence curve calculations for each observation in
+          the validation set using default learner (binary outcome)", {
+
+  library(dplyr)
+  library(sl3)
+  library(origami)
+  set.seed(61345)
+
+  # prepare some mock data
+  data <- mtcars %>%
+    dplyr::mutate(vs = factor(vs)) %>%
+    dplyr::select(mpg, am, vs, hp, wt)
+  data <- bind_rows(data, data, data, data)
+  outcome <- "am"
+  treatment <- "vs"
+  biomarkers <- c("hp", "wt")
+  propensity_score_ls <- list("1" = 0.4, "0" = 0.6)
+
+  # create the fold to test on
+  fold <- make_folds(data, fold_fun = folds_vfold, V = 5)[[1]]
+
+  # apply the fold function
+  res_ls <- hold_out_calculation(
+    fold, data, outcome, treatment, biomarkers,
+    super_learner = NULL,
+    propensity_score_ls, outcome_type = "binomial"
+  )
+
+  # make sure that the coefficients vector is a numeric vector
+  expect_equal(class(res_ls$beta_coefs), "numeric")
+  expect_length(res_ls$beta_coefs, 2)
+
+  # make sure that the IC table is a tibble of appropriate dimensions
+  expect_equal(nrow(res_ls$ic_df), length(fold$validation_set))
+  expect_equal(ncol(res_ls$ic_df), 2)
+
+  # make sure that the column means of the IC table are approximately equal to 0
+  expect_equal(as.vector(colMeans(res_ls$ic_df)), c(0, 0))
+})
 
 test_that("estimate_univariate_cates() returns a vector with estimate lm
           coefficients and a table of influence curves", {

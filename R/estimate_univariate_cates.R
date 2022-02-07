@@ -168,10 +168,10 @@ estimate_univariate_cates <- function(data,
 #' @importFrom rlang !! enquo
 #' @importFrom magrittr %>%
 #' @importFrom origami training validation
-#' @importFrom stats var coef lm
+#' @importFrom stats predict var
 #' @importFrom purrr map
 #' @importFrom matrixStats colVars
-#' @importFrom glmnet cv.glmnet predict.glmnet
+#' @importFrom glmnet cv.glmnet
 #' @import sl3
 #'
 #' @keywords internal
@@ -204,9 +204,8 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     y_train <- train_data[[outcome]]
     covar_names <- colnames(train_data)
     covar_names <- covar_names[which(!grepl(outcome, covar_names))]
-    x_train <- training_data %>%
-      dplyr::select(dplyr::all_of(covar_names)) %>%
-      as.matrix()
+    x_train <- train_data %>% dplyr::select(dplyr::all_of(covar_names))
+    x_train <- matrix(as.numeric(unlist(x_train)), nrow = nrow(x_train))
 
     if (outcome_type == "continuous") {
 
@@ -233,17 +232,21 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
 
     # predict the outcomes in the validation sets with fixed treatments
     x_data_treat <- valid_data_treat %>%
-      dplyr::select(dplyr::all_of(covar_names)) %>%
-      as.matrix()
-    valid_data$y_hat_treat <- glmnet::predict.glmnet(
+      dplyr::select(dplyr::all_of(covar_names))
+    x_data_treat <- matrix(
+      as.numeric(unlist(x_data_treat)), nrow = nrow(x_data_treat)
+    )
+    valid_data$y_hat_treat <- stats::predict(
       glmnet_fit,
       newx = x_data_treat,
       s = "lambda.min"
     )
     x_data_cont <- valid_data_cont %>%
-      dplyr::select(dplyr::all_of(covar_names)) %>%
-      as.matrix()
-    valid_data$y_hat_cont <- glmnet::predict.glmnet(
+      dplyr::select(dplyr::all_of(covar_names))
+    x_data_cont <- matrix(
+      as.numeric(unlist(x_data_cont)), nrow = nrow(x_data_cont)
+    )
+    valid_data$y_hat_cont <- stats::predict(
       glmnet_fit,
       newx = x_data_cont,
       s = "lambda.min"
