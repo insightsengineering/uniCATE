@@ -12,7 +12,8 @@ prep_long_data(
   treatment,
   covariates,
   biomarkers,
-  time_cutoff = NULL
+  time_cutoff = NULL,
+  propensity_score_ls = NULL
 )
 }
 \arguments{
@@ -46,6 +47,11 @@ interest in \code{data}. \code{biomarkers} must be a subset of
 the biomarkers' importance with respect to the outcome. If not specified,
 this value is set to the median value in the \code{data} argument's
 \code{relative_time} variable.}
+
+\item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
+propensity scores for the treatment conditions. The first element of the
+list should correspond to the "treatment" condition, and the second to the
+"control" condition, whatever their names may be.}
 }
 \value{
 A longitudinal \code{tibble} containing only the event indicator
