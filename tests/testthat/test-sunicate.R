@@ -1,4 +1,6 @@
-test_that("sunicate() identifies the effect modified in a simulated example", {
+# integrationt test
+test_that("sunicate() identifies the effect modified in a simulated example
+          using default learners", {
   library(dplyr)
   library(sl3)
   library(origami)

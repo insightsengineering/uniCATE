@@ -18,6 +18,10 @@
 #' @param biomarkers A \code{character} vector listing the pre-treatment
 #'   biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
 #'   \code{covariates}.
+#' @param propensity_score_ls A named \code{numeric} \code{list} providing the
+#'   propensity scores for the treatment conditions. The first element of the
+#'   list should correspond to the "treatment" condition, and the second to the
+#'   "control" condition, whatever their names may be.
 #'
 #' @return A \code{tibble} containing only the outcome variable, treatment
 #'   indicator, and covariates. Note that the treatment variable is transformed
@@ -30,7 +34,8 @@
 #' @importFrom rlang !! sym :=
 #'
 #' @keywords internal
-prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
+prep_data <- function(data, outcome, treatment, covariates, biomarkers,
+                      propensity_score_ls = NULL) {
 
   # assert that the arguments are properly defined
   assertthat::assert_that(
@@ -88,7 +93,9 @@ prep_data <- function(data, outcome, treatment, covariates, biomarkers) {
   if (!is.factor(data[treatment])) {
     data <- data %>%
       dplyr::mutate(
-        !!rlang::sym(treatment) := factor(!!rlang::sym(treatment))
+        !!rlang::sym(treatment) := factor(!!rlang::sym(treatment),
+          levels = names(propensity_score_ls)
+        )
       )
   }
 

@@ -55,15 +55,13 @@ this value is set to the median value of the \code{data} argument's
 
 \item{cond_surv_haz_super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
 object used to estimate the conditional event hazard model. If set to
-\code{NULL}, the default SuperLearner is used. The default's library
-consists of a linear model, penalized linear models (LASSO and elasticnet),
-a Random Forest, and the mean model.}
+\code{NULL}, the default, an elastic net regression is used instead. It is
+best to use this default behaviour when analyzing small datasets.}
 
 \item{cond_censor_haz_super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
 object used to estimate the conditional censoring hazard model. If set to
-\code{NULL}, the default SuperLearner is used. The default's library
-consists of a linear model, penalized linear models (LASSO and elasticnet),
-a Random Forest, and the mean model.}
+\code{NULL}, the default, an elastic net regression is used instead. It is
+best to use this default behaviour when analyzing small datasets.}
 
 \item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
 propensity scores for the treatment conditions. The first element of the

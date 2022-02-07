@@ -34,6 +34,10 @@
 #'   observation identifier. The treatment variable is transformed into a factor
 #'   if not already, and no rows whose relative time values are larger than
 #'   \code{time_cutoff} are retained when \code{time_cutoff} is non-null.
+#' @param propensity_score_ls A named \code{numeric} \code{list} providing the
+#'   propensity scores for the treatment conditions. The first element of the
+#'   list should correspond to the "treatment" condition, and the second to the
+#'   "control" condition, whatever their names may be.
 #'
 #' @importFrom assertthat assert_that
 #' @importFrom tibble is_tibble
@@ -43,7 +47,8 @@
 #'
 #' @keywords internal
 prep_long_data <- function(data, event, censor, relative_time, treatment,
-                           covariates, biomarkers, time_cutoff = NULL) {
+                           covariates, biomarkers, time_cutoff = NULL,
+                           propensity_score_ls = NULL) {
 
   # check that data is a data.frame or tibble object
   assertthat::assert_that(
@@ -159,7 +164,9 @@ prep_long_data <- function(data, event, censor, relative_time, treatment,
   if (!is.factor(data[treatment])) {
     data <- data %>%
       dplyr::mutate(
-        !!rlang::sym(treatment) := factor(!!rlang::sym(treatment))
+        !!rlang::sym(treatment) := factor(!!rlang::sym(treatment),
+          levels = names(propensity_score_ls)
+        )
       )
   }
 

@@ -33,14 +33,10 @@ treatment variable in \code{data}.}
 biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
 \code{covariates}.}
 
-\item{super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object. If set
-to \code{NULL}, a default SuperLearner is used. If the outcome variable is
-continuous, the default's library of base learners is made up of a
-linear model, penalized linear models (LASSO and elasticnet), a spline
-regression, XGBoost, a Random Forest, and the mean model. When the outcome
-variable is binary, the base learner library consists of (penalized)
-logistic regression models, XGBoost, a Random Forests, and the mean model.
-The type of outcome is automatically detected.}
+\item{super_learner}{A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}} object used to
+estimate the conditional outcome regression. If set to \code{NULL}, the
+default, an elastic net regression is used instead. It is best to use this
+default behaviour when analyzing small datasets.}
 
 \item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
 propensity scores for the treatment conditions. The first element of the

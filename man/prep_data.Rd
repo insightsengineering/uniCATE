@@ -4,7 +4,14 @@
 \alias{prep_data}
 \title{Prepare Data}
 \usage{
-prep_data(data, outcome, treatment, covariates, biomarkers)
+prep_data(
+  data,
+  outcome,
+  treatment,
+  covariates,
+  biomarkers,
+  propensity_score_ls = NULL
+)
 }
 \arguments{
 \item{data}{A \code{data.frame} or \code{tibble} object containing the
@@ -24,6 +31,11 @@ covariates variables in \code{data}.}
 \item{biomarkers}{A \code{character} vector listing the pre-treatment
 biomarkers variables in \code{data}. \code{biomarkers} must be a subset of
 \code{covariates}.}
+
+\item{propensity_score_ls}{A named \code{numeric} \code{list} providing the
+propensity scores for the treatment conditions. The first element of the
+list should correspond to the "treatment" condition, and the second to the
+"control" condition, whatever their names may be.}
 }
 \value{
 A \code{tibble} containing only the outcome variable, treatment

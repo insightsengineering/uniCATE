@@ -20,12 +20,6 @@ knitr::opts_chunk$set(
 ```{r setup, include=FALSE}
 library(uniCATE)
 library(dplyr)
-library(sl3)
-library(glmnet)
-library(speedglm)
-library(polspline)
-library(ranger)
-library(xgboost)
 ```
 
 
@@ -55,7 +49,7 @@ guarantee of false positive rate control [@tian2014;@chen2017], which can have
 severe consequences in practice. The inclusion of false positive biomarkers in
 diagnostic assays decreases their clinical utility, and already limited
 resources are wasted on biological validation experiments of duds for drug
-target discovery purposes. Patient outcomes are ultimately negatively effected.
+target discovery purposes. Patient outcomes are ultimately negatively affected.
 
 We proposed in recent work a variable importance parameter that directly
 measures individual biomarkers' roles in treatment effect modification. The
@@ -129,12 +123,6 @@ computational convenience.
 ```{r load-pkgs, eval=FALSE}
 library(dplyr)
 library(uniCATE)
-library(sl3)
-library(glmnet)
-library(speedglm)
-library(polspline)
-library(ranger)
-library(xgboost)
 ```
 ```{r cont-sim}
 # simulate n trial participants
@@ -309,8 +297,8 @@ baseline_data <- tibble(
 
 # simulate event and censoring times
 # define hazard functions
-cond_surv_hazard <- function(t, A, B1) {
-  (t < 9) / (1 + exp(-(-2 - 3*A*B1))) +
+cond_surv_hazard <- function(t, a, b1) {
+  (t < 9) / (1 + exp(- (-2 - 3 * a * b1))) +
     (t == 9)
 }
 

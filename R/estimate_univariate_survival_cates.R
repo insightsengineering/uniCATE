@@ -25,14 +25,12 @@
 #'   interest in \code{data}.
 #' @param cond_surv_haz_super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
 #'   object used to estimate the conditional event hazard model. If set to
-#'   \code{NULL}, the default SuperLearner is used. The default's library
-#'   consists of a linear model, penalized linear models (LASSO and elasticnet),
-#'   a Random Forest, and the mean model.
+#'   \code{NULL}, the default, an elastic net regression is used instead. It is
+#'   best to use this default behaviour when analyzing small datasets.
 #' @param cond_censor_haz_super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
 #'   object used to estimate the conditional censoring hazard model. If set to
-#'   \code{NULL}, the default SuperLearner is used. The default's library
-#'   consists of a linear model, penalized linear models (LASSO and elasticnet),
-#'   a Random Forest, and the mean model.
+#'   \code{NULL}, the default, an elastic net regression is used instead. It is
+#'   best to use this default behaviour when analyzing small datasets.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
 #'   propensity scores for the treatment conditions. The first element of the
 #'   list should correspond to the "treatment" condition, and the second to the
@@ -168,14 +166,12 @@ estimate_univariate_s_cates <- function(long_data,
 #'   interest in \code{data}.
 #' @param cond_surv_haz_super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
 #'   object used to estimate the conditional event hazard model. If set to
-#'   \code{NULL}, the default SuperLearner is used. The default's library
-#'   consists of a linear model, penalized linear models (LASSO and elasticnet),
-#'   a Random Forest, and the mean model.
+#'   \code{NULL}, the default, an elastic net regression is used instead. It is
+#'   best to use this default behaviour when analyzing small datasets.
 #' @param cond_censor_haz_super_learner A \code{\link[sl3:Lrnr_sl]{Lrnr_sl}}
 #'   object used to estimate the conditional censoring hazard model. If set to
-#'   \code{NULL}, the default SuperLearner is used. The default's library
-#'   consists of a linear model, penalized linear models (LASSO and elasticnet),
-#'   a Random Forest, and the mean model.
+#'   \code{NULL}, the default, an elastic net regression is used instead. It is
+#'   best to use this default behaviour when analyzing small datasets.
 #' @param propensity_score_ls A named \code{numeric} \code{list} providing the
 #'   propensity scores for the treatment conditions. The first element of the
 #'   list should correspond to the "treatment" condition, and the second to the
@@ -191,6 +187,8 @@ estimate_univariate_s_cates <- function(long_data,
 #' @importFrom magrittr %>%
 #' @importFrom origami training validation
 #' @importFrom purrr map
+#' @importFrom stats as.formula model.matrix predict
+#' @importFrom glmnet cv.glmnet
 #' @import sl3
 #'
 #' @keywords internal
@@ -210,121 +208,11 @@ hold_out_calculation_survival <- function(fold,
 
   # grab the covariates' column names
   covar_names <- colnames(train_data)
-  rm_noncovar_regex <- "(event|censor|observation_id)"
+  rm_noncovar_regex <- paste0("(", event, "|", censor, "|observation_id)")
   covar_names <- covar_names[which(!grepl(rm_noncovar_regex, covar_names))]
 
-
-  # estimate conditional survival function #####################################
-
-  # define an sl3 task
-  surv_haz_train_task <- sl3::make_sl3_Task(
-    data = train_data,
-    covariates = covar_names,
-    outcome = event,
-    outcome_type = "binomial"
-  )
-
-  # create the super learner if not already defined
-  if (is.null(cond_surv_haz_super_learner)) {
-
-    # define the treatment-covariate interaction for certain learners
-    covars <- covar_names[which(!grepl(treatment, covar_names))]
-    interactions <- lapply(covars, function(w) c(w, treatment))
-    lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
-
-    # define the base learners for binary outcomes
-    lrnr_glm <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
-    )
-    lrnr_lasso <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
-    )
-    lrnr_enet <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
-    )
-    lrnr_rf <- sl3::Lrnr_ranger$new()
-    lrnr_mean <- sl3::Lrnr_mean$new()
-
-    # assemble learners
-    learner_library <- sl3::make_learner(
-      sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_rf, lrnr_mean
-    )
-
-    # define the metalearner
-    meta_learner <- sl3::make_learner(
-      sl3::Lrnr_solnp,
-      loss_function = sl3::loss_loglik_binomial,
-      learner_function = sl3::metalearner_logistic_binomial
-    )
-
-    # initialize the SuperLearner
-    cond_surv_haz_super_learner <- sl3::Lrnr_sl$new(
-      learners = learner_library,
-      metalearner = meta_learner
-    )
-  }
-
-  # estimate the conditional hazard function
-  cond_surv_haz_fit <- cond_surv_haz_super_learner$train(surv_haz_train_task)
-
-
-
-  # estimate censoring function ################################################
-  # define an sl3 task
-  cens_haz_train_task <- sl3::make_sl3_Task(
-    data = train_data,
-    covariates = covar_names,
-    outcome = censor,
-    outcome_type = "binomial"
-  )
-
-  # create the super learner if not already defined
-  if (is.null(cond_censor_haz_super_learner)) {
-
-    # define the treatment-covariate interaction for certain learners
-    covars <- covar_names[which(!grepl(treatment, covar_names))]
-    interactions <- lapply(covars, function(w) c(w, treatment))
-    lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
-
-    # define the base learners for binary outcomes
-    lrnr_glm <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm_fast$new()
-    )
-    lrnr_lasso <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new()
-    )
-    lrnr_enet <- sl3::make_learner(
-      sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glmnet$new(alpha = 0.5)
-    )
-    lrnr_rf <- sl3::Lrnr_ranger$new()
-    lrnr_mean <- sl3::Lrnr_mean$new()
-
-    # assemble learners
-    learner_library <- sl3::make_learner(
-      sl3::Stack, lrnr_glm, lrnr_lasso, lrnr_enet, lrnr_rf, lrnr_mean
-    )
-
-    # define the metalearner
-    meta_learner <- sl3::make_learner(
-      sl3::Lrnr_solnp,
-      loss_function = sl3::loss_loglik_binomial,
-      learner_function = sl3::metalearner_logistic_binomial
-    )
-
-    # initialize the SuperLearner
-    cond_censor_haz_super_learner <- sl3::Lrnr_sl$new(
-      learners = learner_library,
-      metalearner = meta_learner
-    )
-  }
-
-  # estimate the conditional hazard function
-  cond_cens_haz_fit <- cond_censor_haz_super_learner$train(cens_haz_train_task)
-
-
-  # estimate variable important parameters #####################################
-
-  # estimate the survival probs under treatment and control at t0
+  # remove event and censor indicators, and add times up to t_0 for each
+  # observation in a new version of the validation data
   times <- c(valid_data$time, train_data$time) %>%
     unique() %>%
     sort()
@@ -333,46 +221,130 @@ hold_out_calculation_survival <- function(fold,
     dplyr::select(-dplyr::all_of(c(event, censor, "time"))) %>%
     dplyr::distinct()
   surv_valid_data <- lapply(
-    seq_len(nrow(valid_data)),
+    seq_len(nrow(surv_valid_data)),
     function(idx) {
-      replicate(n_times, valid_data[idx, ], simplify = FALSE) %>%
+      replicate(n_times, surv_valid_data[idx, ], simplify = FALSE) %>%
         dplyr::bind_rows() %>%
         dplyr::mutate(time = times)
     }
   ) %>%
     dplyr::bind_rows()
 
-  # create the treatment dataset and prediction task
+  # prepare the validation datasets for fixed treatment assignments
   valid_data_treat <- surv_valid_data
   valid_data_treat[treatment] <- names(propensity_score_ls)[1]
   valid_data_treat[treatment] <- factor(
     dplyr::pull(valid_data_treat, treatment),
     levels = names(propensity_score_ls)
   )
-  pred_task_treat <- sl3::make_sl3_Task(
-    data = valid_data_treat,
-    covariates = covar_names
-  )
-
-  # create the control dataset and prediction task
   valid_data_cont <- surv_valid_data
   valid_data_cont[treatment] <- names(propensity_score_ls)[2]
   valid_data_cont[treatment] <- factor(
     dplyr::pull(valid_data_cont, treatment),
     levels = names(propensity_score_ls)
   )
-  pred_task_cont <- sl3::make_sl3_Task(
-    data = valid_data_cont,
-    covariates = covar_names
-  )
 
-  # estimate conditional survival for all at max time (one est per row)
-  surv_valid_data$cond_surv_haz_control <- cond_surv_haz_fit$predict(
-    pred_task_cont
-  )
-  surv_valid_data$cond_surv_haz_treat <- cond_surv_haz_fit$predict(
-    pred_task_treat
-  )
+  # estimate conditional survival function #####################################
+
+  # create the super learner if not already defined
+  if (is.null(cond_surv_haz_super_learner)) {
+
+    # prepare the data for glmnet
+    y_train <- train_data[[event]]
+    glm_covar_names <- covar_names[which(covar_names != treatment)]
+    formula_string <- paste(
+      "~", treatment, "+", paste(glm_covar_names, collapse = " + "), "+",
+      paste(paste(glm_covar_names, treatment, sep = ":"), collapse = " + ")
+    )
+    x_train <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = train_data
+    )
+
+    # train the elastic net
+    glmnet_fit <- cv.glmnet(
+      x = x_train,
+      y = y_train,
+      nfolds = 5,
+      alpha = 0.5,
+      family = "binomial"
+    )
+
+    # estimate the conditional hazard under treatment and control in
+    # surv_valid_data to eventually compute the survival prob
+    x_data_treat <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data_treat
+    )
+    surv_valid_data$cond_surv_haz_treat <- stats::predict(
+      glmnet_fit,
+      newx = x_data_treat,
+      s = "lambda.min",
+      type = "response"
+    )
+    x_data_cont <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data_cont
+    )
+    surv_valid_data$cond_surv_haz_control <- stats::predict(
+      glmnet_fit,
+      newx = x_data_cont,
+      s = "lambda.min",
+      type = "response"
+    )
+
+    # estimate the conditional survival hazard in the validation data
+    x_valid <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data
+    )
+    valid_data$cond_surv_haz <- stats::predict(
+      glmnet_fit,
+      newx = x_valid,
+      s = "lambda.min",
+      type = "response"
+    )
+  } else {
+
+    # define an sl3 task
+    surv_haz_train_task <- sl3::make_sl3_Task(
+      data = train_data,
+      covariates = covar_names,
+      outcome = event,
+      outcome_type = "binomial"
+    )
+
+    # estimate the conditional hazard function
+    cond_surv_haz_fit <- cond_surv_haz_super_learner$train(surv_haz_train_task)
+
+    # create the treatment and control prediction tasks
+    pred_task_treat <- sl3::make_sl3_Task(
+      data = valid_data_treat,
+      covariates = covar_names
+    )
+    pred_task_cont <- sl3::make_sl3_Task(
+      data = valid_data_cont,
+      covariates = covar_names
+    )
+
+    # estimate the conditional hazard under treatment and control in
+    # surv_valid_data to eventually compute the survival prob
+    surv_valid_data$cond_surv_haz_treat <- cond_surv_haz_fit$predict(
+      pred_task_treat
+    )
+    surv_valid_data$cond_surv_haz_control <- cond_surv_haz_fit$predict(
+      pred_task_cont
+    )
+
+    # estimate the conditional hazard in the validation data
+    pred_task_valid <- sl3::make_sl3_Task(
+      data = valid_data,
+      covariates = covar_names
+    )
+    valid_data$cond_surv_haz <- cond_surv_haz_fit$predict(pred_task_valid)
+  }
+
+  # estimate the survival probs under treatment and control at t0
   surv_valid_data <- surv_valid_data %>%
     dplyr::group_by(.data$observation_id) %>%
     dplyr::summarise(
@@ -381,19 +353,72 @@ hold_out_calculation_survival <- function(fold,
     ) %>%
     dplyr::ungroup()
 
-  # construct cumulative portion of empirical efficient influence curve
+
+  # estimate censoring function ################################################
+
+  # create the super learner if not already defined
+  if (is.null(cond_censor_haz_super_learner)) {
+
+    # prepare the data for glmnet
+    y_train <- train_data[[censor]]
+    glm_covar_names <- covar_names[which(covar_names != treatment)]
+    formula_string <- paste(
+      "~", treatment, "+", paste(glm_covar_names, collapse = " + "), "+",
+      paste(paste(glm_covar_names, treatment, sep = ":"), collapse = " + ")
+    )
+    x_train <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = train_data
+    )
+
+    # train the elastic net
+    glmnet_fit <- cv.glmnet(
+      x = x_train,
+      y = y_train,
+      nfolds = 5,
+      alpha = 0.5,
+      family = "binomial"
+    )
+
+    # predict the conditional censoring hazard at each time for each treatment
+    x_valid <- stats::model.matrix(
+      stats::as.formula(formula_string),
+      data = valid_data
+    )
+    valid_data$cond_cens_haz <- stats::predict(
+      glmnet_fit,
+      newx = x_valid,
+      s = "lambda.min",
+      type = "response"
+    )
+  } else {
+
+    # define an sl3 task
+    cens_haz_train_task <- sl3::make_sl3_Task(
+      data = train_data,
+      covariates = covar_names,
+      outcome = censor,
+      outcome_type = "binomial"
+    )
+
+    # estimate the conditional hazard function
+    cond_cens_haz_fit <- cond_censor_haz_super_learner$train(
+      cens_haz_train_task
+    )
+
+    # predict cond hazards at each time
+    pred_task_valid <- sl3::make_sl3_Task(
+      data = valid_data,
+      covariates = covar_names
+    )
+    valid_data$cond_cens_haz <- cond_cens_haz_fit$predict(pred_task_valid)
+  }
+
+  # construct cumulative portion of empirical efficient influence curve ########
 
   # add the survival probs at t0
   valid_data <- valid_data %>%
     dplyr::left_join(surv_valid_data, by = "observation_id")
-
-  # predict cond hazards at each time
-  pred_task_valid <- sl3::make_sl3_Task(
-    data = valid_data,
-    covariates = covar_names
-  )
-  valid_data$cond_surv_haz <- cond_surv_haz_fit$predict(pred_task_valid)
-  valid_data$cond_cens_haz <- cond_cens_haz_fit$predict(pred_task_valid)
 
   # compute the ajdusted differences in survival probabilities
   surv_diff <- valid_data %>%
@@ -427,26 +452,40 @@ hold_out_calculation_survival <- function(fold,
     dplyr::distinct() %>%
     dplyr::pull(.data$adj_surv_diff)
 
-  # estimate the variable importance parameter and compute the emp eif for all
-  # biomarkers
+  # estimate variable important parameters and emp EIFs ########################
   valid_data <- valid_data %>%
-    dplyr::select(dplyr::all_of(biomarkers)) %>%
-    dplyr::distinct()
+    dplyr::select(dplyr::all_of(biomarkers), .data$observation_id) %>%
+    dplyr::distinct() %>%
+    dplyr::select(-.data$observation_id)
   coefs_and_ic_ls <- valid_data %>%
-    purrr::map(
-      function(bio) {
+    purrr::map2(
+      colnames(valid_data),
+      function(bio, bio_name) {
 
         # center the biomarker measurements
         bio <- as.vector(base::scale(bio, center = TRUE, scale = FALSE))
         var_bio <- mean(bio^2)
 
-        # estimate the best linear approximation using the estimating equation
-        # formula
-        bio_coef <- mean(surv_diff * bio) / var_bio
+        # if the variance of the biomarker is nonzero, then proceed
+        # otherwise, fail gracefully
+        if (var_bio > 0) {
 
-        # compute the unscaled empirical IC of each observation
-        inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
+          # estimate the best linear approximation using the estimating equation
+          # formula
+          bio_coef <- mean(surv_diff * bio) / var_bio
 
+          # compute the empirical IC of each observation
+          inf_curves <- ((surv_diff - bio_coef * bio) * bio) / var_bio
+        } else {
+
+          # set the coefficient to zero, and make the influence curve enormous
+          bio_coef <- 0
+          inf_curves <- rep(1000000, length(surv_diff))
+          message(paste(
+            "Biomarker", bio_name, "has low variability. Remove",
+            "it and repeat the analysis."
+          ))
+        }
         # return the beta coefficients and the influence curves
         return(list(
           "bio_coef" = bio_coef,

@@ -1,6 +1,6 @@
 Package: uniCATE
 Title: Univariate Conditional Average Treatment Effect Estimation
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: c(
     person(given = "Philippe",
            family = "Boileau",
@@ -35,7 +35,6 @@ Suggests:
     nnls,
     Rsolnp,
     speedglm,
-    glmnet,
     polspline,
     xgboost,
     ranger,
@@ -52,6 +51,7 @@ Imports:
     purrr,
     rlang,
     sl3,
+    glmnet,
     tibble,
     future
 Config/testthat/edition: 3
