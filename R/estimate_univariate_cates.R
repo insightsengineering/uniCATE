@@ -168,7 +168,7 @@ estimate_univariate_cates <- function(data,
 #' @importFrom rlang !! enquo
 #' @importFrom magrittr %>%
 #' @importFrom origami training validation
-#' @importFrom stats predict var
+#' @importFrom stats predict
 #' @importFrom purrr map
 #' @importFrom matrixStats colVars
 #' @importFrom glmnet cv.glmnet
@@ -239,7 +239,8 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     valid_data$y_hat_treat <- stats::predict(
       glmnet_fit,
       newx = x_data_treat,
-      s = "lambda.min"
+      s = "lambda.min",
+      type = "response"
     )
     x_data_cont <- valid_data_cont %>%
       dplyr::select(dplyr::all_of(covar_names))
@@ -249,7 +250,8 @@ hold_out_calculation <- function(fold, data, outcome, treatment, biomarkers,
     valid_data$y_hat_cont <- stats::predict(
       glmnet_fit,
       newx = x_data_cont,
-      s = "lambda.min"
+      s = "lambda.min",
+      type = "response"
     )
 
   } else {

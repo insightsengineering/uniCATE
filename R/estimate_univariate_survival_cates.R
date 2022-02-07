@@ -208,7 +208,7 @@ hold_out_calculation_survival <- function(fold,
 
   # grab the covariates' column names
   covar_names <- colnames(train_data)
-  rm_noncovar_regex <- "(event|censor|observation_id)"
+  rm_noncovar_regex <- paste0("(",event,"|",censor,"|observation_id)")
   covar_names <- covar_names[which(!grepl(rm_noncovar_regex, covar_names))]
 
   # remove event and censor indicators, and add times up to t_0 for each
@@ -223,7 +223,7 @@ hold_out_calculation_survival <- function(fold,
   surv_valid_data <- lapply(
     seq_len(nrow(valid_data)),
     function(idx) {
-      replicate(n_times, valid_data[idx, ], simplify = FALSE) %>%
+      replicate(n_times, surv_valid_data[idx, ], simplify = FALSE) %>%
         dplyr::bind_rows() %>%
         dplyr::mutate(time = times)
     }
@@ -273,7 +273,8 @@ hold_out_calculation_survival <- function(fold,
     surv_valid_data$cond_surv_haz_treat <- stats::predict(
       glmnet_fit,
       newx = x_data_treat,
-      s = "lambda.min"
+      s = "lambda.min",
+      type = "response"
     )
     x_data_cont <- valid_data_cont %>% dplyr::select(dplyr::all_of(covar_names))
     x_data_cont <- matrix(
@@ -282,7 +283,8 @@ hold_out_calculation_survival <- function(fold,
     surv_valid_data$cond_surv_haz_control <- stats::predict(
       glmnet_fit,
       newx = x_data_cont,
-      s = "lambda.min"
+      s = "lambda.min",
+      type = "response"
     )
 
     # estimate the conditional survival hazard in the validation data
@@ -291,7 +293,8 @@ hold_out_calculation_survival <- function(fold,
     valid_data$cond_surv_haz <- stats::predict(
       glmnet_fit,
       newx = x_valid,
-      s = "lambda.min"
+      s = "lambda.min",
+      type = "response"
     )
 
 
@@ -371,7 +374,8 @@ hold_out_calculation_survival <- function(fold,
     valid_data$cond_cens_haz <- stats::predict(
       glmnet_fit,
       newx = x_valid,
-      s = "lambda.min"
+      s = "lambda.min",
+      type = "response"
     )
 
 
