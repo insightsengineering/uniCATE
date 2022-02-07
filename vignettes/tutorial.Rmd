@@ -20,12 +20,6 @@ knitr::opts_chunk$set(
 ```{r setup, include=FALSE}
 library(uniCATE)
 library(dplyr)
-library(sl3)
-library(glmnet)
-library(speedglm)
-library(polspline)
-library(ranger)
-library(xgboost)
 ```
 
 
@@ -129,12 +123,6 @@ computational convenience.
 ```{r load-pkgs, eval=FALSE}
 library(dplyr)
 library(uniCATE)
-library(sl3)
-library(glmnet)
-library(speedglm)
-library(polspline)
-library(ranger)
-library(xgboost)
 ```
 ```{r cont-sim}
 # simulate n trial participants
