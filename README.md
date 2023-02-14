@@ -1,0 +1,135 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# `R`/`uniCATE`
+
+> Univariate Conditional Average Treatment Effect Estimation
+
+**Author:** [Philippe Boileau](https://pboileau.ca/)
+
+<!-- badges: start -->
+
+[![Check](https://github.com/insightsengineering/uniCATE/actions/workflows/check.yaml/badge.svg)](https://github.com/insightsengineering/uniCATE/actions/workflows/check.yaml)
+[![Docs](https://github.com/insightsengineering/uniCATE/actions/workflows/docs.yaml/badge.svg)](https://github.com/insightsengineering/uniCATE/actions/workflows/docs.yaml)
+[![Project Status: Inactive – The project has reached a stable, usable
+state but is no longer being actively developed; support/maintenance
+will be provided as time
+allows.](https://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
+<!-- badges: end -->
+
+------------------------------------------------------------------------
+
+`uniCATE` implements statistical inference procedures for variable
+importance measures that assess the treatment effect modification
+capabilities of individual pre-treatment biomarkers in high-dimensional
+randomized control trials. This variable importance measure is defined
+as the vector of simple linear regression slope coefficients obtained by
+regressing the difference in potential outcomes on each biomarker. This
+parameter, which we dub the *univariate conditional average treatment
+effect*, is a reasonable indicator of treatment effect modification in
+all but pathological biomarker-outcome relationships, and can therefore
+be used to identify predictive biomarkers. Assumption-lean estimation
+and testing procedures based on semiparametric theory are made available
+for continuous, binary, and right-censored time-to-event outcomes.
+
+## Installation
+
+The *development version* of the package may be installed from GitHub
+using [`remotes`](https://CRAN.R-project.org/package=remotes):
+
+``` r
+remotes::install_github("insightsengineering/uniCATE")
+```
+
+## Usage
+
+`unicate()` should be used when the outcome is continuous or binary. For
+right-censored time-to-event outcomes, use `sunicate()`.
+
+## Example
+
+We simulate a randomized control trial in which there is a heterogeneous
+treatment effect for biomarkers 1 and 2. `unicate()` successfully
+identifies these biomarkers as effect modifiers.
+
+``` r
+# load the required libraries
+library(uniCATE)
+library(dplyr)
+library(sl3)
+```
+
+``` r
+# set the seed for reproducibility
+set.seed(514)
+
+# simulate some randomized control data
+n <- 100
+data <- tibble("treatment" = rbinom(n, 1, 0.5)) %>%
+  mutate(
+    bio1 = rnorm(n, mean = 2, sd = 0.2),
+    bio2 = rnorm(n, mean = -2, sd = 0.2),
+    bio3 = rnorm(n, mean = 0, sd = 0.1),
+    bio4 = rnorm(n, mean = 0, sd = 0.1),
+    covar = 0.2 * rbinom(n, 1, 0.4),
+    response = covar + bio1 * treatment + bio2 * treatment
+  )
+
+# define the required arguments
+covariates <- c("bio1", "bio2", "bio3", "bio4", "covar")
+biomarkers <- c("bio1", "bio2", "bio3", "bio4")
+propensity_score_ls <- list("1" = 0.5, "0" = 0.5)
+
+# create a simple SuperLearner using a linear model and a random forest
+interactions <- lapply(biomarkers, function(b) c(b, "treatment"))
+lrnr_interactions <- sl3::Lrnr_define_interactions$new(interactions)
+lrnr_glm <- sl3::make_learner(
+  sl3::Pipeline, lrnr_interactions, sl3::Lrnr_glm$new()
+)
+lrnr_sl <- Lrnr_sl$new(
+  learners = make_learner(
+    Stack, Lrnr_ranger$new(), lrnr_glm
+  ),
+  metalearner = make_learner(Lrnr_nnls)
+)
+
+# apply uniCATE to the simulated data
+unicate(
+  data,
+  outcome = "response",
+  treatment = "treatment",
+  covariates = covariates,
+  biomarkers = biomarkers,
+  propensity_score_ls = propensity_score_ls,
+  super_learner = lrnr_sl,
+  v_folds = 2L
+)
+#> # A tibble: 4 × 7
+#>   biomarker  coef     se      z  p_value p_value_bh p_value_holm
+#>   <chr>     <dbl>  <dbl>  <dbl>    <dbl>      <dbl>        <dbl>
+#> 1 bio1      0.876 0.0851 10.3   7.52e-25   3.01e-24     3.01e-24
+#> 2 bio2      0.841 0.108   7.80  6.00e-15   1.20e-14     1.80e-14
+#> 3 bio3      0.117 0.252   0.464 6.43e- 1   6.72e- 1     1   e+ 0
+#> 4 bio4      0.113 0.266   0.423 6.72e- 1   6.72e- 1     1   e+ 0
+```
+
+## Issues
+
+If you encounter any bugs or have any specific feature requests, please
+[file an issue](https://github.com/insightsengineering/uniCATE/issues).
+
+## Contributions
+
+Contributions are very welcome. Interested contributors should consult
+our [contribution
+guidelines](https://github.com/insightsengineering/uniCATE/blob/master/.github/CONTRIBUTING.md)
+prior to submitting a pull request.
+
+## License
+
+The contents of this repository are distributed under the Apache 2.0
+license. See the
+[`LICENSE.md`](https://github.com/insightsengineering/uniCATE/blob/main/LICENSE.md)
+and
+[`LICENSE`](https://github.com/insightsengineering/uniCATE/blob/main/LICENSE)
+files for details.
