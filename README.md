@@ -11,9 +11,10 @@
 
 [![Check](https://github.com/insightsengineering/uniCATE/actions/workflows/check.yaml/badge.svg)](https://github.com/insightsengineering/uniCATE/actions/workflows/check.yaml)
 [![Docs](https://github.com/insightsengineering/uniCATE/actions/workflows/docs.yaml/badge.svg)](https://github.com/insightsengineering/uniCATE/actions/workflows/docs.yaml)
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
-developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status: Inactive – The project has reached a stable, usable
+state but is no longer being actively developed; support/maintenance
+will be provided as time
+allows.](https://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
 <!-- badges: end -->
 
 ------------------------------------------------------------------------
@@ -103,13 +104,13 @@ unicate(
   super_learner = lrnr_sl,
   v_folds = 2L
 )
-#> # A tibble: 4 x 7
-#>   biomarker  coef     se     z  p_value p_value_bh p_value_holm
-#>   <chr>     <dbl>  <dbl> <dbl>    <dbl>      <dbl>        <dbl>
-#> 1 bio1      0.876 0.0988 8.87  7.52e-19   3.01e-18     3.01e-18
-#> 2 bio2      0.841 0.115  7.30  2.97e-13   5.94e-13     8.91e-13
-#> 3 bio3      0.117 0.255  0.457 6.48e- 1   6.64e- 1     1   e+ 0
-#> 4 bio4      0.113 0.260  0.434 6.64e- 1   6.64e- 1     1   e+ 0
+#> # A tibble: 4 × 7
+#>   biomarker  coef     se      z  p_value p_value_bh p_value_holm
+#>   <chr>     <dbl>  <dbl>  <dbl>    <dbl>      <dbl>        <dbl>
+#> 1 bio1      0.876 0.0851 10.3   7.52e-25   3.01e-24     3.01e-24
+#> 2 bio2      0.841 0.108   7.80  6.00e-15   1.20e-14     1.80e-14
+#> 3 bio3      0.117 0.252   0.464 6.43e- 1   6.72e- 1     1   e+ 0
+#> 4 bio4      0.113 0.266   0.423 6.72e- 1   6.72e- 1     1   e+ 0
 ```
 
 ## Issues
