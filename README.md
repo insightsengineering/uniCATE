@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# `R`/`uniCATE`
+# R/`uniCATE`
 
 > Univariate Conditional Average Treatment Effect Estimation
 
@@ -34,6 +34,10 @@ for continuous, binary, and right-censored time-to-event outcomes.
 Additional details are provided in [*A Flexible Approach for Predictive
 Biomarker Discovery* by Boileau et
 al.](https://academic.oup.com/biostatistics/advance-article/doi/10.1093/biostatistics/kxac029/6647929).
+
+If you are looking to apply similar methods to observational study data,
+check out the [`unihtee` R
+package](https://github.com/insightsengineering/unihtee).
 
 ## Installation
 
