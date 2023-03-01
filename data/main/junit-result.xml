@@ -1,168 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="apply_aiptw_transform" timestamp="2023-03-01T19:30:26Z" hostname="eb43a3ab240c" tests="1" skipped="0" failures="0" errors="0" time="0.059">
-    <testcase time="0.0590000000000002" classname="apply_aiptw_transform" name="can_pass_in_a_propensity_score_list_to_apply_aiptw_transform_"/>
+  <testsuite name="apply_aiptw_transform" timestamp="2023-03-01T19:56:59Z" hostname="72ec697f45ab" tests="1" skipped="0" failures="0" errors="0" time="0.064">
+    <testcase time="0.0640000000000001" classname="apply_aiptw_transform" name="can_pass_in_a_propensity_score_list_to_apply_aiptw_transform_"/>
   </testsuite>
-  <testsuite name="compute_coefs_tbl" timestamp="2023-03-01T19:30:26Z" hostname="eb43a3ab240c" tests="4" skipped="0" failures="0" errors="0" time="0.066">
-    <testcase time="0.0390000000000001" classname="compute_coefs_tbl" name="column_of_coefs_is_the_mean_of_validation_fold_coefs"/>
+  <testsuite name="compute_coefs_tbl" timestamp="2023-03-01T19:56:59Z" hostname="72ec697f45ab" tests="4" skipped="0" failures="0" errors="0" time="0.069">
+    <testcase time="0.0409999999999999" classname="compute_coefs_tbl" name="column_of_coefs_is_the_mean_of_validation_fold_coefs"/>
     <testcase time="0.00499999999999989" classname="compute_coefs_tbl" name="column_of_coefs_is_the_mean_of_validation_fold_coefs"/>
-    <testcase time="0.016" classname="compute_coefs_tbl" name="column_of_SEs_is_the_mean_of_the_squared_of_influence_curves_divided_by_the_number_of_observations_in_the_data"/>
-    <testcase time="0.00599999999999978" classname="compute_coefs_tbl" name="column_of_SEs_is_the_mean_of_the_squared_of_influence_curves_divided_by_the_number_of_observations_in_the_data"/>
+    <testcase time="0.0169999999999999" classname="compute_coefs_tbl" name="column_of_SEs_is_the_mean_of_the_squared_of_influence_curves_divided_by_the_number_of_observations_in_the_data"/>
+    <testcase time="0.00600000000000023" classname="compute_coefs_tbl" name="column_of_SEs_is_the_mean_of_the_squared_of_influence_curves_divided_by_the_number_of_observations_in_the_data"/>
   </testsuite>
-  <testsuite name="estimate_univariate_cates" timestamp="2023-03-01T19:30:26Z" hostname="eb43a3ab240c" tests="29" skipped="0" failures="0" errors="0" time="6.41">
-    <testcase time="1.842" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
-    <testcase time="0.0110000000000001" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
-    <testcase time="0.000999999999999446" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
+  <testsuite name="estimate_univariate_cates" timestamp="2023-03-01T19:56:59Z" hostname="72ec697f45ab" tests="29" skipped="0" failures="0" errors="0" time="6.726">
+    <testcase time="1.919" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
+    <testcase time="0.0119999999999996" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
+    <testcase time="0.00800000000000001" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
     <testcase time="0.00400000000000045" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
-    <testcase time="0.00599999999999934" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
-    <testcase time="0.00500000000000078" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
-    <testcase time="0.141" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
-    <testcase time="0.00899999999999945" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
-    <testcase time="0.00100000000000033" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
+    <testcase time="0.00600000000000023" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
+    <testcase time="0.00499999999999989" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_continuous_outcomes_"/>
+    <testcase time="0.151" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
+    <testcase time="0.00900000000000034" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
+    <testcase time="0.00199999999999978" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
     <testcase time="0.00399999999999956" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
     <testcase time="0.00400000000000045" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
     <testcase time="0.00499999999999989" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_continuous_outcomes_"/>
-    <testcase time="1.45" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
-    <testcase time="0.00899999999999945" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
-    <testcase time="0.00200000000000067" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
-    <testcase time="0.00299999999999923" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
-    <testcase time="0.00500000000000078" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
-    <testcase time="0.00399999999999956" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
-    <testcase time="0.134" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
-    <testcase time="0.00899999999999945" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
+    <testcase time="1.527" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
+    <testcase time="0.00999999999999979" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
+    <testcase time="0.00199999999999978" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
+    <testcase time="0.0140000000000002" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
+    <testcase time="0.00499999999999989" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
+    <testcase time="0.00600000000000023" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_super_learner_binary_outcome_"/>
+    <testcase time="0.132" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
+    <testcase time="0.00999999999999979" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
     <testcase time="0.00100000000000033" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
-    <testcase time="0.00399999999999956" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
-    <testcase time="0.00400000000000045" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
     <testcase time="0.00499999999999989" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
-    <testcase time="1.35" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="1.376" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.0109999999999992" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.00500000000000078" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.00499999999999989" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
+    <testcase time="0.00499999999999989" classname="estimate_univariate_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_influence_curve_calculations_for_each_observation_in_the_validation_set_using_default_learner_binary_outcome_"/>
+    <testcase time="1.411" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="1.442" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.0120000000000005" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
     <testcase time="0.00499999999999901" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.00500000000000078" classname="estimate_univariate_cates" name="estimate_univariate_cates_returns_a_vector_with_estimate_lm_coefficients_and_a_table_of_influence_curves"/>
   </testsuite>
-  <testsuite name="estimate_univariate_survival_cates" timestamp="2023-03-01T19:30:33Z" hostname="eb43a3ab240c" tests="25" skipped="0" failures="0" errors="0" time="13.013">
-    <testcase time="4.429" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
-    <testcase time="0.0299999999999994" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
-    <testcase time="0.0300000000000011" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
-    <testcase time="0.00600000000000023" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
-    <testcase time="0.000999999999999446" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
+  <testsuite name="estimate_univariate_survival_cates" timestamp="2023-03-01T19:57:06Z" hostname="72ec697f45ab" tests="25" skipped="0" failures="0" errors="0" time="13.96">
+    <testcase time="4.678" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
+    <testcase time="0.0330000000000013" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
+    <testcase time="0.0399999999999991" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
+    <testcase time="0.00699999999999967" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
+    <testcase time="0.00100000000000122" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
     <testcase time="0.00399999999999956" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
-    <testcase time="0.00399999999999956" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
-    <testcase time="0.011000000000001" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
-    <testcase time="1.492" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="0.0300000000000011" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="0.0309999999999988" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="0.00500000000000078" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="0.00200000000000067" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="0.00399999999999956" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="0.00399999999999956" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="0.00500000000000078" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
-    <testcase time="3.859" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.0309999999999988" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.0310000000000024" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="2.925" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.0310000000000024" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.0309999999999988" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.00799999999999912" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
-    <testcase time="0.00400000000000134" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.00499999999999901" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
+    <testcase time="0.00500000000000078" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_SLs"/>
+    <testcase time="1.621" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="0.032" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="0.032" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="0.00600000000000023" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="0.00100000000000122" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="0.00499999999999901" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="0.00500000000000256" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="0.00499999999999901" classname="estimate_univariate_survival_cates" name="fold_function_returns_a_vector_of_estimated_biomarker_coefficients_and_a_tibble_of_efficient_influence_function_values_for_each_observation_in_the_validation_set_using_defaults"/>
+    <testcase time="4.121" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.0340000000000025" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.0339999999999989" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="3.203" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.0350000000000001" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.0339999999999989" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.00900000000000034" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
     <testcase time="0.00499999999999901" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
+    <testcase time="0.00500000000000256" classname="estimate_univariate_survival_cates" name="estimate_univariate_s_cates_returns_a_vector_with_estimated_lm_coefficients_and_a_table_of_influence_curves"/>
   </testsuite>
-  <testsuite name="perform_inference" timestamp="2023-03-01T19:30:46Z" hostname="eb43a3ab240c" tests="4" skipped="0" failures="0" errors="0" time="0.035">
-    <testcase time="0.0240000000000009" classname="perform_inference" name="assert_that_p_values_are_properly_calculated"/>
-    <testcase time="0.00300000000000011" classname="perform_inference" name="assert_that_p_values_are_properly_calculated"/>
+  <testsuite name="perform_inference" timestamp="2023-03-01T19:57:20Z" hostname="72ec697f45ab" tests="4" skipped="0" failures="0" errors="0" time="0.039">
+    <testcase time="0.0269999999999975" classname="perform_inference" name="assert_that_p_values_are_properly_calculated"/>
+    <testcase time="0.00400000000000134" classname="perform_inference" name="assert_that_p_values_are_properly_calculated"/>
     <testcase time="0.00399999999999778" classname="perform_inference" name="assert_that_p_values_are_properly_calculated"/>
     <testcase time="0.00400000000000134" classname="perform_inference" name="assert_that_p_values_are_properly_calculated"/>
   </testsuite>
-  <testsuite name="prep_data" timestamp="2023-03-01T19:30:46Z" hostname="eb43a3ab240c" tests="19" skipped="0" failures="0" errors="0" time="0.162">
-    <testcase time="0.0210000000000008" classname="prep_data" name="only_accepts_data.frames_and_tibbles"/>
-    <testcase time="0.00799999999999912" classname="prep_data" name="only_accepts_data.frames_and_tibbles"/>
-    <testcase time="0.00799999999999912" classname="prep_data" name="only_accepts_data.frames_and_tibbles"/>
-    <testcase time="0.0110000000000028" classname="prep_data" name="checks_that_outcome_is_a_continuous_or_binary_numeric_variable"/>
-    <testcase time="0.00600000000000023" classname="prep_data" name="checks_that_outcome_is_a_continuous_or_binary_numeric_variable"/>
-    <testcase time="0.0069999999999979" classname="prep_data" name="checks_that_outcome_is_a_continuous_or_binary_numeric_variable"/>
-    <testcase time="0.0169999999999995" classname="prep_data" name="checks_that_treatment_is_a_binary_variable"/>
-    <testcase time="0.0100000000000016" classname="prep_data" name="outcome_and_treatment_designators_are_of_length_1"/>
-    <testcase time="0.00499999999999901" classname="prep_data" name="outcome_and_treatment_designators_are_of_length_1"/>
-    <testcase time="0.00799999999999912" classname="prep_data" name="specified_variables_are_contained_in_the_data"/>
+  <testsuite name="prep_data" timestamp="2023-03-01T19:57:20Z" hostname="72ec697f45ab" tests="19" skipped="0" failures="0" errors="0" time="0.191">
+    <testcase time="0.0240000000000009" classname="prep_data" name="only_accepts_data.frames_and_tibbles"/>
+    <testcase time="0.0109999999999992" classname="prep_data" name="only_accepts_data.frames_and_tibbles"/>
+    <testcase time="0.00900000000000034" classname="prep_data" name="only_accepts_data.frames_and_tibbles"/>
+    <testcase time="0.0129999999999981" classname="prep_data" name="checks_that_outcome_is_a_continuous_or_binary_numeric_variable"/>
+    <testcase time="0.017000000000003" classname="prep_data" name="checks_that_outcome_is_a_continuous_or_binary_numeric_variable"/>
+    <testcase time="0.0119999999999969" classname="prep_data" name="checks_that_outcome_is_a_continuous_or_binary_numeric_variable"/>
+    <testcase time="0.0110000000000028" classname="prep_data" name="checks_that_treatment_is_a_binary_variable"/>
+    <testcase time="0.00899999999999679" classname="prep_data" name="outcome_and_treatment_designators_are_of_length_1"/>
+    <testcase time="0.00600000000000023" classname="prep_data" name="outcome_and_treatment_designators_are_of_length_1"/>
+    <testcase time="0.00900000000000034" classname="prep_data" name="specified_variables_are_contained_in_the_data"/>
     <testcase time="0.00500000000000256" classname="prep_data" name="specified_variables_are_contained_in_the_data"/>
     <testcase time="0.00600000000000023" classname="prep_data" name="specified_variables_are_contained_in_the_data"/>
-    <testcase time="0.00499999999999901" classname="prep_data" name="specified_variables_are_contained_in_the_data"/>
-    <testcase time="0.0129999999999981" classname="prep_data" name="if_the_treatment_variable_is_not_a_factor_it_is_turned_into_one"/>
-    <testcase time="0.00300000000000011" classname="prep_data" name="if_the_treatment_variable_is_not_a_factor_it_is_turned_into_one"/>
-    <testcase time="0.00900000000000034" classname="prep_data" name="if_the_treatment_variable_is_not_a_factor_it_is_turned_into_one"/>
+    <testcase time="0.00599999999999667" classname="prep_data" name="specified_variables_are_contained_in_the_data"/>
+    <testcase time="0.0140000000000029" classname="prep_data" name="if_the_treatment_variable_is_not_a_factor_it_is_turned_into_one"/>
+    <testcase time="0.00399999999999778" classname="prep_data" name="if_the_treatment_variable_is_not_a_factor_it_is_turned_into_one"/>
+    <testcase time="0.0120000000000005" classname="prep_data" name="if_the_treatment_variable_is_not_a_factor_it_is_turned_into_one"/>
     <testcase time="0.00400000000000134" classname="prep_data" name="if_the_treatment_variable_is_not_a_factor_it_is_turned_into_one"/>
-    <testcase time="0.0119999999999969" classname="prep_data" name="always_returns_a_tibble_with_only_the_outcome_treatment_and_covariates"/>
-    <testcase time="0.00400000000000134" classname="prep_data" name="always_returns_a_tibble_with_only_the_outcome_treatment_and_covariates"/>
+    <testcase time="0.0139999999999993" classname="prep_data" name="always_returns_a_tibble_with_only_the_outcome_treatment_and_covariates"/>
+    <testcase time="0.00499999999999901" classname="prep_data" name="always_returns_a_tibble_with_only_the_outcome_treatment_and_covariates"/>
   </testsuite>
-  <testsuite name="prep_long_data" timestamp="2023-03-01T19:30:46Z" hostname="eb43a3ab240c" tests="33" skipped="0" failures="0" errors="0" time="0.637">
-    <testcase time="0.0399999999999991" classname="prep_long_data" name="A_wide_data.frame_of_3_rows_with_2_unique_relative_times_produces_a_tibble_with_5_rows"/>
-    <testcase time="0.00100000000000122" classname="prep_long_data" name="A_wide_data.frame_of_3_rows_with_2_unique_relative_times_produces_a_tibble_with_5_rows"/>
-    <testcase time="0.0410000000000004" classname="prep_long_data" name="The_observation_with_latest_relative_time_is_represented_twice"/>
-    <testcase time="0.0820000000000007" classname="prep_long_data" name="If_there_are_more_than_five_unique_relative_times_before_the_time_cutoff_then_only_the_quintiles_of_the_unique_relative_times_up_to_the_time_cutoff_are_used_to_lengthen_the_wide_data"/>
-    <testcase time="0.0350000000000001" classname="prep_long_data" name="Only_data.frame_or_tibble_objects_are_accepted_by_the_data_argument"/>
-    <testcase time="0.032" classname="prep_long_data" name="Only_data.frame_or_tibble_objects_are_accepted_by_the_data_argument"/>
-    <testcase time="0.0069999999999979" classname="prep_long_data" name="Only_data.frame_or_tibble_objects_are_accepted_by_the_data_argument"/>
-    <testcase time="0.0100000000000016" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
-    <testcase time="0.00499999999999901" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
+  <testsuite name="prep_long_data" timestamp="2023-03-01T19:57:20Z" hostname="72ec697f45ab" tests="33" skipped="0" failures="0" errors="0" time="0.683">
+    <testcase time="0.0450000000000017" classname="prep_long_data" name="A_wide_data.frame_of_3_rows_with_2_unique_relative_times_produces_a_tibble_with_5_rows"/>
+    <testcase time="0.00199999999999889" classname="prep_long_data" name="A_wide_data.frame_of_3_rows_with_2_unique_relative_times_produces_a_tibble_with_5_rows"/>
+    <testcase time="0.0450000000000017" classname="prep_long_data" name="The_observation_with_latest_relative_time_is_represented_twice"/>
+    <testcase time="0.0909999999999975" classname="prep_long_data" name="If_there_are_more_than_five_unique_relative_times_before_the_time_cutoff_then_only_the_quintiles_of_the_unique_relative_times_up_to_the_time_cutoff_are_used_to_lengthen_the_wide_data"/>
+    <testcase time="0.0390000000000015" classname="prep_long_data" name="Only_data.frame_or_tibble_objects_are_accepted_by_the_data_argument"/>
+    <testcase time="0.0339999999999989" classname="prep_long_data" name="Only_data.frame_or_tibble_objects_are_accepted_by_the_data_argument"/>
+    <testcase time="0.00700000000000145" classname="prep_long_data" name="Only_data.frame_or_tibble_objects_are_accepted_by_the_data_argument"/>
+    <testcase time="0.0109999999999992" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
     <testcase time="0.00600000000000023" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
     <testcase time="0.00600000000000023" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
-    <testcase time="0.00499999999999901" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
     <testcase time="0.00600000000000023" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
-    <testcase time="0.0100000000000016" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
+    <testcase time="0.00600000000000023" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
+    <testcase time="0.00600000000000023" classname="prep_long_data" name="Errors_occure_when_the_event_censor_relative_time_treatment_covariates_and_biomarkers_arguments_are_not_characters"/>
+    <testcase time="0.0219999999999985" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
     <testcase time="0.00600000000000023" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
-    <testcase time="0.014999999999997" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
-    <testcase time="0.00800000000000267" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
+    <testcase time="0.0069999999999979" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
     <testcase time="0.00600000000000023" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
-    <testcase time="0.0120000000000005" classname="prep_long_data" name="An_error_is_reported_when_the_event_variable_is_not_a_binary_numeric_variables_in_the_data_argument"/>
-    <testcase time="0.0129999999999981" classname="prep_long_data" name="An_error_is_reported_when_the_censor_variable_is_not_a_binary_numeric_variables_in_the_data_argument"/>
-    <testcase time="0.0120000000000005" classname="prep_long_data" name="An_error_is_thrown_for_observations_with_an_event_that_is_censored"/>
-    <testcase time="0.0129999999999981" classname="prep_long_data" name="An_error_is_reported_when_the_treatment_variable_is_not_a_binary_variable_in_the_data_argument"/>
-    <testcase time="0.0360000000000014" classname="prep_long_data" name="Treatment_variable_is_coerced_to_a_factor_if_not_already"/>
-    <testcase time="0.0160000000000018" classname="prep_long_data" name="An_error_is_reported_when_relative_time_variable_is_not_a_positive_numeric"/>
-    <testcase time="0.0119999999999969" classname="prep_long_data" name="The_time_cutoff_is_a_numeric_if_non_null"/>
-    <testcase time="0.0410000000000004" classname="prep_long_data" name="Warn_when_time_cutoff_not_within_the_range_of_relative_time"/>
-    <testcase time="0.0370000000000026" classname="prep_long_data" name="Only_relevant_variables_remain_after_data_prep"/>
-    <testcase time="0.0370000000000026" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
-    <testcase time="0.0109999999999992" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
-    <testcase time="0.0109999999999992" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
-    <testcase time="0.0109999999999992" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
-    <testcase time="0.0429999999999993" classname="prep_long_data" name="Obs_3_isn_t_censored_and_doesn_t_have_an_event"/>
+    <testcase time="0.00500000000000256" classname="prep_long_data" name="Errors_occur_when_variable_arguments_are_missing_from_the_data"/>
+    <testcase time="0.0129999999999981" classname="prep_long_data" name="An_error_is_reported_when_the_event_variable_is_not_a_binary_numeric_variables_in_the_data_argument"/>
+    <testcase time="0.0120000000000005" classname="prep_long_data" name="An_error_is_reported_when_the_censor_variable_is_not_a_binary_numeric_variables_in_the_data_argument"/>
+    <testcase time="0.0129999999999981" classname="prep_long_data" name="An_error_is_thrown_for_observations_with_an_event_that_is_censored"/>
+    <testcase time="0.0140000000000029" classname="prep_long_data" name="An_error_is_reported_when_the_treatment_variable_is_not_a_binary_variable_in_the_data_argument"/>
+    <testcase time="0.036999999999999" classname="prep_long_data" name="Treatment_variable_is_coerced_to_a_factor_if_not_already"/>
+    <testcase time="0.0180000000000007" classname="prep_long_data" name="An_error_is_reported_when_relative_time_variable_is_not_a_positive_numeric"/>
+    <testcase time="0.0109999999999992" classname="prep_long_data" name="The_time_cutoff_is_a_numeric_if_non_null"/>
+    <testcase time="0.0429999999999993" classname="prep_long_data" name="Warn_when_time_cutoff_not_within_the_range_of_relative_time"/>
+    <testcase time="0.0399999999999991" classname="prep_long_data" name="Only_relevant_variables_remain_after_data_prep"/>
+    <testcase time="0.0400000000000027" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
+    <testcase time="0.0119999999999969" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
+    <testcase time="0.0110000000000028" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
+    <testcase time="0.0110000000000028" classname="prep_long_data" name="Obs_2_doesn_t_have_a_censoring_event_obs_3_doesn_t_have_any_events"/>
+    <testcase time="0.046999999999997" classname="prep_long_data" name="Obs_3_isn_t_censored_and_doesn_t_have_an_event"/>
     <testcase time="0.0110000000000028" classname="prep_long_data" name="Obs_3_isn_t_censored_and_doesn_t_have_an_event"/>
   </testsuite>
-  <testsuite name="sunicate" timestamp="2023-03-01T19:30:47Z" hostname="eb43a3ab240c" tests="8" skipped="0" failures="0" errors="0" time="5.085">
-    <testcase time="3.704" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
-    <testcase time="0.0310000000000024" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
-    <testcase time="0.0309999999999988" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
-    <testcase time="1.224" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
-    <testcase time="0.0309999999999988" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
-    <testcase time="0.0310000000000024" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
-    <testcase time="0.0249999999999986" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
-    <testcase time="0.00799999999999912" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+  <testsuite name="sunicate" timestamp="2023-03-01T19:57:21Z" hostname="72ec697f45ab" tests="8" skipped="0" failures="0" errors="0" time="5.552">
+    <testcase time="4.051" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+    <testcase time="0.0330000000000013" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+    <testcase time="0.032" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+    <testcase time="1.334" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+    <testcase time="0.0330000000000013" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+    <testcase time="0.0329999999999977" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+    <testcase time="0.027000000000001" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
+    <testcase time="0.00900000000000034" classname="sunicate" name="sunicate_identifies_the_effect_modified_in_a_simulated_example_using_default_learners"/>
   </testsuite>
-  <testsuite name="unicate" timestamp="2023-03-01T19:30:52Z" hostname="eb43a3ab240c" tests="24" skipped="0" failures="0" errors="0" time="11.986">
-    <testcase time="1.457" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
-    <testcase time="1.458" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
-    <testcase time="0.0329999999999977" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
-    <testcase time="3.039" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
-    <testcase time="0.0159999999999982" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
-    <testcase time="0.0200000000000031" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
-    <testcase time="0.117999999999995" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
-    <testcase time="0.104000000000006" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
-    <testcase time="0.0239999999999938" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
-    <testcase time="0.316000000000003" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
-    <testcase time="0.017000000000003" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
-    <testcase time="0.019999999999996" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
-    <testcase time="1.048" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
-    <testcase time="1.073" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
-    <testcase time="0.0259999999999962" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
-    <testcase time="2.39" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
-    <testcase time="0.0160000000000053" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
-    <testcase time="0.0189999999999984" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
-    <testcase time="0.158000000000001" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
-    <testcase time="0.161999999999999" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
-    <testcase time="0.0229999999999961" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
-    <testcase time="0.414000000000001" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
-    <testcase time="0.0150000000000006" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
-    <testcase time="0.0200000000000031" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
+  <testsuite name="unicate" timestamp="2023-03-01T19:57:26Z" hostname="72ec697f45ab" tests="24" skipped="0" failures="0" errors="0" time="12.716">
+    <testcase time="1.579" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
+    <testcase time="1.522" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
+    <testcase time="0.0399999999999991" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
+    <testcase time="3.266" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
+    <testcase time="0.0180000000000007" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
+    <testcase time="0.0210000000000008" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_cont._outcome_"/>
+    <testcase time="0.126999999999995" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
+    <testcase time="0.116" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
+    <testcase time="0.0260000000000034" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
+    <testcase time="0.347000000000001" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
+    <testcase time="0.0169999999999959" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
+    <testcase time="0.0210000000000008" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_cont._outcome_"/>
+    <testcase time="1.094" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
+    <testcase time="1.101" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
+    <testcase time="0.0260000000000034" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
+    <testcase time="2.538" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
+    <testcase time="0.017000000000003" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
+    <testcase time="0.0210000000000008" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_SL_binary_outcome_"/>
+    <testcase time="0.170999999999999" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
+    <testcase time="0.155999999999999" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
+    <testcase time="0.0240000000000009" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
+    <testcase time="0.430999999999997" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
+    <testcase time="0.0160000000000053" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
+    <testcase time="0.0210000000000008" classname="unicate" name="biomarkers_1_and_2_found_by_unicate_with_default_learner_binary_outcome_"/>
   </testsuite>
 </testsuites>
