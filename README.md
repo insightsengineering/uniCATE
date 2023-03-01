@@ -31,6 +31,9 @@ all but pathological biomarker-outcome relationships, and can therefore
 be used to identify predictive biomarkers. Assumption-lean estimation
 and testing procedures based on semiparametric theory are made available
 for continuous, binary, and right-censored time-to-event outcomes.
+Additional details are provided in [*A Flexible Approach for Predictive
+Biomarker Discovery* by Boileau et
+al.](https://academic.oup.com/biostatistics/advance-article/doi/10.1093/biostatistics/kxac029/6647929).
 
 ## Installation
 
@@ -124,6 +127,29 @@ Contributions are very welcome. Interested contributors should consult
 our [contribution
 guidelines](https://github.com/insightsengineering/uniCATE/blob/master/.github/CONTRIBUTING.md)
 prior to submitting a pull request.
+
+## Citation
+
+You can cite this package and the methodology used therein with the
+following BibTeX entries:
+
+    @manual{uniCATE,
+      title = {uniCATE: Univariate Conditional Average Treatment Effect Estimation},
+      author = {Philippe Boileau},
+      year = {2023},
+      note = {R package version 0.4.0},
+    }
+      
+    @article{boileau2022,
+      author = {Boileau, Philippe and Qi, Nina Ting and van der Laan, Mark J and Dudoit, Sandrine and Leng, Ning},
+      title = "{A flexible approach for predictive biomarker discovery}",
+      journal = {Biostatistics},
+      year = {2022},
+      month = {07},
+      issn = {1465-4644},
+      doi = {10.1093/biostatistics/kxac029},
+      url = {https://doi.org/10.1093/biostatistics/kxac029}
+    }
 
 ## License
 
