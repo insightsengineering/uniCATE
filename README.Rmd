@@ -50,7 +50,7 @@ out the [`unihtee` R package](https://github.com/insightsengineering/unihtee).
 
 ## Installation
 
-The _development version_ of the package may be installed from GitHub using
+This package can be installed directly from GitHub using
 [`remotes`](https://CRAN.R-project.org/package=remotes):
 
 ```{r gh-master-installation, eval=FALSE}
