@@ -66,12 +66,6 @@
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/uniCATE/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -104,7 +98,7 @@
 <!-- badges: start -->
 
 <hr>
-<p><code>uniCATE</code> implements statistical inference procedures for variable importance measures that assess the treatment effect modification capabilities of individual pre-treatment biomarkers in high-dimensional randomized control trials. This variable importance measure is defined as the vector of simple linear regression slope coefficients obtained by regressing the difference in potential outcomes on each biomarker. This parameter, which we dub the <em>univariate conditional average treatment effect</em>, is a reasonable indicator of treatment effect modification in all but pathological biomarker-outcome relationships, and can therefore be used to identify predictive biomarkers. Assumption-lean estimation and testing procedures based on semiparametric theory are made available for continuous, binary, and right-censored time-to-event outcomes.</p>
+<p><code>uniCATE</code> implements statistical inference procedures for variable importance measures that assess the treatment effect modification capabilities of individual pre-treatment biomarkers in high-dimensional randomized control trials. This variable importance measure is defined as the vector of simple linear regression slope coefficients obtained by regressing the difference in potential outcomes on each biomarker. This parameter, which we dub the <em>univariate conditional average treatment effect</em>, is a reasonable indicator of treatment effect modification in all but pathological biomarker-outcome relationships, and can therefore be used to identify predictive biomarkers. Assumption-lean estimation and testing procedures based on semiparametric theory are made available for continuous, binary, and right-censored time-to-event outcomes. Additional details are provided in <a href="https://academic.oup.com/biostatistics/advance-article/doi/10.1093/biostatistics/kxac029/6647929" class="external-link"><em>A Flexible Approach for Predictive Biomarker Discovery</em> by Boileau et al.</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -188,6 +182,28 @@
 <h2 id="contributions">Contributions<a class="anchor" aria-label="anchor" href="#contributions"></a>
 </h2>
 <p>Contributions are very welcome. Interested contributors should consult our <a href="https://github.com/insightsengineering/uniCATE/blob/master/.github/CONTRIBUTING.md" class="external-link">contribution guidelines</a> prior to submitting a pull request.</p>
+</div>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
+<p>You can cite this package and the methodology used therein with the following BibTeX entries:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="sc">@</span>manual{uniCATE,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  title <span class="ot">=</span> {uniCATE<span class="sc">:</span> Univariate Conditional Average Treatment Effect Estimation},</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  author <span class="ot">=</span> {Philippe Boileau},</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2023</span>},</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  note <span class="ot">=</span> {R package version <span class="dv">0</span>.<span class="fl">4.0</span>},</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="sc">@</span>article{boileau2022,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  author <span class="ot">=</span> {Boileau, Philippe and Qi, Nina Ting and van der Laan, Mark J and Dudoit, Sandrine and Leng, Ning},</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  title <span class="ot">=</span> <span class="st">"{A flexible approach for predictive biomarker discovery}"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  journal <span class="ot">=</span> {Biostatistics},</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  year <span class="ot">=</span> {<span class="dv">2022</span>},</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  month <span class="ot">=</span> {<span class="dv">07</span>},</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  issn <span class="ot">=</span> {<span class="dv">1465-4644</span>},</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  doi <span class="ot">=</span> {<span class="fl">10.1093</span><span class="sc">/</span>biostatistics<span class="sc">/</span>kxac029},</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1093</span><span class="sc">/</span>biostatistics<span class="sc">/</span>kxac029}</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
