@@ -41,8 +41,8 @@ package](https://github.com/insightsengineering/unihtee).
 
 ## Installation
 
-The *development version* of the package may be installed from GitHub
-using [`remotes`](https://CRAN.R-project.org/package=remotes):
+This package can be installed directly from GitHub using
+[`remotes`](https://CRAN.R-project.org/package=remotes):
 
 ``` r
 remotes::install_github("insightsengineering/uniCATE")
