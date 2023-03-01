@@ -66,12 +66,6 @@
 <li>
   <a href="news/index.html">Changelog</a>
 </li>
-<!-- start dropdown for versions --> <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle"
-          data-bs-toggle="dropdown" role="button"
-          aria-expanded="false" aria-haspopup="true"
-          id="dropdown-versions">Versions</a> <div class="dropdown-menu" aria-labelledby="dropdown-versions"> <a class="dropdown-item" data-toggle="tooltip" title="" href="https://insightsengineering.github.io/uniCATE/main">main</a> </div></li>
-<!-- end dropdown for versions -->
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -93,8 +87,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="runicate">
-<code>R</code>/<code>uniCATE</code>
+<div class="page-header"><h1 id="runicate">R/<code>uniCATE</code>
 <a class="anchor" aria-label="anchor" href="#runicate"></a>
 </h1></div>
 <blockquote>
@@ -105,6 +98,7 @@
 
 <hr>
 <p><code>uniCATE</code> implements statistical inference procedures for variable importance measures that assess the treatment effect modification capabilities of individual pre-treatment biomarkers in high-dimensional randomized control trials. This variable importance measure is defined as the vector of simple linear regression slope coefficients obtained by regressing the difference in potential outcomes on each biomarker. This parameter, which we dub the <em>univariate conditional average treatment effect</em>, is a reasonable indicator of treatment effect modification in all but pathological biomarker-outcome relationships, and can therefore be used to identify predictive biomarkers. Assumption-lean estimation and testing procedures based on semiparametric theory are made available for continuous, binary, and right-censored time-to-event outcomes. Additional details are provided in <a href="https://academic.oup.com/biostatistics/advance-article/doi/10.1093/biostatistics/kxac029/6647929" class="external-link"><em>A Flexible Approach for Predictive Biomarker Discovery</em> by Boileau et al.</a>.</p>
+<p>If you are looking to apply similar methods to observational study data, check out the <a href="https://github.com/insightsengineering/unihtee" class="external-link"><code>unihtee</code> R package</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
